@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { CampaignCard } from './CampaignCard';
+import { CampaignCardSkeleton } from './SkeletonLoader';
 
 interface CampaignsListProps {
   campaigns: Campaign[];
@@ -13,6 +13,8 @@ interface CampaignsListProps {
   onShare: (campaign: Campaign) => void;
   onNavigateDetail: (id: string) => void;
   onNavigateAnalytics: (id: string) => void;
+  onManage?: (campaign: Campaign) => void;
+  isFounder?: boolean;
 }
 
 export const CampaignsList: React.FC<CampaignsListProps> = ({
@@ -25,124 +27,99 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onShare,
   onNavigateDetail,
   onNavigateAnalytics,
+  onManage,
+  isFounder = false,
 }) => {
+  const [isLoading] = useState(false);
+
   const openCampaigns = campaigns.filter((c) => !c.joined);
   const joinedCampaigns = campaigns.filter((c) => c.joined);
   const visibleCampaigns = filterTab === 'open' ? openCampaigns : joinedCampaigns;
 
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-8 sm:py-12 animate-[rise_0.3s_cubic-bezier(0.2,0.8,0.2,1)]">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+      {/* Title & Filter bar */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC]">
             Campaigns
           </h1>
-          <p className="text-sm text-[#8e8e93] mt-2">
+          <p className="text-[13px] text-[#9A9892] mt-1">
             Vetted mobile apps with real-time attribution and guaranteed creator bounties.
           </p>
         </div>
 
-        {/* Clean Filter Capsule: No bulky numbers on Open and Joined */}
-        <div
-          className="inline-flex p-1 rounded-full border border-white/5 self-start sm:self-auto relative"
-          style={{ backgroundColor: '#222226' }}
-          role="tablist"
-          aria-label="Campaign filter"
-        >
+        {/* Filter Capsule: [ Open | Joined ] */}
+        <div className="inline-flex bg-[#161616] rounded-full p-1 self-start sm:self-auto shrink-0 border border-[#2A2A2A]/40">
           <button
-            role="tab"
-            aria-selected={filterTab === 'open'}
             onClick={() => setFilterTab('open')}
-            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 cursor-pointer ${
-              filterTab === 'open' ? 'text-black' : 'text-[#8e8e93] hover:text-white'
-            }`}
+            className={`pill min-h-[36px] px-4 cursor-pointer ${filterTab === 'open' ? 'on' : ''}`}
           >
-            <span>Open</span>
-            {filterTab === 'open' && (
-              <motion.div
-                layoutId="campaignFilterPill"
-                className="absolute inset-0 bg-white rounded-full -z-10 shadow-xs"
-                transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-              />
-            )}
+            Open
           </button>
-
           <button
-            role="tab"
-            aria-selected={filterTab === 'joined'}
             onClick={() => setFilterTab('joined')}
-            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 cursor-pointer ${
-              filterTab === 'joined' ? 'text-black' : 'text-[#8e8e93] hover:text-white'
-            }`}
+            className={`pill min-h-[36px] px-4 cursor-pointer ${filterTab === 'joined' ? 'on' : ''}`}
           >
-            <span>Joined</span>
-            {filterTab === 'joined' && (
-              <motion.div
-                layoutId="campaignFilterPill"
-                className="absolute inset-0 bg-white rounded-full -z-10 shadow-xs"
-                transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-              />
-            )}
+            Joined
           </button>
         </div>
       </div>
 
-      {/* Timeline Campaign Cards with Animated Stagger */}
-      <AnimatePresence mode="wait">
-        {visibleCampaigns.length > 0 ? (
-          <motion.div
-            key={filterTab}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.18 }}
-            className="space-y-6 sm:space-y-7"
-          >
-            {visibleCampaigns.map((campaign, index) => (
-              <CampaignCard
-                key={campaign.id}
-                campaign={campaign}
-                onJoin={onJoin}
-                onOpenQr={onOpenQr}
-                onCopyLink={onCopyLink}
-                onShare={onShare}
-                onNavigateDetail={onNavigateDetail}
-                onNavigateAnalytics={onNavigateAnalytics}
-                redirectMode={filterTab === 'joined' ? 'analytics' : 'detail'}
-                isLast={index === visibleCampaigns.length - 1}
-              />
-            ))}
-          </motion.div>
+      {/* Campaigns list */}
+      <div className="space-y-4 pt-2">
+        {isLoading ? (
+          <>
+            <CampaignCardSkeleton />
+            <CampaignCardSkeleton />
+            <CampaignCardSkeleton />
+          </>
+        ) : visibleCampaigns.length > 0 ? (
+          visibleCampaigns.map((campaign) => (
+            <CampaignCard
+              key={campaign.id}
+              campaign={campaign}
+              onJoin={onJoin}
+              onOpenQr={onOpenQr}
+              onCopyLink={onCopyLink}
+              onShare={onShare}
+              onNavigateDetail={onNavigateDetail}
+              onNavigateAnalytics={onNavigateAnalytics}
+              onManage={onManage}
+              isFounder={isFounder}
+            />
+          ))
         ) : (
-          <motion.div
-            key={`empty-${filterTab}`}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-            className="text-center py-16 px-4 rounded-[22px] border border-white/5"
-            style={{ backgroundColor: '#1e1e22' }}
-          >
-            <h2 className="text-xl font-medium text-white">
-              {filterTab === 'open' ? 'No open campaigns' : 'Nothing joined yet'}
-            </h2>
-            <p className="text-sm text-[#8e8e93] mt-2 max-w-sm mx-auto">
-              {filterTab === 'open'
-                ? 'Check back soon for new distribution bounties.'
-                : 'Join any campaign from the Open tab to get your instant tracking link and start earning.'}
-            </p>
-            {filterTab === 'joined' && openCampaigns.length > 0 && (
-              <button
-                onClick={() => setFilterTab('open')}
-                className="mt-4 px-4 py-2 rounded-full text-xs font-semibold text-white bg-[#1a8cff] hover:bg-[#258cfb] transition-colors cursor-pointer"
-              >
-                Browse open campaigns
-              </button>
+          /* Empty States with Short Invitation and One Primary Action */
+          <div className="card text-center py-14 px-6 space-y-3 bg-[#161616] border border-[#2A2A2A] rounded-[24px]">
+            <div className="w-12 h-12 rounded-full bg-[#1C1C1C] text-[#9A9892] flex items-center justify-center text-[22px] mx-auto">
+              <i className={`ti ${filterTab === 'joined' ? 'ti-link' : 'ti-speakerphone'}`}></i>
+            </div>
+            <div>
+              <div className="text-[16px] font-medium text-[#F5F3EC]">
+                {filterTab === 'joined' ? 'No joined campaigns yet' : 'No open campaigns'}
+              </div>
+              <div className="text-[13px] text-[#9A9892] mt-1 max-w-[420px] mx-auto leading-relaxed">
+                {filterTab === 'joined'
+                  ? 'Join a campaign to generate your personal creator tracking link and start earning per verified install.'
+                  : 'All campaigns are currently filled. New mobile apps enter the marketplace weekly.'}
+              </div>
+            </div>
+
+            {filterTab === 'joined' && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setFilterTab('open')}
+                  className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+                >
+                  Browse open campaigns
+                </button>
+              </div>
             )}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
-import { linkOf, plainPay } from '../data/campaigns';
-import { Icon } from './Icons';
-import { getCampaignTheme, hexToRgba } from '../utils/campaignTheme';
+import { CATS } from '../data/campaigns';
+import { Breadcrumbs } from './Breadcrumbs';
 
 interface CampaignDetailProps {
   campaign: Campaign;
@@ -17,529 +15,419 @@ interface CampaignDetailProps {
   onBack: () => void;
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  'Art and design': 'camera',
-  'Music': 'music',
-  'Social': 'chat',
-  'Productivity': 'bolt',
-  'Education': 'book',
-  'Finance': 'wallet',
-  'Health': 'heart',
-  'Travel': 'map',
-  'Games': 'game',
-};
+// Procedural QR Code generator
+function generateQrSvg(seed: number) {
+  const n = 21;
+  const s = 5;
+  const rects: React.ReactNode[] = [];
 
-const PROMO_SCREENS: Record<string, { icon: string; title: string; subtitle: string }[]> = {
-  atelier: [
-    { icon: 'spark', title: 'Studio Canvas', subtitle: 'Pressure-sensitive vector ink' },
-    { icon: 'sliders', title: 'Palette Engine', subtitle: 'Dynamic color harmonics' },
-    { icon: 'camera', title: 'Live Capture', subtitle: 'Texture scanning from reality' },
-    { icon: 'star', title: 'Patron Showcase', subtitle: 'Export 4K portfolio reel' },
-  ],
-  palazzo: [
-    { icon: 'cube', title: 'Spatial Gallery', subtitle: '3D exhibition walking tours' },
-    { icon: 'map', title: 'Curator Guide', subtitle: 'Audio navigation in residencies' },
-    { icon: 'eye', title: 'Detail Zoom', subtitle: 'Ultra-resolution brushwork' },
-    { icon: 'globe', title: 'Worldwide Sync', subtitle: 'Connect collectors globally' },
-  ],
-  pixelpop: [
-    { icon: 'game', title: 'Arcade Rush', subtitle: 'Fast-paced tactical puzzles' },
-    { icon: 'trophy', title: 'Global Ladder', subtitle: 'Seasonal creator tournaments' },
-    { icon: 'spark', title: 'Daily Quests', subtitle: 'New mechanics unlocked daily' },
-    { icon: 'star', title: 'Custom Themes', subtitle: 'Unlock retro pixel palettes' },
-  ],
-  pennywise: [
-    { icon: 'wallet', title: 'Ledger Flow', subtitle: 'Zero-knowledge cash tracker' },
-    { icon: 'trend', title: 'Forecast AI', subtitle: 'Recurring bill projection' },
-    { icon: 'bill', title: 'Split Vaults', subtitle: 'Shared group expense pools' },
-    { icon: 'check', title: 'Safe to Spend', subtitle: 'Live calculated budget limit' },
-  ],
-  stride: [
-    { icon: 'heart', title: 'Cadence Tracker', subtitle: 'Gentle daily walk goals' },
-    { icon: 'clock', title: 'Micro Streaks', subtitle: 'Mindful 10-minute pauses' },
-    { icon: 'trend', title: 'Vigor Index', subtitle: 'Long-term stamina analytics' },
-    { icon: 'trophy', title: 'Route Badges', subtitle: 'Neighborhood landmark logs' },
-  ],
-  tessera: [
-    { icon: 'book', title: 'Bite Lessons', subtitle: '5-minute micro immersion' },
-    { icon: 'globe', title: 'Cultural Notes', subtitle: 'Idiomatic expressions' },
-    { icon: 'chat', title: 'Pronounce AI', subtitle: 'Live acoustic voice feedback' },
-    { icon: 'star', title: 'Fluency Path', subtitle: 'Adaptive mastery checkpoints' },
-  ],
-};
+  function rnd(x: number) {
+    let s2 = (x + 0x6d2b79f5) | 0;
+    const t = Math.imul(s2 ^ (s2 >>> 15), 1 | s2);
+    const t2 = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t2 ^ (t2 >>> 14)) >>> 0) / 4294967296;
+  }
+
+  function fin(fx: number, fy: number, keyPrefix: string) {
+    return (
+      <g key={keyPrefix}>
+        <rect x={fx * s} y={fy * s} width={7 * s} height={7 * s} fill="#0B0B0B" />
+        <rect x={(fx + 1) * s} y={(fy + 1) * s} width={5 * s} height={5 * s} fill="#F5F3EC" />
+        <rect x={(fx + 2) * s} y={(fy + 2) * s} width={3 * s} height={3 * s} fill="#0B0B0B" />
+      </g>
+    );
+  }
+
+  for (let y = 0; y < n; y++) {
+    for (let x = 0; x < n; x++) {
+      if ((x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9)) continue;
+      if (rnd(seed * 131 + y * n + x) > 0.5) {
+        rects.push(
+          <rect
+            key={`dot-${x}-${y}`}
+            x={x * s}
+            y={y * s}
+            width={s}
+            height={s}
+            fill="#0B0B0B"
+          />
+        );
+      }
+    }
+  }
+
+  return (
+    <svg
+      width={n * s}
+      height={n * s}
+      viewBox={`0 0 ${n * s} ${n * s}`}
+      role="img"
+      aria-label="Creator QR code"
+      className="bg-[#F5F3EC] rounded-[10px] p-1.5 shrink-0"
+    >
+      {rects}
+      {fin(0, 0, 'fin-tl')}
+      {fin(n - 7, 0, 'fin-tr')}
+      {fin(0, n - 7, 'fin-bl')}
+    </svg>
+  );
+}
 
 export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   campaign,
+  allCampaigns = [],
   onJoin,
-  onOpenQr,
   onCopyLink,
-  onShare,
+  onNavigateDetail,
   onNavigateAnalytics,
   onBack,
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [showStickyBar, setShowStickyBar] = useState(false);
-  const [activeScreenIndex, setActiveScreenIndex] = useState<number | null>(null);
-  const actionRef = useRef<HTMLDivElement | null>(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const baseTheme = getCampaignTheme(campaign);
-  const activeColor = baseTheme.primary;
-
-  const defaultScreens = [
-    { icon: 'spark', title: 'Feature Spotlight', subtitle: 'Seamless creator onboarding' },
-    { icon: 'cube', title: 'Real-time Sync', subtitle: 'Instant device pairing' },
-    { icon: 'book', title: 'Resource Hub', subtitle: 'Curated workflow guides' },
-    { icon: 'star', title: 'Verified Rewards', subtitle: 'Guaranteed attribution payout' },
-  ];
-
-  const promoScreens = PROMO_SCREENS[campaign.id] || defaultScreens;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!actionRef.current) return;
-      const rect = actionRef.current.getBoundingClientRect();
-      setShowStickyBar(rect.top < 64);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleJoinClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (campaign.joined || isJoining) return;
-    setIsJoining(true);
-    setTimeout(() => {
-      onJoin(campaign, e.currentTarget);
-      setIsJoining(false);
-    }, 250);
-  };
+  const bg = campaign.bg || '#CECBF6';
+  const fg = campaign.fg || '#26215C';
+  const icon = campaign.icon || 'ti-device-gamepad-2';
+  const slug = campaign.slug || campaign.id;
+  const linkText = `kred.link/${slug}/you`;
 
   const handleCopy = () => {
     onCopyLink(campaign);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  };
+
+  const handleJoin = (e: React.MouseEvent<HTMLButtonElement>) => {
+    onJoin(campaign, e.currentTarget);
+  };
+
+  const otherCampaigns = allCampaigns.filter((c) => c.id !== campaign.id).slice(0, 2);
+
+  // Phone Mockup Renderer
+  const renderPhoneMockup = (k: number) => {
+    const hh = [150, 172, 150][k];
+    const isCenter = k === 1;
+    return (
+      <div
+        key={`phone-${k}`}
+        className="ph block shrink-0"
+        style={{
+          height: `${hh + 18}px`,
+          marginTop: isCenter ? 0 : '14px',
+        }}
+      >
+        {/* Notch */}
+        <div className="w-[22px] h-[4px] rounded-[2px] bg-[#2A2A2A] mx-auto mb-2" />
+        {/* Header Widget */}
+        <div
+          className="rounded-[10px] flex items-center justify-center"
+          style={{
+            height: isCenter ? '44px' : '30px',
+            backgroundColor: bg,
+            color: fg,
+            fontSize: isCenter ? '20px' : '15px',
+          }}
+        >
+          <i className={`ti ${icon}`} aria-hidden="true"></i>
+        </div>
+        {/* Text bars */}
+        <div className="h-[8px] rounded-[4px] bg-[#242424] mt-2 w-[80%]" />
+        <div className="h-[8px] rounded-[4px] bg-[#242424] mt-1.5 w-[55%]" />
+        {/* Grid widgets */}
+        <div className="grid grid-cols-2 gap-1 mt-2">
+          <div
+            className="rounded-[7px] bg-[#1C1C1C]"
+            style={{ height: isCenter ? '34px' : '24px' }}
+          />
+          <div
+            className="rounded-[7px]"
+            style={{ height: isCenter ? '34px' : '24px', backgroundColor: bg }}
+          />
+          <div
+            className="rounded-[7px] bg-[#1C1C1C]"
+            style={{ height: isCenter ? '34px' : '24px' }}
+          />
+          <div
+            className="rounded-[7px] bg-[#1C1C1C]"
+            style={{ height: isCenter ? '34px' : '24px' }}
+          />
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="w-full max-w-[860px] mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 select-none">
-      {/* Clean hairline linear top accent (strictly linear without huge fuzzy glow) */}
-      <div
-        className="w-full h-[1px]"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${activeColor}, transparent)`,
-        }}
+    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-4">
+      {/* Breadcrumb with icons */}
+      <Breadcrumbs
+        items={[
+          { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
+          { label: campaign.cat, icon: 'ti-tag' },
+          { label: campaign.name, icon: campaign.icon, active: true },
+        ]}
       />
 
-      {/* Sticky top bar on scroll */}
-      <motion.div
-        animate={{ y: showStickyBar ? 0 : -80 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
-        className="fixed top-16 left-0 right-0 z-30 px-6 py-2.5 backdrop-blur-md border-b flex items-center justify-between"
-        style={{
-          backgroundColor: 'rgba(20, 20, 22, 0.95)',
-          borderColor: hexToRgba(activeColor, 0.2),
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0 border"
-            style={{
-              backgroundColor: baseTheme.secondary,
-              borderColor: hexToRgba(activeColor, 0.3),
-              color: activeColor,
-            }}
-          >
-            <Icon name={campaign.icon} className="w-4 h-4" />
-          </div>
-          <b className="text-sm font-semibold text-white">{campaign.name}</b>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {campaign.joined && onNavigateAnalytics && (
-            <button
-              onClick={() => onNavigateAnalytics(campaign.id)}
-              className="h-8 px-3.5 rounded-full text-xs font-semibold text-white border border-white/20 hover:border-white/40 cursor-pointer"
-            >
-              Analytics ↗
-            </button>
-          )}
-          {campaign.joined ? (
-            <button
-              onClick={() => onOpenQr(campaign)}
-              className="h-8 px-4 rounded-full text-xs font-semibold text-white cursor-pointer active:scale-95"
-              style={{
-                backgroundColor: activeColor,
-              }}
-            >
-              Get link
-            </button>
-          ) : (
-            <button
-              onClick={handleJoinClick}
-              disabled={isJoining}
-              className="h-8 px-4 rounded-full text-xs font-semibold text-white cursor-pointer active:scale-95"
-              style={{
-                backgroundColor: activeColor,
-              }}
-            >
-              {isJoining ? 'Joining…' : 'Join campaign'}
-            </button>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Breadcrumb with category icon & reactive campaign highlight */}
-      <nav className="flex items-center gap-2 text-sm text-[var(--t2)]" aria-label="Breadcrumb">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 hover:text-white transition-colors group cursor-pointer"
-        >
-          <Icon name="navCampaigns" className="w-4 h-4 text-[#8e8e93] group-hover:text-white" />
-          <span>Campaigns</span>
-        </button>
-        <span className="text-[#636366] font-mono select-none">&gt;</span>
-        <div className="flex items-center gap-1.5 font-medium transition-colors" style={{ color: activeColor }}>
-          <Icon name={CATEGORY_ICONS[campaign.cat] || campaign.icon} className="w-4 h-4" />
-          <span>{campaign.name}</span>
-        </div>
-      </nav>
-
-      {/* Main Campaign Header Card with clean linear top accent */}
-      <article
-        ref={actionRef}
-        className="rounded-[22px] border p-6 sm:p-7 shadow-xs select-none relative overflow-hidden"
-        style={{
-          backgroundColor: '#1e1e22',
-          borderColor: hexToRgba(activeColor, 0.3),
-        }}
-      >
-        {/* Subtle accent hairline line at top of card */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[1.5px]"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${activeColor}, transparent)`,
-          }}
-        />
-
-        <div className="flex flex-col-reverse sm:flex-row items-start justify-between gap-6 relative z-10">
-          {/* Left content area */}
-          <div className="flex-1 min-w-0 space-y-3">
-            {/* Title & Category */}
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight">
-                {campaign.name}
-              </h1>
-              <span className="text-xs sm:text-sm text-[#8e8e93] mt-0.5 block">
-                {campaign.cat} · Worldwide · {campaign.days} days left
-              </span>
-            </div>
-
-            {/* Host byline */}
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-[#8e8e93]">
-              <span
-                className="w-5 h-5 rounded-md text-[10px] font-bold flex items-center justify-center shrink-0 transition-colors"
-                style={{
-                  backgroundColor: hexToRgba(activeColor, 0.2),
-                  color: activeColor,
-                }}
-              >
-                {campaign.host.charAt(0)}
-              </span>
-              <span className="truncate">By {campaign.host}</span>
-            </div>
-
-            {/* Payout & Store Icons */}
-            <div className="flex items-center gap-2 text-sm text-[#8e8e93] flex-wrap pt-1">
-              <Icon name="bill" className="w-4 h-4 text-white shrink-0 mr-0.5" />
-              <span
-                className="text-white font-semibold"
-                dangerouslySetInnerHTML={{ __html: campaign.pay }}
-              />
-              <span className="w-5 h-5 rounded-full bg-[#2a2a30] flex items-center justify-center text-white ml-2 shrink-0">
-                <Icon name="apple" className="w-3 h-3" fill />
-              </span>
-              <span className="w-5 h-5 rounded-full bg-[#2a2a30] flex items-center justify-center text-white ml-1 shrink-0">
-                <Icon name="play" className="w-2.5 h-2.5" fill />
-              </span>
-            </div>
-
-            {/* Action Row */}
-            <div className="flex items-center gap-3 pt-3 flex-wrap">
-              {campaign.joined ? (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span
-                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border"
-                    style={{
-                      backgroundColor: hexToRgba(activeColor, 0.15),
-                      color: '#ffffff',
-                      borderColor: hexToRgba(activeColor, 0.35),
-                    }}
-                  >
-                    <Icon name="check" className="w-3.5 h-3.5 text-emerald-400" />
-                    Joined
-                  </span>
-                  {onNavigateAnalytics && (
-                    <button
-                      onClick={() => onNavigateAnalytics(campaign.id)}
-                      className="px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all cursor-pointer shadow-xs active:scale-95"
-                      style={{
-                        backgroundColor: activeColor,
-                      }}
-                    >
-                      View analytics ↗
-                    </button>
-                  )}
-                  <button
-                    onClick={() => onOpenQr(campaign)}
-                    className="px-4 py-1.5 rounded-full text-xs font-semibold text-white border border-white/20 hover:border-white/40 transition-colors cursor-pointer"
-                  >
-                    QR Code
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={handleJoinClick}
-                  disabled={isJoining}
-                  className="px-5 py-2 rounded-full text-xs font-semibold text-white active:scale-95 transition-all cursor-pointer shadow-xs"
-                  style={{
-                    backgroundColor: activeColor,
-                  }}
-                >
-                  {isJoining ? 'Joining…' : 'Join campaign'}
-                </button>
+      {/* Hero Section */}
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_252px] gap-6 items-center">
+        {/* Left Info Column */}
+        <div className="min-w-0">
+          {/* Creator / Host badge & Analytics Link */}
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2 text-[13px] font-medium">
+              <span className="w-2 h-2 rounded-full bg-[#C7F26B]" />
+              <span>{campaign.by || campaign.host}</span>
+              {campaign.tag && (
+                <span className="font-serif italic font-normal text-[#9A9892] ml-1">
+                  · {campaign.tag}
+                </span>
               )}
-
-              {/* Creator Avatars stack */}
-              <div className="flex items-center ml-1">
-                <div className="flex -space-x-1 overflow-hidden">
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#3a3a42]">
-                    H
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#42424c]">
-                    C
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#484854]">
-                    F
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#525260]">
-                    A
-                  </span>
-                </div>
-                <span className="ml-2 text-xs font-mono text-[#8e8e93]">
-                  +{campaign.creators} Creators
-                </span>
-              </div>
-
-              <button
-                onClick={() => onShare(campaign)}
-                className="ml-auto p-2 text-[#8e8e93] hover:text-white transition-colors cursor-pointer"
-                title="Share"
-              >
-                <Icon name="share" className="w-4 h-4" />
-              </button>
             </div>
-          </div>
 
-          {/* Right Dark Square App Card */}
-          <div
-            className="w-28 h-28 sm:w-36 sm:h-36 rounded-[22px] flex flex-col items-center justify-center text-center p-3 border shrink-0 transition-all relative group/tile shadow-xs"
-            style={{
-              backgroundColor: baseTheme.secondary,
-              borderColor: hexToRgba(activeColor, 0.35),
-            }}
-          >
-            <div style={{ color: activeColor }} className="mb-2.5 relative z-10">
-              <Icon name={campaign.icon} className="w-9 h-9" />
-            </div>
-            <span className="text-xs font-bold text-white tracking-tight line-clamp-1 relative z-10">
-              {campaign.name}
-            </span>
-          </div>
-        </div>
-      </article>
-
-      {/* Promotional Features Container */}
-      <section
-        className="rounded-[22px] border border-white/5 p-6 sm:p-7 space-y-5"
-        style={{ backgroundColor: '#1e1e22' }}
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#8e8e93] font-mono">
-            WHAT YOU’LL BE PROMOTING
-          </span>
-          <span className="text-xs font-mono transition-colors" style={{ color: activeColor }}>
-            ● Attribution Guaranteed
-          </span>
-        </div>
-
-        <p className="text-sm text-[#d1d5db] leading-relaxed max-w-3xl">
-          {campaign.desc}
-        </p>
-
-        {/* 4 Phone Mockup Screens */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          {promoScreens.map((screen, idx) => (
-            <div
-              key={idx}
-              onClick={() => setActiveScreenIndex(idx)}
-              className="h-44 rounded-[20px] border p-3 flex flex-col justify-between shrink-0 shadow-xs cursor-pointer transition-colors relative group/phone"
-              style={{
-                backgroundColor: '#0e0e11',
-                borderColor:
-                  activeScreenIndex === idx
-                    ? activeColor
-                    : hexToRgba(activeColor, 0.25),
-              }}
-            >
-              {/* Top Speaker / Camera Pill */}
-              <div className="w-6 h-1 rounded-full bg-white/20 mx-auto" />
-
-              {/* App Content Display with Feature Icon */}
-              <div
-                className="w-full h-22 rounded-xl flex flex-col items-center justify-center my-auto border border-white/5"
-                style={{ backgroundColor: '#16161b' }}
-              >
-                <div style={{ color: activeColor }} className="mb-1">
-                  <Icon name={screen.icon} className="w-7 h-7" />
-                </div>
-                <span className="text-[10px] font-bold text-white px-1 truncate max-w-full">
-                  {screen.title}
-                </span>
-              </div>
-
-              {/* Bottom UI Bar and Placeholder */}
-              <div className="space-y-1">
-                <div className="h-1 rounded-full bg-white/15 w-3/4 mx-auto" />
-                <div
-                  className="h-2.5 rounded-full"
-                  style={{
-                    backgroundColor: hexToRgba(activeColor, 0.8),
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Selected Screen Subtitle Banner */}
-        {activeScreenIndex !== null && (
-          <div
-            className="p-3 rounded-xl border flex items-center justify-between text-xs"
-            style={{
-              backgroundColor: hexToRgba(activeColor, 0.1),
-              borderColor: hexToRgba(activeColor, 0.3),
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <span style={{ color: activeColor }}>
-                <Icon name={promoScreens[activeScreenIndex].icon} className="w-4 h-4" />
-              </span>
-              <span className="text-white font-semibold">
-                {promoScreens[activeScreenIndex].title}:
-              </span>
-              <span className="text-[#d1d5db]">
-                {promoScreens[activeScreenIndex].subtitle}
-              </span>
-            </div>
-            <button
-              onClick={() => setActiveScreenIndex(null)}
-              className="text-[#8e8e93] hover:text-white cursor-pointer px-1"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-      </section>
-
-      {/* Campaign Attribution & Tracking Link Hub */}
-      {campaign.joined && (
-        <section
-          className="rounded-[22px] border p-6 sm:p-7 space-y-4"
-          style={{
-            backgroundColor: '#1e1e22',
-            borderColor: hexToRgba(activeColor, 0.25),
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              Your tracking link &amp; QR code
-            </h2>
             {onNavigateAnalytics && (
               <button
+                type="button"
                 onClick={() => onNavigateAnalytics(campaign.id)}
-                className="text-xs font-semibold text-emerald-400 hover:underline cursor-pointer"
+                className="pill text-[12px] min-h-[34px] px-3 cursor-pointer"
               >
-                Open Analytics &rarr;
+                <i className="ti ti-chart-bar text-[13px] text-[#B5D4F4]"></i>
+                <span>App analytics</span>
               </button>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-[#8e8e93]">
-            Share this link across YouTube, TikTok, X, or email. Installs that complete verification automatically register in your Earnings balance.
+
+          {/* Big App Title */}
+          <h1 className="font-serif text-[38px] sm:text-[46px] font-normal tracking-[-1.2px] leading-[1.05] mt-3 text-[#F5F3EC]">
+            {campaign.name}
+          </h1>
+
+          {/* Description */}
+          <p className="text-[14px] text-[#B9B7AF] leading-[1.6] mt-3">
+            {campaign.desc}
           </p>
 
-          <div
-            className="flex items-center gap-2 p-2 rounded-xl border max-w-xl transition-all"
-            style={{
-              backgroundColor: 'rgba(0,0,0,0.4)',
-              borderColor: hexToRgba(activeColor, 0.3),
-            }}
-          >
-            <code className="text-xs sm:text-sm font-mono text-white truncate px-2 flex-1">
-              https://{linkOf(campaign)}
-            </code>
-            <button
-              onClick={handleCopy}
-              className="px-4 py-1.5 text-white rounded-lg text-xs font-semibold shrink-0 transition-colors cursor-pointer active:scale-95"
-              style={{
-                backgroundColor: activeColor,
-              }}
-            >
-              {copiedLink ? 'Copied!' : 'Copy Link'}
-            </button>
-            <button
-              onClick={() => onOpenQr(campaign)}
-              className="p-1.5 text-[#8e8e93] hover:text-white transition-colors shrink-0 cursor-pointer"
-              title="QR Code"
-            >
-              <Icon name="qr" className="w-4 h-4" />
-            </button>
+          {/* Social Proof Row */}
+          <div className="flex items-center gap-3.5 mt-3.5 text-[13px] flex-wrap">
+            <span className="flex items-center gap-1">
+              <i className="ti ti-star text-[#C7F26B]" aria-hidden="true"></i>
+              <span>{campaign.rating}</span>
+            </span>
+            <span className="flex items-center gap-1 text-[#B9B7AF]">
+              <i className="ti ti-users" aria-hidden="true"></i>
+              <span>{campaign.creators + (campaign.joined ? 1 : 0)} creators</span>
+            </span>
+            <span className="flex items-center gap-1 text-[#B9B7AF]">
+              <i className="ti ti-circle-check" aria-hidden="true"></i>
+              <span>{campaign.installsVerified || '12.4k'} verified installs</span>
+            </span>
           </div>
-        </section>
-      )}
 
-      {/* Key Terms & Specs Grid */}
-      <section
-        className="rounded-[22px] border border-white/5 p-6 sm:p-7 space-y-4"
-        style={{ backgroundColor: '#1e1e22' }}
-      >
-        <h2 className="text-lg font-bold text-white tracking-tight">
-          Campaign specifications
-        </h2>
+          {/* Price row */}
+          <div className="flex items-center gap-2 mt-4.5">
+            <span className="text-[30px] font-medium tracking-[-0.6px] text-[#F5F3EC]">
+              ${campaign.price}
+            </span>
+            <span className="sub">per verified install</span>
+            <span className="w-1.5" />
+            <span className="ol ci" aria-label="App Store">
+              <i className="ti ti-brand-apple" aria-hidden="true"></i>
+            </span>
+            <span className="ol ci" aria-label="Google Play">
+              <i className="ti ti-player-play" aria-hidden="true"></i>
+            </span>
+          </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-2 border-t border-white/5 text-xs text-[#8e8e93]">
-          <div>
-            <span className="block mb-1">Tracking Window</span>
-            <strong className="text-white text-sm font-mono">30 Days</strong>
-          </div>
-          <div>
-            <span className="block mb-1">Attribution Type</span>
-            <strong className="text-white text-sm font-mono">
-              {campaign.rate.t === 'pct' ? 'RevShare' : 'Fixed CPI'}
-            </strong>
-          </div>
-          <div>
-            <span className="block mb-1">App Store Rating</span>
-            <strong className="text-white text-sm font-mono">
-              ★ {campaign.rating} ({campaign.rc})
-            </strong>
-          </div>
-          <div>
-            <span className="block mb-1">Target Platforms</span>
-            <strong className="text-white text-sm font-mono">iOS &amp; Android</strong>
+          {/* Join Actions row */}
+          <div className="flex items-center gap-2.5 mt-4 flex-wrap">
+            {/* Split Join Button */}
+            <div className={`split text-[13px] h-[36px] ${campaign.joined ? 'j' : ''}`}>
+              <button onClick={handleJoin} className="m text-[13px] py-1 px-3.5 font-medium">
+                {campaign.joined ? (
+                  <>
+                    <i className="ti ti-check" aria-hidden="true"></i>
+                    <span>Joined</span>
+                  </>
+                ) : (
+                  <span>Join campaign</span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowTerms(!showTerms)}
+                className="c px-2"
+                aria-label="Toggle terms"
+              >
+                <i
+                  className={`ti ti-chevron-${showTerms ? 'up' : 'down'} text-[14px]`}
+                  aria-hidden="true"
+                ></i>
+              </button>
+            </div>
+
+            <span className="ol">
+              <i className="ti ti-clock" aria-hidden="true"></i>
+              <span>{campaign.days} days left</span>
+            </span>
           </div>
         </div>
-      </section>
+
+        {/* Right Phone Mockups Column: Stacks on mobile with horizontal scroll */}
+        <div className="flex gap-2.5 items-center justify-start md:justify-end overflow-x-auto pb-2 scrollbar-none w-full md:w-auto shrink-0">
+          {renderPhoneMockup(0)}
+          {renderPhoneMockup(1)}
+          {renderPhoneMockup(2)}
+        </div>
+      </div>
+
+      {/* Sponsored Content Disclosure per UX Spec */}
+      <div className="card p-3.5 flex items-start gap-3 bg-[#161616] border border-[#2A2A2A]/40 text-[12px] text-[#9A9892]">
+        <i className="ti ti-info-circle text-[18px] text-[#B9B7AF] shrink-0 mt-0.5" aria-hidden="true"></i>
+        <div className="leading-relaxed">
+          <span className="text-[#F5F3EC] font-medium block mb-0.5">Sponsored content disclosure</span>
+          When sharing your tracking link in videos, bios, or streams, you must disclose your partnership clearly using tags like <span className="text-[#F5F3EC]">#ad</span> or platform sponsorship labels in accordance with advertising guidelines.
+        </div>
+      </div>
+
+      {/* Campaign Terms Card (when opened via split button) */}
+      {showTerms && (
+        <div className="card animate-[rise_0.2s_ease-out]">
+          <div className="font-medium text-[15px] text-[#F5F3EC]">Campaign terms</div>
+          <div className="mt-1.5">
+            <div className="row2">
+              <span>Verification window</span>
+              <span>14 days</span>
+            </div>
+            <div className="row2">
+              <span>Settlement</span>
+              <span>Weekly, on Fridays</span>
+            </div>
+            <div className="row2">
+              <span>Minimum payout</span>
+              <span>$20.00</span>
+            </div>
+            <div className="row2">
+              <span>Platforms</span>
+              <span>iOS and Android</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Your Creator Link Card (when joined) */}
+      {campaign.joined && (
+        <div className="card flex flex-col sm:flex-row gap-4 items-center animate-[pop_0.2s_ease-out]">
+          <div className="flex-1 min-w-0 w-full">
+            <div className="font-medium text-[15px] text-[#F5F3EC]">Your creator link</div>
+            <div className="sub mt-0.5">
+              Every install through this link counts toward your earnings.
+            </div>
+
+            <div className="flex items-center gap-2 mt-3.5 bg-[#1C1C1C] rounded-full p-1.5 pl-4 border border-[#2A2A2A]/40">
+              <span className="flex-1 font-mono text-[12px] text-[#F5F3EC] overflow-hidden text-ellipsis whitespace-nowrap">
+                {linkText}
+              </span>
+              <button
+                onClick={handleCopy}
+                className="pill on text-[12px] py-1.5 px-3.5"
+              >
+                {copied ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+          </div>
+
+          {/* QR Code */}
+          <div className="shrink-0">
+            {generateQrSvg(campaign.name.length * 17 + 9)}
+          </div>
+        </div>
+      )}
+
+      {/* How you earn Card */}
+      <div className="card">
+        <div className="font-medium text-[15px] text-[#F5F3EC]">How you earn</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-3.5">
+          {[
+            {
+              ic: 'ti-link',
+              title: 'Join and get your link',
+              desc: 'Your personal link is ready as soon as you join.',
+            },
+            {
+              ic: 'ti-share',
+              title: 'Share it your way',
+              desc: 'Post it in videos, stories, or your bio.',
+            },
+            {
+              ic: 'ti-coin',
+              title: 'Earn per verified install',
+              desc: 'Paid weekly once installs are verified.',
+            },
+          ].map((step, idx) => (
+            <div key={step.title} className="p-1">
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-[16px]"
+                  style={{ backgroundColor: bg, color: fg }}
+                >
+                  <i className={`ti ${step.ic}`} aria-hidden="true"></i>
+                </span>
+                <span className="sub">Step {idx + 1}</span>
+              </div>
+              <div className="text-[14px] font-medium text-[#F5F3EC] mt-2.5">
+                {step.title}
+              </div>
+              <div className="sub mt-1 leading-[1.5]">{step.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Up next section */}
+      {otherCampaigns.length > 0 && (
+        <div className="pt-2">
+          <div className="font-medium text-[15px] text-[#F5F3EC] mb-2.5">Up next</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {otherCampaigns.map((other) => (
+              <button
+                key={other.id}
+                onClick={() => onNavigateDetail && onNavigateDetail(other.id)}
+                className="card p-3.5! flex items-center gap-3 text-left w-full hover:bg-[#1C1C1C] transition-colors cursor-pointer border-0"
+              >
+                <span
+                  className="w-12 h-12 rounded-[14px] flex items-center justify-center text-[22px] shrink-0"
+                  style={{ backgroundColor: other.bg, color: other.fg }}
+                >
+                  <i className={`ti ${other.icon}`} aria-hidden="true"></i>
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-[14px] font-medium text-[#F5F3EC]">
+                    {other.name}
+                  </span>
+                  <span className="block text-[12px] text-[#9A9892]">
+                    ${other.price} per verified install
+                  </span>
+                </span>
+                <i className="ti ti-arrow-right text-[#9A9892]" aria-hidden="true"></i>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Categories Grid */}
+      <div className="pt-2">
+        <div className="font-medium text-[15px] text-[#F5F3EC] mb-2.5">Categories</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {Object.entries(CATS).slice(0, 8).map(([name, catData]) => (
+            <div
+              key={name}
+              className="rounded-[18px] p-3 flex flex-col gap-3.5 transition-transform hover:scale-[1.02] cursor-default"
+              style={{ backgroundColor: catData.bg, color: catData.fg }}
+            >
+              <i className={`ti ${catData.icon} text-[20px]`} aria-hidden="true"></i>
+              <span className="text-[13px] font-medium">{name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,227 +1,253 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export type AvatarMood = 'friendly' | 'chill' | 'winking' | 'blissful' | 'starry';
+export const AVATAR_COLORS = [
+  '#C7F26B', // Lime
+  '#7FB2FF', // Blue
+  '#FF8A65', // Coral
+  '#C4A6FF', // Purple
+  '#5EE0C0', // Aqua/Teal
+  '#FFC857', // Amber
+  '#FF8FB1', // Pink
+  '#8DA2FB', // Periwinkle
+  '#F59E7A', // Peach
+  '#E5E2D8', // Light Gray
+];
 
-export interface AvatarPalette {
+export interface AvatarPersona {
   id: string;
   name: string;
-  bgGradient: string;
-  faceColor: string;
-  blushColor: string;
+  type: 'founder' | 'creator';
+  renderFeatures: (d: string) => React.ReactNode;
 }
 
-export const AVATAR_PALETTES: Record<string, AvatarPalette> = {
-  mint: {
-    id: 'mint',
-    name: 'Mint Breeze',
-    bgGradient: 'radial-gradient(circle at 35% 30%, #f0fdf4 0%, #bbf7d0 50%, #86efac 100%)',
-    faceColor: '#14532d',
-    blushColor: 'rgba(239, 68, 68, 0.16)',
-  },
-  sunset: {
-    id: 'sunset',
-    name: 'Sunset Peach',
-    bgGradient: 'radial-gradient(circle at 35% 30%, #fff1f2 0%, #fecdd3 50%, #fda4af 100%)',
-    faceColor: '#881337',
-    blushColor: 'rgba(225, 29, 72, 0.18)',
-  },
-  sky: {
-    id: 'sky',
-    name: 'Celestial Sky',
-    bgGradient: 'radial-gradient(circle at 35% 30%, #f0f9ff 0%, #bae6fd 50%, #7dd3fc 100%)',
-    faceColor: '#0c4a6e',
-    blushColor: 'rgba(56, 189, 248, 0.22)',
-  },
-  lavender: {
-    id: 'lavender',
-    name: 'Twilight Lavender',
-    bgGradient: 'radial-gradient(circle at 35% 30%, #faf5ff 0%, #e9d5ff 50%, #c084fc 100%)',
-    faceColor: '#3b0764',
-    blushColor: 'rgba(168, 85, 247, 0.2)',
-  },
-  warm: {
-    id: 'warm',
-    name: 'Solar Amber',
-    bgGradient: 'radial-gradient(circle at 35% 30%, #fffbeb 0%, #fde68a 50%, #fcd34d 100%)',
-    faceColor: '#78350f',
-    blushColor: 'rgba(245, 158, 11, 0.25)',
-  },
-};
+const D = '#16140F';
 
-export const DEFAULT_AVATAR_PALETTE = 'mint';
-export const DEFAULT_AVATAR_MOOD: AvatarMood = 'friendly';
+export const AVATAR_PERSONAS: AvatarPersona[] = [
+  // Founders
+  {
+    id: 'builder',
+    name: 'Builder',
+    type: 'founder',
+    renderFeatures: (d) => (
+      <g>
+        {/* Antenna */}
+        <path d="M40 16 L40 9" stroke={d} strokeWidth="3" strokeLinecap="round" />
+        <circle cx="40" cy="7" r="3.5" fill={d} />
+        {/* Pill eyes */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <rect x="43" y="35" width="6" height="14" rx="3" fill={d} />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'operator',
+    name: 'Operator',
+    type: 'founder',
+    renderFeatures: (d) => (
+      <g>
+        {/* Shades */}
+        <rect x="26" y="36" width="12" height="9" rx="3" fill={d} />
+        <rect x="42" y="36" width="12" height="9" rx="3" fill={d} />
+        <rect x="37" y="39" width="6" height="2.5" fill={d} />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'visionary',
+    name: 'Visionary',
+    type: 'founder',
+    renderFeatures: (d) => (
+      <g>
+        {/* Spark */}
+        <path d="M64 6 L66 12 L72 14 L66 16 L64 22 L62 16 L56 14 L62 12 Z" fill={d} />
+        {/* Wink: left pill eye, right arc wink */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <path d="M42 46 Q46 38 50 46" stroke={d} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'maker',
+    name: 'Maker',
+    type: 'founder',
+    renderFeatures: (d) => (
+      <g>
+        {/* Beanie */}
+        <path d="M14 31 A26 22 0 0 1 66 31 Z" fill={d} />
+        <rect x="13" y="28" width="54" height="7" rx="3.5" fill="#2E2E2B" />
+        <circle cx="40" cy="9" r="4" fill={d} />
+        {/* Pill eyes */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <rect x="43" y="35" width="6" height="14" rx="3" fill={d} />
+      </g>
+    ),
+  },
+  {
+    id: 'boss',
+    name: 'Boss',
+    type: 'founder',
+    renderFeatures: (d) => (
+      <g>
+        {/* Monocle */}
+        <circle cx="49" cy="42" r="8.5" fill="none" stroke={d} strokeWidth="2.5" />
+        <path d="M52 50 L56 62" stroke={d} strokeWidth="2" strokeLinecap="round" />
+        {/* Pill eyes */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <rect x="43" y="35" width="6" height="14" rx="3" fill={d} />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+
+  // Creators
+  {
+    id: 'streamer',
+    name: 'Streamer',
+    type: 'creator',
+    renderFeatures: (d) => (
+      <g>
+        {/* Headphones */}
+        <path d="M13 44 A27 28 0 0 1 67 44" stroke={d} strokeWidth="5" fill="none" />
+        <rect x="8" y="40" width="9" height="17" rx="4.5" fill={d} />
+        <rect x="63" y="40" width="9" height="17" rx="4.5" fill={d} />
+        {/* Pill eyes */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <rect x="43" y="35" width="6" height="14" rx="3" fill={d} />
+      </g>
+    ),
+  },
+  {
+    id: 'vlogger',
+    name: 'Vlogger',
+    type: 'creator',
+    renderFeatures: (d) => (
+      <g>
+        {/* Cap */}
+        <path d="M16 31 A24 19 0 0 1 64 31 Z" fill={d} />
+        <path d="M38 31 L72 31 Q72 37 60 37 L38 37 Z" fill="#2E2E2B" />
+        {/* Arcs eyes */}
+        <path d="M30 46 Q34 38 38 46 M42 46 Q46 38 50 46" stroke={d} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'trendsetter',
+    name: 'Trendsetter',
+    type: 'creator',
+    renderFeatures: (d) => (
+      <g>
+        {/* Spark */}
+        <path d="M64 6 L66 12 L72 14 L66 16 L64 22 L62 16 L56 14 L62 12 Z" fill={d} />
+        {/* Arcs eyes */}
+        <path d="M30 46 Q34 38 38 46 M42 46 Q46 38 50 46" stroke={d} strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'chill',
+    name: 'Chill',
+    type: 'creator',
+    renderFeatures: (d) => (
+      <g>
+        {/* Headband */}
+        <path d="M14 33 Q40 21 66 33" stroke={d} strokeWidth="6" fill="none" strokeLinecap="round" />
+        {/* Sleepy eyes */}
+        <rect x="30" y="44" width="8" height="3.5" rx="1.75" fill={d} />
+        <rect x="42" y="44" width="8" height="3.5" rx="1.75" fill={d} />
+        {/* Smile */}
+        <path d="M34 56 Q40 62 46 56" stroke={d} strokeWidth="3" strokeLinecap="round" fill="none" />
+      </g>
+    ),
+  },
+  {
+    id: 'hype',
+    name: 'Hype',
+    type: 'creator',
+    renderFeatures: (d) => (
+      <g>
+        {/* Pill eyes */}
+        <rect x="31" y="35" width="6" height="14" rx="3" fill={d} />
+        <rect x="43" y="35" width="6" height="14" rx="3" fill={d} />
+        {/* Oh mouth */}
+        <circle cx="40" cy="58" r="3.5" fill={d} />
+      </g>
+    ),
+  },
+];
+
+export const DEFAULT_AVATAR_PALETTE = AVATAR_COLORS[0]; // Lime '#C7F26B'
+export const DEFAULT_AVATAR_PERSONA = 'builder';
+export type AvatarMood = string;
+export const DEFAULT_AVATAR_MOOD = 'builder';
 
 interface SmileyAvatarProps {
-  paletteId?: string;
-  mood?: AvatarMood;
+  paletteId?: string; // Hex color or color index
+  personaId?: string; // ID of persona: builder, streamer, etc.
+  mood?: string;
   size?: number;
   className?: string;
   onClick?: () => void;
-  interactiveHover?: boolean;
 }
 
 export const SmileyAvatar: React.FC<SmileyAvatarProps> = ({
   paletteId = DEFAULT_AVATAR_PALETTE,
-  mood = DEFAULT_AVATAR_MOOD,
+  personaId = DEFAULT_AVATAR_PERSONA,
+  mood,
   size = 34,
   className = '',
   onClick,
-  interactiveHover = true,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const palette = AVATAR_PALETTES[paletteId] || AVATAR_PALETTES.mint;
+  // Support either personaId or mood
+  const activeId = personaId || mood || DEFAULT_AVATAR_PERSONA;
+  const persona = AVATAR_PERSONAS.find((p) => p.id === activeId) || AVATAR_PERSONAS[0];
 
-  // Eye and mouth geometry - original, clean vector character design
-  const currentMood = isHovered && interactiveHover ? 'winking' : mood;
+  // Resolve color (either raw hex or palette key)
+  const bgColor = paletteId.startsWith('#')
+    ? paletteId
+    : AVATAR_COLORS[0];
 
   return (
     <div
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`rounded-full flex items-center justify-center shrink-0 select-none transition-transform duration-200 active:scale-95 relative overflow-hidden shadow-xs border border-white/20 ${className}`}
-      style={{
-        width: size,
-        height: size,
-        background: palette.bgGradient,
-        cursor: onClick ? 'pointer' : 'default',
-        boxShadow: `inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.12)`,
-      }}
+      className={`rounded-full flex items-center justify-center shrink-0 select-none overflow-hidden ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      style={{ width: size, height: size }}
       role="img"
-      aria-label="Creator Avatar"
+      aria-label={`${persona.name} avatar`}
     >
-      {/* Top subtle gloss highlight */}
-      <div
-        className="absolute top-0 left-0 right-0 h-1/2 rounded-t-full pointer-events-none opacity-40"
-        style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, transparent 100%)',
-        }}
-      />
-
-      {/* SVG Face Features: Original, copyright-safe, charming minimalist creator companion */}
       <svg
-        viewBox="0 0 36 36"
-        className="w-full h-full relative z-10 transition-transform duration-200"
-        style={{
-          transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-        }}
-        fill="none"
+        width={size}
+        height={size}
+        viewBox="0 0 80 80"
+        role="img"
+        aria-hidden="true"
+        className="w-full h-full"
       >
-        {/* Soft Blushing Cheeks */}
-        <circle cx="10" cy="22" r="2.8" fill={palette.blushColor} />
-        <circle cx="26" cy="22" r="2.8" fill={palette.blushColor} />
-
-        {/* Eyes based on mood */}
-        {currentMood === 'friendly' && (
-          <>
-            {/* Left Eye: rounded pill with tiny top catchlight */}
-            <rect
-              x="11.5"
-              y="13"
-              width="2.8"
-              height="4.2"
-              rx="1.4"
-              fill={palette.faceColor}
-            />
-            {/* Right Eye */}
-            <rect
-              x="21.7"
-              y="13"
-              width="2.8"
-              height="4.2"
-              rx="1.4"
-              fill={palette.faceColor}
-            />
-          </>
-        )}
-
-        {currentMood === 'chill' && (
-          <>
-            {/* Calm horizontal pill eyes */}
-            <rect
-              x="11"
-              y="14.5"
-              width="3.5"
-              height="2.2"
-              rx="1.1"
-              fill={palette.faceColor}
-            />
-            <rect
-              x="21.5"
-              y="14.5"
-              width="3.5"
-              height="2.2"
-              rx="1.1"
-              fill={palette.faceColor}
-            />
-          </>
-        )}
-
-        {currentMood === 'winking' && (
-          <>
-            {/* Left Eye: playful arc wink */}
-            <path
-              d="M 10.5 16.5 C 11.5 13.5, 14.5 13.5, 15.5 16.5"
-              stroke={palette.faceColor}
-              strokeWidth="2.2"
-              strokeLinecap="round"
-            />
-            {/* Right Eye: wide open rounded pill */}
-            <rect
-              x="21.7"
-              y="13"
-              width="2.8"
-              height="4.2"
-              rx="1.4"
-              fill={palette.faceColor}
-            />
-          </>
-        )}
-
-        {currentMood === 'blissful' && (
-          <>
-            {/* Happy closed eyes ^ ^ */}
-            <path
-              d="M 10.5 16 C 11.5 13, 14 13, 15 16"
-              stroke={palette.faceColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              d="M 21 16 C 22 13, 24.5 13, 25.5 16"
-              stroke={palette.faceColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </>
-        )}
-
-        {currentMood === 'starry' && (
-          <>
-            {/* Left Eye spark */}
-            <path
-              d="M 13 12 L 13 18 M 10 15 L 16 15"
-              stroke={palette.faceColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            {/* Right Eye spark */}
-            <path
-              d="M 23 12 L 23 18 M 20 15 L 26 15"
-              stroke={palette.faceColor}
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </>
-        )}
-
-        {/* Mouth: Sweet subtle curve */}
-        <path
-          d="M 15.2 21.2 C 16.2 23.2, 19.8 23.2, 20.8 21.2"
-          stroke={palette.faceColor}
-          strokeWidth="2"
-          strokeLinecap="round"
+        {/* Outer color circle */}
+        <circle cx="40" cy="40" r="40" fill={bgColor} />
+        {/* Silver inner face */}
+        <circle cx="40" cy="43" r="27" fill="#D8D7D2" />
+        {/* Specular highlight */}
+        <ellipse
+          cx="31"
+          cy="31"
+          rx="10"
+          ry="4.5"
+          fill="#EEEDE9"
+          transform="rotate(-25 31 31)"
         />
+        {/* Persona features */}
+        {persona.renderFeatures(D)}
       </svg>
     </div>
   );

@@ -1,162 +1,153 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Icon } from './Icons';
-import { SmileyAvatar, AvatarMood, DEFAULT_AVATAR_PALETTE, DEFAULT_AVATAR_MOOD } from './SmileyAvatar';
+import { SmileyAvatar } from './SmileyAvatar';
 import { ProfileDropdown } from './ProfileDropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 
 interface HeaderProps {
-  currentTab: 'campaigns' | 'discover' | 'earnings' | 'profile' | 'create';
-  onNavigate: (tab: 'campaigns' | 'discover' | 'earnings' | 'profile' | 'create') => void;
-  onCreateClick: () => void;
+  currentTab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings';
+  onNavigate: (tab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings') => void;
   onNavigateCampaign: (id: string) => void;
   avatarPalette?: string;
-  avatarMood?: AvatarMood;
+  avatarMood?: string;
+  unreadCount: number;
+  readMap: Record<number, boolean>;
+  onMarkRead: (id: number) => void;
+  onMarkAllRead: () => void;
+  balance?: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentTab,
   onNavigate,
-  onCreateClick,
   onNavigateCampaign,
-  avatarPalette = DEFAULT_AVATAR_PALETTE,
-  avatarMood = DEFAULT_AVATAR_MOOD,
+  avatarPalette = '#C7F26B',
+  avatarMood = 'builder',
+  unreadCount,
+  readMap,
+  onMarkRead,
+  onMarkAllRead,
+  balance = 248.6,
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <header
-      className="sticky top-0 z-40 h-16 w-full border-b transition-colors px-4 sm:px-6 flex items-center justify-between"
-      style={{
-        backgroundColor: 'var(--bg)',
-        borderColor: 'var(--line)',
-      }}
-    >
-      {/* Zone 1: Asterisk / Brand Logo */}
-      <div className="flex items-center gap-2">
-        <motion.button
-          whileHover={{ scale: 1.08, rotate: 12 }}
-          whileTap={{ scale: 0.94 }}
-          onClick={() => onNavigate('campaigns')}
-          className="w-10 h-10 rounded-2xl flex items-center justify-center cursor-pointer shadow-xs border border-white/5"
-          style={{
-            backgroundColor: '#1e1e22',
-            color: '#1a8cff',
-          }}
-          aria-label="KRED home"
-        >
-          <Icon name="kredLogo" className="w-5 h-5" />
-        </motion.button>
-      </div>
-
-      {/* Zone 2: Navigation Pills with Smooth Sliding Indicator */}
-      <nav className="flex items-center gap-2 relative" aria-label="Primary">
-        <button
-          onClick={() => onNavigate('campaigns')}
-          className={`relative z-10 flex items-center gap-2 h-9 px-4 rounded-full text-sm font-medium transition-colors cursor-pointer ${
-            currentTab === 'campaigns' ? 'text-white' : 'text-[#8e8e93] hover:text-white'
-          }`}
-        >
-          <Icon name="navCampaigns" className="w-4 h-4" />
-          <span>Campaigns</span>
-          {currentTab === 'campaigns' && (
-            <motion.div
-              layoutId="headerNavTab"
-              className="absolute inset-0 bg-[#252528] border border-white/10 rounded-full -z-10 shadow-xs"
-              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-            />
-          )}
-        </button>
-
-        <button
-          onClick={() => onNavigate('discover')}
-          className={`relative z-10 flex items-center gap-2 h-9 px-4 rounded-full text-sm font-medium transition-colors cursor-pointer ${
-            currentTab === 'discover' ? 'text-white' : 'text-[#8e8e93] hover:text-white'
-          }`}
-        >
-          <Icon name="navDiscover" className="w-4 h-4" />
-          <span>Discover</span>
-          {currentTab === 'discover' && (
-            <motion.div
-              layoutId="headerNavTab"
-              className="absolute inset-0 bg-[#252528] border border-white/10 rounded-full -z-10 shadow-xs"
-              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-            />
-          )}
-        </button>
-      </nav>
-
-      {/* Zone 3: Time, + Create campaign, Notifications & Profile with Pastel Avatar Orb */}
-      <div className="flex items-center gap-2 sm:gap-3 relative">
-        {/* Time display */}
-        <span className="text-xs text-[#8e8e93] font-mono hidden lg:inline mr-1">
-          7:44 PM GMT+3
-        </span>
-
-        {/* + Create Campaign pill */}
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={onCreateClick}
-          className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs ${
-            currentTab === 'create'
-              ? 'bg-white text-black'
-              : 'bg-[#1a8cff] hover:bg-[#3d9eff] text-white shadow-[0_0_12px_rgba(26,140,255,0.35)]'
-          }`}
-        >
-          <span>+ Create campaign</span>
-        </motion.button>
-
-        {/* Notifications Bell Trigger */}
-        <div className="relative">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setIsNotifOpen(!isNotifOpen);
-              setIsProfileOpen(false);
-            }}
-            className="relative w-9 h-9 rounded-full flex items-center justify-center transition-colors text-[#8e8e93] hover:text-white border border-white/5 cursor-pointer"
-            style={{ backgroundColor: '#1e1e22' }}
-            aria-label="Notifications"
+    <header className="sticky top-0 z-40 w-full bg-[#0B0B0B] border-b border-[#2A2A2A] px-3 sm:px-6 py-3 select-none">
+      {/* Edge-to-Edge corner-to-corner container (no max-w constrain) */}
+      <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
+        {/* Left Corner: Logo & Navigation Tabs */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <button
+            onClick={() => onNavigate('campaigns')}
+            className="w-[36px] h-[36px] rounded-[12px] bg-[#1C1C1C] hover:bg-[#242424] text-[#F5F3EC] flex items-center justify-center text-[18px] border-0 cursor-pointer transition-colors shrink-0"
+            aria-label="KRED home"
           >
-            <Icon name="bell" className="w-4 h-4" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-          </motion.button>
+            <i className="ti ti-asterisk" aria-hidden="true"></i>
+          </button>
 
-          {/* Notifications Dropdown */}
-          <NotificationsDropdown
-            isOpen={isNotifOpen}
-            onClose={() => setIsNotifOpen(false)}
-            onNavigateCampaign={onNavigateCampaign}
-          />
+          {/* Navigation Pills: Campaigns, Discover, Earnings */}
+          <nav className="flex items-center gap-1 sm:gap-1.5" aria-label="Main navigation">
+            <button
+              onClick={() => onNavigate('campaigns')}
+              className={`pill ${currentTab === 'campaigns' ? 'on' : ''}`}
+            >
+              <i className="ti ti-speakerphone" aria-hidden="true"></i>
+              <span>Campaigns</span>
+            </button>
+
+            <button
+              onClick={() => onNavigate('discover')}
+              className={`pill ${currentTab === 'discover' ? 'on' : ''}`}
+            >
+              <i className="ti ti-compass" aria-hidden="true"></i>
+              <span>Discover</span>
+            </button>
+          </nav>
         </div>
 
-        {/* Account Avatar Orb Button */}
-        <div className="relative">
-          <motion.button
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
-            onClick={() => {
-              setIsProfileOpen(!isProfileOpen);
-              setIsNotifOpen(false);
-            }}
-            className="w-9 h-9 rounded-full flex items-center justify-center focus:outline-none cursor-pointer p-0.5"
-            aria-label="User profile menu"
+        {/* Right Corner: Create Campaign, Notifications, Profile Avatar */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Create campaign button (Available for everyone) */}
+          <button
+            type="button"
+            onClick={() => onNavigate('create')}
+            className={`pill on font-medium text-[13px] py-1.5 px-3.5 cursor-pointer ${
+              currentTab === 'create' ? 'ring-2 ring-[#C7F26B]' : ''
+            }`}
           >
-            <SmileyAvatar paletteId={avatarPalette} mood={avatarMood} size={34} />
-          </motion.button>
+            <i className="ti ti-plus" aria-hidden="true"></i>
+            <span className="hidden sm:inline">Create campaign</span>
+            <span className="sm:hidden">Create</span>
+          </button>
 
-          {/* Profile Dropdown */}
-          <ProfileDropdown
-            isOpen={isProfileOpen}
-            onClose={() => setIsProfileOpen(false)}
-            avatarPalette={avatarPalette}
-            avatarMood={avatarMood}
-            onNavigateProfile={() => onNavigate('profile')}
-            onNavigateEarnings={() => onNavigate('earnings')}
-          />
+          {/* Notifications Button with Live Unread Badge */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setIsNotifOpen(!isNotifOpen);
+                setIsProfileOpen(false);
+              }}
+              className={`w-[36px] h-[36px] rounded-full border-0 flex items-center justify-center text-[17px] transition-colors relative cursor-pointer ${
+                isNotifOpen
+                  ? 'bg-[#F5F3EC] text-[#0B0B0B]'
+                  : 'bg-[#1C1C1C] text-[#F5F3EC] hover:bg-[#242424]'
+              }`}
+              aria-label="Notifications"
+            >
+              <i className="ti ti-bell" aria-hidden="true"></i>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-[#C7F26B] text-[#16140F] text-[10px] font-semibold flex items-center justify-center px-1 border-2 border-[#0B0B0B] box-content">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            <NotificationsDropdown
+              isOpen={isNotifOpen}
+              onClose={() => setIsNotifOpen(false)}
+              role="creator"
+              readMap={readMap}
+              onMarkRead={onMarkRead}
+              onMarkAllRead={onMarkAllRead}
+              onNavigateCampaign={onNavigateCampaign}
+              onOpenNotificationSettings={() => {
+                setIsNotifOpen(false);
+                onNavigate('notification-settings');
+              }}
+            />
+          </div>
+
+          {/* Profile Avatar Button with Dropdown directing to pages */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                setIsProfileOpen(!isProfileOpen);
+                setIsNotifOpen(false);
+              }}
+              className={`w-[36px] h-[36px] rounded-full p-0 border-0 bg-transparent cursor-pointer flex items-center justify-center transition-all ${
+                isProfileOpen ? 'ring-2 ring-[#F5F3EC]' : ''
+              }`}
+              aria-label="Profile menu"
+            >
+              <SmileyAvatar paletteId={avatarPalette} personaId={avatarMood} size={36} />
+            </button>
+
+            <ProfileDropdown
+              isOpen={isProfileOpen}
+              onClose={() => setIsProfileOpen(false)}
+              avatarPalette={avatarPalette}
+              avatarMood={avatarMood}
+              balance={balance}
+              onNavigateProfile={() => onNavigate('profile')}
+              onNavigateEarnings={() => onNavigate('earnings')}
+              onNavigateAnalytics={() => onNavigate('profile')}
+              onNavigatePayoutMethods={() => onNavigate('payout-methods')}
+              onNavigateBilling={() => onNavigate('billing')}
+              onNavigateNotificationSettings={() => onNavigate('notification-settings')}
+            />
+          </div>
         </div>
       </div>
     </header>

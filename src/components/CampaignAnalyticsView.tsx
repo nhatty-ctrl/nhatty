@@ -1,395 +1,519 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
 import { Campaign } from '../types/campaign';
-import { linkOf, plainPay, usd, getCampaignStats } from '../data/campaigns';
-import { Icon } from './Icons';
-import { getCampaignTheme, hexToRgba } from '../utils/campaignTheme';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from 'recharts';
+import { Breadcrumbs } from './Breadcrumbs';
 
 interface CampaignAnalyticsViewProps {
-  campaign: Campaign;
-  onBack: () => void;
-  onOpenQr: (campaign: Campaign) => void;
-  onCopyLink: (campaign: Campaign) => void;
-  onShare: (campaign: Campaign) => void;
+  campaigns?: Campaign[];
+  initialCampaignId?: string | null;
+  onBack?: () => void;
+  onNavigateCampaign?: (id: string) => void;
+  onCreateCampaign?: () => void;
+}
+
+const TODAY = new Date(2026, 9, 2);
+
+const FOUNDER_CAMPAIGNS = [
+  {
+    id: 'pixelpop',
+    n: 'Pixel Pop',
+    cat: 'Games',
+    bg: '#CECBF6',
+    fg: '#26215C',
+    ic: 'ti-device-gamepad-2',
+    pay: 1.8,
+    ab: 38,
+    ver: 0.78,
+    cv: 0.28,
+    ios: 0.44,
+  },
+  {
+    id: 'stride',
+    n: 'Stride',
+    cat: 'Health',
+    bg: '#F5C4B3',
+    fg: '#4A1B0C',
+    ic: 'ti-heart',
+    pay: 2.9,
+    ab: 21,
+    ver: 0.84,
+    cv: 0.35,
+    ios: 0.63,
+  },
+  {
+    id: 'focusly',
+    n: 'Focusly',
+    cat: 'Productivity',
+    bg: '#B5D4F4',
+    fg: '#042C53',
+    ic: 'ti-bolt',
+    pay: 2.1,
+    ab: 12,
+    ver: 0.8,
+    cv: 0.22,
+    ios: 0.52,
+  },
+];
+
+function rnd(s: number) {
+  s = (s + 0x6d2b79f5) | 0;
+  const t = Math.imul(s ^ (s >>> 15), 1 | s);
+  const t2 = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t2 ^ (t2 >>> 14)) >>> 0) / 4294967296;
+}
+
+function master(ci: number, base: number, off: number) {
+  const a: number[] = [];
+  for (let d = 0; d < 90; d++) {
+    const f = 0.7 + 0.3 * (1 - d / 90);
+    a.push(
+      Math.max(0, Math.round(base * f * (0.55 + 0.9 * rnd(ci * 977 + d * 31 + off))))
+    );
+  }
+  return a;
+}
+
+const A = FOUNDER_CAMPAIGNS.map((c, i) => master(i, c.ab, 401));
+const NB: Record<number, number> = { 7: 7, 30: 15, 90: 18 };
+
+function sum(arr: number[], from: number, to: number) {
+  let s = 0;
+  for (let i = from; i <= to && i < arr.length; i++) s += arr[i];
+  return s;
+}
+
+function money(n: number) {
+  return (
+    '$' +
+    n.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  );
+}
+
+function num(n: number) {
+  return Math.round(n).toLocaleString('en-US');
+}
+
+function dstr(ago: number) {
+  const d = new Date(TODAY);
+  d.setDate(d.getDate() - ago);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
-  campaign,
+  initialCampaignId,
+  onNavigateCampaign,
+  onCreateCampaign,
   onBack,
-  onOpenQr,
-  onCopyLink,
-  onShare,
 }) => {
-  const [copiedLink, setCopiedLink] = useState(false);
-  const theme = getCampaignTheme(campaign);
-  const stats = getCampaignStats(campaign);
-
-  // Daily time series for this specific campaign's verified installs
-  const chartData = stats.days.map((val, idx) => {
-    const dayNum = idx + 17;
-    const dateLabel = `Sep ${dayNum > 30 ? (dayNum - 30) : dayNum}`;
-    return {
-      date: dateLabel,
-      installs: val,
-      earnings: val * (campaign.rate.t === 'fixed' ? campaign.rate.v : (campaign.rate.v / 100) * 45),
-    };
+  const [range, setRange] = useState<number>(30);
+  const [selCamp, setSelCamp] = useState<number>(() => {
+    if (initialCampaignId) {
+      const idx = FOUNDER_CAMPAIGNS.findIndex((c) => c.id === initialCampaignId);
+      return idx >= 0 ? idx : -1;
+    }
+    return -1;
   });
+  const [hoveredTip, setHoveredTip] = useState<string | null>(null);
+  const [showDataTable, setShowDataTable] = useState(false);
 
-  const handleCopy = () => {
-    onCopyLink(campaign);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+  const getBuckets = () => {
+    const nb = NB[range] || 15;
+    const bs = range / nb;
+    const out: { v: number; m: number; ago: number; bs: number; label: string }[] = [];
+
+    for (let k = 0; k < nb; k++) {
+      const newest = (nb - 1 - k) * bs;
+      const oldest = newest + bs - 1;
+      let v = 0;
+      let m = 0;
+
+      FOUNDER_CAMPAIGNS.forEach((c, i) => {
+        if (selCamp >= 0 && i !== selCamp) return;
+        const s = sum(A[i], newest, oldest);
+        v += s;
+        m += s * c.pay;
+      });
+
+      const label = bs > 1 ? `${dstr(newest + bs - 1)} to ${dstr(newest)}` : dstr(newest);
+      out.push({ v, m, ago: newest, bs, label });
+    }
+    return out;
   };
 
-  // Mock attribution events for this campaign
-  const recentEvents = [
-    { id: 'att_9a8f2', device: 'iOS 18.2 (iPhone 16 Pro)', time: '4 mins ago', country: 'US', bounty: usd(campaign.rate.t === 'fixed' ? campaign.rate.v : 5.4) },
-    { id: 'att_8b7e1', device: 'Android 15 (Pixel 9)', time: '22 mins ago', country: 'UK', bounty: usd(campaign.rate.t === 'fixed' ? campaign.rate.v : 5.4) },
-    { id: 'att_7c6d0', device: 'iOS 18.1 (iPhone 15)', time: '1 hr ago', country: 'DE', bounty: usd(campaign.rate.t === 'fixed' ? campaign.rate.v : 5.4) },
-    { id: 'att_6d5c9', device: 'Android 14 (Galaxy S24)', time: '3 hrs ago', country: 'CA', bounty: usd(campaign.rate.t === 'fixed' ? campaign.rate.v : 5.4) },
-    { id: 'att_5e4b8', device: 'iOS 18.0 (iPhone 14)', time: '5 hrs ago', country: 'FR', bounty: usd(campaign.rate.t === 'fixed' ? campaign.rate.v : 5.4) },
-  ];
+  const buckets = getBuckets();
+  let maxChartVal = 0;
+  buckets.forEach((b) => {
+    maxChartVal = Math.max(maxChartVal, b.v);
+  });
+
+  let totalVerInst = 0;
+  let totalRawInst = 0;
+  let totalClicks = 0;
+  let totalSpend = 0;
+  let totalIos = 0;
+
+  FOUNDER_CAMPAIGNS.forEach((c, i) => {
+    if (selCamp >= 0 && i !== selCamp) return;
+    const v = sum(A[i], 0, range - 1);
+    totalVerInst += v;
+    totalRawInst += v / c.ver;
+    totalClicks += v / c.ver / c.cv;
+    totalSpend += v * c.pay;
+    totalIos += v * c.ios;
+  });
+
+  const cr = totalRawInst / (totalClicks || 1);
+  const vr = totalVerInst / (totalRawInst || 1);
+  const ip = totalIos / (totalVerInst || 1);
+
+  const hasData = totalVerInst > 0;
 
   return (
-    <div className="w-full max-w-[880px] mx-auto px-4 sm:px-6 py-8 sm:py-12 animate-[rise_0.25s_cubic-bezier(0.2,0.8,0.2,1)] space-y-8 select-none">
-      {/* Clean top hairline linear accent (strictly linear, no fuzzy radial glow) */}
-      <div
-        className="w-full h-[1px]"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${theme.primary}, transparent)`,
-        }}
+    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
+      {/* Breadcrumbs with icons */}
+      <Breadcrumbs
+        items={[
+          { label: 'Profile', icon: 'ti-user', onClick: onBack },
+          ...(selCamp >= 0
+            ? [
+                {
+                  label: FOUNDER_CAMPAIGNS[selCamp].n,
+                  icon: FOUNDER_CAMPAIGNS[selCamp].ic,
+                  onClick: onNavigateCampaign
+                    ? () => onNavigateCampaign(FOUNDER_CAMPAIGNS[selCamp].id)
+                    : undefined,
+                },
+              ]
+            : []),
+          { label: 'Campaign analytics', icon: 'ti-chart-bar', active: true },
+        ]}
       />
 
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-[var(--t2)]" aria-label="Breadcrumb">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 hover:text-white transition-colors group cursor-pointer"
-        >
-          <Icon name="navCampaigns" className="w-4 h-4 text-[#8e8e93] group-hover:text-white" />
-          <span>Campaigns</span>
-        </button>
-        <span className="text-[#636366] font-mono select-none">&gt;</span>
-        <button
-          onClick={onBack}
-          className="hover:text-white transition-colors cursor-pointer"
-        >
-          {campaign.name}
-        </button>
-        <span className="text-[#636366] font-mono select-none">&gt;</span>
-        <div className="flex items-center gap-1.5 font-medium text-emerald-400">
-          <Icon name="trend" className="w-4 h-4" />
-          <span>Analytics</span>
-        </div>
-      </nav>
-
-      {/* Header Banner: Clean linear accent border with zero heavy glow */}
-      <div
-        className="p-6 sm:p-7 rounded-[22px] border relative overflow-hidden"
-        style={{
-          backgroundColor: '#1c1c1f',
-          borderColor: hexToRgba(theme.primary, 0.35),
-        }}
-      >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shrink-0 border"
-              style={{
-                backgroundColor: theme.secondary,
-                borderColor: hexToRgba(theme.primary, 0.4),
-                color: theme.primary,
-              }}
-            >
-              <Icon name={campaign.icon} className="w-7 h-7" />
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                  {campaign.name}
-                </h1>
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  ● Joined &amp; Tracking
-                </span>
-              </div>
-              <p className="text-xs text-[#8e8e93] mt-1">
-                By {campaign.host} · {campaign.cat} · {plainPay(campaign)}
-              </p>
-            </div>
+      {/* Title & Date Range Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div className="sub text-[12px] uppercase tracking-wider font-mono">
+            Attribution telemetry
           </div>
+          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC] mt-0.5">
+            {selCamp >= 0 ? `${FOUNDER_CAMPAIGNS[selCamp].n} analytics` : 'Campaign analytics'}
+          </h1>
+          <p className="text-[13px] text-[#9A9892] mt-1">
+            Real-time attribution telemetry, verification rates, and creator spend.
+          </p>
+        </div>
 
-          {/* Quick Tracking Link Actions */}
-          <div className="flex items-center gap-2 self-stretch sm:self-auto">
+        {/* Date range filter chips */}
+        <div className="flex gap-1.5 self-start sm:self-auto shrink-0">
+          {[7, 30, 90].map((d) => (
             <button
-              onClick={handleCopy}
-              className="flex-1 sm:flex-initial h-9 px-4 rounded-full text-xs font-semibold text-white transition-all cursor-pointer shadow-xs active:scale-95"
-              style={{
-                backgroundColor: theme.primary,
-              }}
+              key={`range-${d}`}
+              onClick={() => setRange(d)}
+              className={`chip min-h-[38px] px-3.5 cursor-pointer ${range === d ? 'sel' : ''}`}
             >
-              {copiedLink ? 'Copied Link' : 'Copy Tracking Link'}
+              {d} days
             </button>
-            <button
-              onClick={() => onOpenQr(campaign)}
-              className="w-9 h-9 rounded-full border border-white/10 hover:border-white/30 flex items-center justify-center text-white transition-colors cursor-pointer"
-              title="Show QR Code"
-            >
-              <Icon name="qr" className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onShare(campaign)}
-              className="w-9 h-9 rounded-full border border-white/10 hover:border-white/30 flex items-center justify-center text-white transition-colors cursor-pointer"
-              title="Share Link"
-            >
-              <Icon name="share" className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 4 Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div
-          className="p-4 sm:p-5 rounded-2xl border"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <span className="text-xs text-[#8e8e93] font-mono block">Verified Installs</span>
-          <strong className="text-2xl sm:text-3xl font-bold text-white block mt-1 font-mono tabular-nums">
-            {stats.inst}
-          </strong>
-          <span className="text-[11px] text-emerald-400 font-mono mt-0.5 block">
-            +38 this week
-          </span>
-        </div>
-
-        <div
-          className="p-4 sm:p-5 rounded-2xl border"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <span className="text-xs text-[#8e8e93] font-mono block">Total Earned</span>
-          <strong className="text-2xl sm:text-3xl font-bold text-emerald-400 block mt-1 font-mono tabular-nums">
-            {usd(stats.earned)}
-          </strong>
-          <span className="text-[11px] text-[#8e8e93] font-mono mt-0.5 block">
-            Escrow verified
-          </span>
-        </div>
-
-        <div
-          className="p-4 sm:p-5 rounded-2xl border"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <span className="text-xs text-[#8e8e93] font-mono block">Link Clicks</span>
-          <strong className="text-2xl sm:text-3xl font-bold text-white block mt-1 font-mono tabular-nums">
-            {stats.clicks}
-          </strong>
-          <span className="text-[11px] text-[#8e8e93] font-mono mt-0.5 block">
-            Unique devices
-          </span>
-        </div>
-
-        <div
-          className="p-4 sm:p-5 rounded-2xl border"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <span className="text-xs text-[#8e8e93] font-mono block">Conversion Rate</span>
-          <strong className="text-2xl sm:text-3xl font-bold text-white block mt-1 font-mono tabular-nums">
-            {(stats.conv * 100).toFixed(1)}%
-          </strong>
-          <span className="text-[11px] text-emerald-400 font-mono mt-0.5 block">
-            High intent
-          </span>
-        </div>
-      </div>
-
-      {/* Daily Installs Chart */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              Daily verified install velocity
-            </h2>
-            <p className="text-xs text-[#8e8e93] mt-0.5">
-              Unique device attribution verified through {campaign.name} SDK handshake.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-emerald-400 font-medium">
-            Active Tracking
-          </span>
-        </div>
-
-        <div
-          className="rounded-2xl border p-4 pt-6"
-          style={{
-            backgroundColor: '#161619',
-            borderColor: 'rgba(255,255,255,0.08)',
-          }}
-        >
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart
-              data={chartData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-            >
-              <CartesianGrid
-                stroke="rgba(255,255,255,0.06)"
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={{ stroke: 'rgba(255,255,255,0.08)' }}
-                tick={{ fill: '#9ca3af', fontSize: 11 }}
-              />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: '#9ca3af', fontSize: 11 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1c1c1f',
-                  borderColor: 'rgba(255,255,255,0.12)',
-                  borderRadius: '12px',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                }}
-                formatter={(value: any, name: any) => [
-                  name === 'installs' ? `${value} installs` : usd(Number(value)),
-                  name === 'installs' ? 'Verified Installs' : 'Accrued Bounty',
-                ]}
-                labelStyle={{ color: '#9ca3af', marginBottom: '4px' }}
-              />
-              <Line
-                type="monotone"
-                dataKey="installs"
-                stroke="#10b981"
-                strokeWidth={2.5}
-                dot={{ r: 3, fill: '#10b981', stroke: '#161619', strokeWidth: 2 }}
-                activeDot={{ r: 6, fill: '#10b981', stroke: '#ffffff', strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
-      {/* Attribution Traffic Channels & Devices */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Attribution Channels */}
-        <div
-          className="p-5 rounded-2xl border space-y-3"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <h3 className="text-sm font-bold text-white tracking-tight">Traffic Breakdown</h3>
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-[#8e8e93]">YouTube / Longform Description</span>
-              <span className="font-mono text-white font-semibold">54%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-emerald-400 rounded-full" style={{ width: '54%' }} />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[#8e8e93]">TikTok &amp; Reels Bio Links</span>
-              <span className="font-mono text-white font-semibold">31%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-sky-400 rounded-full" style={{ width: '31%' }} />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[#8e8e93]">X (Twitter) &amp; Direct Messaging</span>
-              <span className="font-mono text-white font-semibold">15%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-purple-400 rounded-full" style={{ width: '15%' }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Platform Share */}
-        <div
-          className="p-5 rounded-2xl border space-y-3"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          <h3 className="text-sm font-bold text-white tracking-tight">Platform OS Split</h3>
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-white">
-                <Icon name="apple" className="w-3.5 h-3.5" fill />
-                <span>Apple iOS App Store</span>
-              </div>
-              <span className="font-mono text-white font-semibold">68%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-white rounded-full" style={{ width: '68%' }} />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-1.5 text-white">
-                <Icon name="play" className="w-3 h-3" fill />
-                <span>Google Play Store</span>
-              </div>
-              <span className="font-mono text-white font-semibold">32%</span>
-            </div>
-            <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-emerald-400 rounded-full" style={{ width: '32%' }} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Live Attribution Event Ledger */}
-      <section className="space-y-3">
-        <h3 className="text-sm font-bold text-white tracking-tight">Recent Verified Attribution Events</h3>
-
-        <div
-          className="rounded-2xl border divide-y divide-white/5 overflow-hidden"
-          style={{ backgroundColor: '#18181b', borderColor: 'rgba(255,255,255,0.08)' }}
-        >
-          {recentEvents.map((evt) => (
-            <div
-              key={evt.id}
-              className="p-3.5 sm:px-4 flex items-center justify-between gap-3 text-xs"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                <span className="font-mono text-white truncate">{evt.device}</span>
-                <span className="text-[#8e8e93] font-mono text-[11px] shrink-0">({evt.country})</span>
-              </div>
-
-              <div className="flex items-center gap-4 shrink-0">
-                <span className="text-[#8e8e93] font-mono text-[11px] hidden sm:inline">{evt.time}</span>
-                <span className="font-mono text-emerald-400 font-semibold">{evt.bounty}</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  Verified
-                </span>
-              </div>
-            </div>
           ))}
         </div>
-      </section>
-
-      {/* Return to campaigns button */}
-      <div className="pt-2 flex justify-start">
-        <button
-          onClick={onBack}
-          className="h-10 px-5 rounded-full border border-white/15 hover:border-white/30 text-xs font-semibold text-white hover:bg-white/5 transition-all cursor-pointer"
-        >
-          &larr; Back to Joined Campaigns
-        </button>
       </div>
+
+      {!hasData ? (
+        /* Empty State */
+        <div className="card text-center py-14 px-6 space-y-3 bg-[#161616] border border-[#2A2A2A] rounded-[24px]">
+          <div className="w-12 h-12 rounded-full bg-[#1C1C1C] text-[#9A9892] flex items-center justify-center text-[22px] mx-auto">
+            <i className="ti ti-chart-bar"></i>
+          </div>
+          <div>
+            <div className="text-[16px] font-medium text-[#F5F3EC]">No analytics data yet</div>
+            <div className="text-[13px] text-[#9A9892] mt-1 max-w-[420px] mx-auto leading-relaxed">
+              Create a campaign and integrate the SDK to see real-time install attribution.
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onCreateCampaign}
+              className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+            >
+              Create campaign
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Campaign Selector Chips */}
+          <div className="flex gap-1.5 flex-wrap pt-1">
+            <button
+              onClick={() => setSelCamp(-1)}
+              className={`chip min-h-[36px] px-3 cursor-pointer ${selCamp < 0 ? 'sel' : ''}`}
+            >
+              All campaigns
+            </button>
+            {FOUNDER_CAMPAIGNS.map((c, i) => (
+              <button
+                key={c.id}
+                onClick={() => setSelCamp(i)}
+                className={`chip min-h-[36px] px-3 cursor-pointer ${selCamp === i ? 'sel' : ''}`}
+              >
+                {c.n}
+              </button>
+            ))}
+          </div>
+
+          {/* Big Installs Banner */}
+          <div className="bg-[#161616] rounded-[20px] p-5 border border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="sub text-[12px]">Verified installs in the last {range} days</div>
+              <div className="text-[36px] font-medium tracking-[-0.8px] text-[#F5F3EC] mt-0.5">
+                {num(totalVerInst)}
+              </div>
+              <div className="text-[12px] text-[#C7F26B] flex items-center gap-1.5 mt-1 font-medium">
+                <i className="ti ti-shield-check" aria-hidden="true"></i>
+                <span>Fraud-shielded attribution SDK active</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              {selCamp >= 0 && onNavigateCampaign && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateCampaign(FOUNDER_CAMPAIGNS[selCamp].id)}
+                  className="pill on min-h-[44px] px-4 shadow-sm cursor-pointer"
+                >
+                  <span>View campaign page</span>
+                  <i className="ti ti-arrow-right" aria-hidden="true"></i>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 4-Stat Numbers Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 bg-[#161616] rounded-[20px] p-4 border border-[#2A2A2A]/40">
+            <div className="p-2 sm:px-3 border-r border-[#2A2A2A]/60">
+              <div className="sub text-[11px]">Clicks</div>
+              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5">
+                {num(totalClicks)}
+              </div>
+            </div>
+            <div className="p-2 sm:px-3 sm:border-r border-[#2A2A2A]/60">
+              <div className="sub text-[11px]">Installs</div>
+              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#B5D4F4] mt-0.5">
+                {num(totalRawInst)}
+              </div>
+            </div>
+            <div className="p-2 sm:px-3 border-r border-[#2A2A2A]/60">
+              <div className="sub text-[11px]">Spend</div>
+              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5">
+                {money(totalSpend)}
+              </div>
+            </div>
+            <div className="p-2 sm:px-3">
+              <div className="sub text-[11px]">Cost per install</div>
+              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#C7F26B] mt-0.5">
+                {money(totalSpend / (totalVerInst || 1))}
+              </div>
+            </div>
+          </div>
+
+          {/* Verified Installs Over Time Bar Chart Card with Tap & Data Table Toggle */}
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-[15px] text-[#F5F3EC]">
+                Verified installs over time
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDataTable(!showDataTable)}
+                className="pill gh text-[12px] py-1 px-2.5 text-[#9A9892] hover:text-[#F5F3EC] cursor-pointer min-h-[36px]"
+              >
+                <i className={`ti ${showDataTable ? 'ti-chart-bar' : 'ti-table'}`}></i>
+                <span>{showDataTable ? 'Show chart' : 'Data table'}</span>
+              </button>
+            </div>
+
+            {showDataTable ? (
+              /* Accessible Table Alternative */
+              <div className="mt-3 overflow-x-auto text-[13px]">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-[#2A2A2A] text-[#9A9892]">
+                      <th className="py-2 px-2 font-normal">Period</th>
+                      <th className="py-2 px-2 font-normal">Verified installs</th>
+                      <th className="py-2 px-2 font-normal text-right">Spend</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {buckets.map((b, idx) => (
+                      <tr key={idx} className="border-b border-[#2A2A2A]/40 hover:bg-[#1C1C1C]">
+                        <td className="py-2 px-2 text-[#F5F3EC]">{b.label}</td>
+                        <td className="py-2 px-2 text-[#B9B7AF]">{num(b.v)}</td>
+                        <td className="py-2 px-2 text-right font-medium text-[#F5F3EC]">{money(b.m)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-end gap-1 sm:gap-1.5 h-[150px] mt-4">
+                  {buckets.map((b, i) => {
+                    const isLast = i === buckets.length - 1;
+                    const pctHeight = Math.max(4, Math.round((b.v / (maxChartVal || 1)) * 100));
+                    return (
+                      <div
+                        key={`ba-${i}`}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`${b.label}: ${num(b.v)} verified installs, ${money(b.m)} spend`}
+                        onClick={() => setHoveredTip(`${b.label} · ${num(b.v)} verified installs · ${money(b.m)} spend`)}
+                        onMouseEnter={() => setHoveredTip(`${b.label} · ${num(b.v)} verified installs · ${money(b.m)} spend`)}
+                        onMouseLeave={() => setHoveredTip(null)}
+                        className="flex-1 rounded-t-[6px] rounded-b-[2px] transition-colors cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-[#F5F3EC]"
+                        style={{
+                          height: `${pctHeight}%`,
+                          backgroundColor: isLast ? '#C7F26B' : '#3A3A37',
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex justify-between items-center sub mt-2.5">
+                  <span>{dstr(range - 1)}</span>
+                  <span className="text-[#F5F3EC] font-mono text-[12px] truncate px-2 text-center">
+                    {hoveredTip || 'Tap or hover a bar for details'}
+                  </span>
+                  <span>Today</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Funnel Card */}
+          <div className="card">
+            <div className="font-medium text-[15px] text-[#F5F3EC]">Conversion funnel</div>
+            <div className="space-y-3 mt-3.5">
+              {/* Clicks */}
+              <div>
+                <div className="flex justify-between text-[13px]">
+                  <span>Clicks</span>
+                  <span className="sub">{num(totalClicks)}</span>
+                </div>
+                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
+                  <div className="h-full bg-[#3A3A37] w-full" />
+                </div>
+              </div>
+
+              {/* Installs */}
+              <div>
+                <div className="flex justify-between text-[13px]">
+                  <span>Installs</span>
+                  <span className="sub">
+                    {num(totalRawInst)} · {(cr * 100).toFixed(1)}% of clicks
+                  </span>
+                </div>
+                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
+                  <div
+                    className="h-full bg-[#B5D4F4]"
+                    style={{ width: `${Math.min(100, Math.max(4, cr * 100))}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Verified */}
+              <div>
+                <div className="flex justify-between text-[13px]">
+                  <span>Verified</span>
+                  <span className="sub">
+                    {num(totalVerInst)} · {(vr * 100).toFixed(0)}% of installs
+                  </span>
+                </div>
+                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
+                  <div
+                    className="h-full bg-[#C7F26B]"
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        Math.max(4, (totalVerInst / (totalClicks || 1)) * 100)
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="sub mt-3 text-[12px]">
+              {num(totalRawInst - totalVerInst)} installs rejected as unverified, so you were not charged for them.
+            </div>
+          </div>
+
+          {/* Top Creators & Platforms Row */}
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-3">
+            {/* Top Creators Card */}
+            <div className="card">
+              <div className="font-medium text-[15px] text-[#F5F3EC]">Top creators</div>
+              <div className="space-y-1 mt-2">
+                {[
+                  { handle: 'maya.makes', pct: 0.31, bg: '#CECBF6', fg: '#26215C' },
+                  { handle: 'devon', pct: 0.24, bg: '#F5C4B3', fg: '#4A1B0C' },
+                  { handle: 'luna_k', pct: 0.19, bg: '#C0DD97', fg: '#173404' },
+                  { handle: 'theo.tv', pct: 0.14, bg: '#B5D4F4', fg: '#042C53' },
+                  { handle: 'ada', pct: 0.12, bg: '#FAC775', fg: '#412402' },
+                ].map((tc) => (
+                  <div
+                    key={tc.handle}
+                    className="flex items-center gap-2.5 py-2 border-t border-[#2A2A2A]"
+                  >
+                    <div
+                      className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[12px] font-medium"
+                      style={{ backgroundColor: tc.bg, color: tc.fg }}
+                    >
+                      {tc.handle[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0 text-[13px] font-medium text-[#F5F3EC]">
+                      @{tc.handle}
+                    </div>
+                    <div className="sub text-[12px]">{num(totalVerInst * tc.pct)} installs</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Platforms Card */}
+            <div className="card">
+              <div className="font-medium text-[15px] text-[#F5F3EC]">Platforms</div>
+              <div className="h-[12px] rounded-[6px] overflow-hidden flex mt-4 bg-[#242424]">
+                <div
+                  className="h-full bg-[#F5F3EC]"
+                  style={{ width: `${ip * 100}%` }}
+                />
+                <div
+                  className="h-full bg-[#C7F26B]"
+                  style={{ width: `${(1 - ip) * 100}%` }}
+                />
+              </div>
+
+              <div className="flex justify-between items-center text-[13px] mt-3.5">
+                <span className="flex items-center gap-1.5 text-[#F5F3EC]">
+                  <i className="ti ti-brand-apple" aria-hidden="true"></i>
+                  <span>iOS</span>
+                </span>
+                <span className="text-[#F5F3EC]">{Math.round(ip * 100)}%</span>
+              </div>
+
+              <div className="flex justify-between items-center text-[13px] mt-2">
+                <span className="flex items-center gap-1.5 text-[#F5F3EC]">
+                  <i className="ti ti-player-play" aria-hidden="true"></i>
+                  <span>Android</span>
+                </span>
+                <span className="text-[#F5F3EC]">{Math.round((1 - ip) * 100)}%</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

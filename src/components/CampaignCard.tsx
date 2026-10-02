@@ -1,445 +1,316 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Campaign } from '../types/campaign';
-import { Icon } from './Icons';
-import { linkOf } from '../data/campaigns';
-import { getCampaignTheme, hexToRgba } from '../utils/campaignTheme';
 
 interface CampaignCardProps {
   campaign: Campaign;
   onJoin: (campaign: Campaign, targetEl?: HTMLElement) => void;
-  onOpenQr: (campaign: Campaign) => void;
-  onCopyLink: (campaign: Campaign) => void;
-  onShare: (campaign: Campaign) => void;
   onNavigateDetail: (id: string) => void;
+  onOpenQr?: (campaign: Campaign) => void;
+  onCopyLink?: (campaign: Campaign) => void;
+  onShare?: (campaign: Campaign) => void;
   onNavigateAnalytics?: (id: string) => void;
-  redirectMode?: 'detail' | 'analytics' | 'created';
-  isLast?: boolean;
+  onManage?: (campaign: Campaign) => void;
+  isFounder?: boolean;
 }
-
-const PROMO_SCREENS: Record<string, string[]> = {
-  atelier: ['spark', 'sliders', 'camera', 'star'],
-  palazzo: ['cube', 'map', 'eye', 'globe'],
-  pixelpop: ['game', 'trophy', 'spark', 'star'],
-  pennywise: ['wallet', 'trend', 'bill', 'check'],
-  stride: ['heart', 'clock', 'trend', 'trophy'],
-  tessera: ['book', 'globe', 'chat', 'star'],
-  solis: ['sun', 'clock', 'spark', 'star'],
-  prism: ['cube', 'sliders', 'camera', 'eye'],
-  zenith: ['globe', 'map', 'search', 'star'],
-  hyperion: ['bolt', 'game', 'trophy', 'spark'],
-  focusly: ['bolt', 'clock', 'spark', 'star'],
-  chatterbox: ['chat', 'users', 'spark', 'star'],
-  snapnest: ['camera', 'sliders', 'eye', 'star'],
-  melodia: ['music', 'sliders', 'spark', 'star'],
-  wayfarer: ['map', 'globe', 'clock', 'star'],
-};
 
 export const CampaignCard: React.FC<CampaignCardProps> = ({
   campaign,
   onJoin,
-  onOpenQr,
-  onCopyLink,
-  onShare,
   onNavigateDetail,
-  onNavigateAnalytics,
-  redirectMode = campaign.joined ? 'analytics' : 'detail',
-  isLast = false,
+  onCopyLink,
+  onManage,
+  isFounder = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [isCardHovered, setIsCardHovered] = useState(false);
-
-  const baseTheme = getCampaignTheme(campaign);
-  const activeColor = baseTheme.primary;
-  const promoIcons = PROMO_SCREENS[campaign.id] || ['spark', 'cube', 'book', 'star'];
+  const [copied, setCopied] = useState(false);
 
   const handleJoinClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (campaign.joined || isJoining) return;
-    setIsJoining(true);
-    setTimeout(() => {
-      onJoin(campaign, e.currentTarget);
-      setIsJoining(false);
-    }, 250);
+    onJoin(campaign, e.currentTarget);
+  };
+
+  const handleToggleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsExpanded((prev) => !prev);
+  };
+
+  const handleViewDetailPage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onNavigateDetail(campaign.id);
   };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onCopyLink(campaign);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    if (onCopyLink) {
+      onCopyLink(campaign);
+    } else {
+      navigator.clipboard?.writeText(`https://kred.link/${campaign.slug || campaign.id}/you`);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
   };
 
-  const handlePrimaryRedirect = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (redirectMode === 'analytics' && onNavigateAnalytics) {
-      onNavigateAnalytics(campaign.id);
-    } else {
-      onNavigateDetail(campaign.id);
-    }
-  };
+  // Pastel styling
+  const bg = campaign.bg || '#CECBF6';
+  const fg = campaign.fg || '#26215C';
+  const icon = campaign.icon || 'ti-device-gamepad-2';
+  const priceDisplay = campaign.price ? `$${campaign.price}` : campaign.pay;
+  const slug = campaign.slug || campaign.id;
+
+  // Status Edge Cases
+  const isEnded = campaign.days <= 0 || (campaign as any).isEnded;
+  const isPaused = (campaign as any).isPaused;
+  const isOutOfBudget = campaign.budget !== undefined && campaign.budget <= 0;
+  const isDraft = (campaign as any).isDraft || !campaign.sdkConnected;
 
   return (
-    <div
-      className="grid grid-cols-[85px_12px_1fr] sm:grid-cols-[120px_16px_1fr] gap-x-2.5 sm:gap-x-4 items-start group"
-      onMouseEnter={() => setIsCardHovered(true)}
-      onMouseLeave={() => setIsCardHovered(false)}
-    >
-      {/* Column 1: Category & Days remaining */}
-      <div className="pt-2 text-left select-none">
-        <span
-          className="block text-[13px] sm:text-sm font-semibold transition-colors duration-200 leading-tight"
-          style={{
-            color: isCardHovered || isExpanded ? activeColor : '#ffffff',
-          }}
-        >
-          {campaign.cat}
-        </span>
-        <span className="block text-xs text-[#8e8e93] mt-0.5 leading-tight">
-          {campaign.days} days left
-        </span>
+    <div className="grid grid-cols-[84px_minmax(0,1fr)] sm:grid-cols-[100px_minmax(0,1fr)] gap-3 sm:gap-4 items-start">
+      {/* Left Column: Category and Days left */}
+      <div className="pt-1.5 select-none">
+        <div className="text-[14px] font-medium text-[#F5F3EC]">{campaign.cat}</div>
+        <div className="text-[12px] text-[#9A9892] mt-0.5">
+          {isEnded ? 'Campaign ended' : `${campaign.days} days left`}
+        </div>
       </div>
 
-      {/* Column 2: Timeline Rail with Linear Gradient Accent */}
-      <div className="relative flex justify-center h-full">
-        {/* Dot indicator */}
-        <div
-          className="w-2.5 h-2.5 rounded-full mt-3 z-10 shrink-0 transition-colors duration-200"
-          style={{
-            backgroundColor: isCardHovered || isExpanded ? activeColor : '#8e8e93',
-          }}
-        />
-
-        {/* Vertical connector line with linear gradient accent */}
-        {!isLast && (
-          <div
-            className="absolute top-4 bottom-[-28px] sm:bottom-[-36px] w-px transition-colors duration-200"
-            style={{
-              background:
-                isCardHovered || isExpanded
-                  ? `linear-gradient(to bottom, ${activeColor}, rgba(255,255,255,0.08))`
-                  : 'rgba(255,255,255,0.08)',
-            }}
-          />
-        )}
-      </div>
-
-      {/* Column 3: The Card with clean linear top accent and no heavy glow */}
-      <article
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="rounded-[22px] border p-4 sm:p-5 sm:pl-6 transition-all duration-200 cursor-pointer shadow-xs select-none relative overflow-hidden"
-        style={{
-          backgroundColor: '#1e1e22',
-          borderColor: isExpanded
-            ? hexToRgba(activeColor, 0.45)
-            : isCardHovered
-            ? hexToRgba(activeColor, 0.28)
-            : 'rgba(255, 255, 255, 0.07)',
-        }}
+      {/* Right Column: Expandable Card */}
+      <div
+        onClick={handleToggleExpand}
+        className={`card cursor-pointer transition-all duration-200 relative group border ${
+          isExpanded ? 'border-[#F5F3EC]/30 bg-[#191919]' : 'border-transparent hover:bg-[#1a1a1a]'
+        }`}
       >
-        {/* Clean top linear hairline accent */}
-        <div
-          className="pointer-events-none absolute top-0 left-0 right-0 h-[1.5px] transition-opacity duration-200"
-          style={{
-            opacity: isCardHovered || isExpanded ? 1 : 0,
-            background: `linear-gradient(90deg, transparent, ${activeColor}, transparent)`,
-          }}
-        />
+        {/* Main Card Header */}
+        <div className="flex gap-3 sm:gap-4 justify-between items-start">
+          <div className="min-w-0 flex-1">
+            {/* App name & Status Badge */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="text-[20px] font-medium tracking-[-0.3px] text-[#F5F3EC] group-hover:text-white transition-colors">
+                {campaign.name}
+              </div>
 
-        <div className="flex items-start justify-between gap-4 relative z-10">
-          {/* Left content area */}
-          <div className="flex-1 min-w-0 space-y-2">
-            {/* Title */}
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-snug">
-              {campaign.name}
-            </h2>
+              {/* Status Chips with Word + Icon */}
+              {isEnded ? (
+                <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C1C] text-[#FF8A80] flex items-center gap-1 font-medium">
+                  <i className="ti ti-clock-x" aria-hidden="true"></i>
+                  <span>Ended</span>
+                </span>
+              ) : isPaused ? (
+                <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C1C] text-[#FAC775] flex items-center gap-1 font-medium">
+                  <i className="ti ti-player-pause" aria-hidden="true"></i>
+                  <span>Paused</span>
+                </span>
+              ) : isOutOfBudget ? (
+                <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C1C] text-[#FF8A80] flex items-center gap-1 font-medium">
+                  <i className="ti ti-alert-circle" aria-hidden="true"></i>
+                  <span>Out of budget</span>
+                </span>
+              ) : isDraft ? (
+                <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C1C] text-[#FAC775] flex items-center gap-1 font-medium">
+                  <i className="ti ti-clock" aria-hidden="true"></i>
+                  <span>Draft</span>
+                </span>
+              ) : null}
+            </div>
 
-            {/* Host byline with dark initial square badge that tints subtly on hover */}
-            <div className="flex items-center gap-1.5 text-xs text-[#8e8e93]">
+            {/* By company */}
+            <div className="text-[12px] text-[#9A9892] mt-0.5 mb-2.5">
+              By {campaign.by || campaign.host}
+            </div>
+
+            {/* Chips row */}
+            <div className="flex gap-1.5 flex-wrap items-center">
               <span
-                className="w-5 h-5 rounded-md text-[10px] font-bold flex items-center justify-center shrink-0 transition-colors duration-200"
-                style={{
-                  backgroundColor: isCardHovered ? hexToRgba(activeColor, 0.2) : '#2c2c32',
-                  color: isCardHovered ? activeColor : '#ffffff',
-                }}
+                className="chip font-medium"
+                style={{ backgroundColor: bg, color: fg, padding: '4px 10px', fontSize: '12px' }}
               >
-                {campaign.host.charAt(0)}
+                {priceDisplay} per verified install
               </span>
-              <span className="truncate">By {campaign.host}</span>
-            </div>
-
-            {/* Payout & Store Icons Row */}
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-[#8e8e93] flex-wrap pt-0.5">
-              <Icon name="bill" className="w-4 h-4 text-white shrink-0 mr-0.5" />
               <span
-                className="text-white"
-                dangerouslySetInnerHTML={{ __html: campaign.pay }}
-              />
-              <span className="w-5 h-5 rounded-full bg-[#2a2a30] flex items-center justify-center text-white ml-2 shrink-0">
-                <Icon name="apple" className="w-3 h-3" fill />
+                className="chip"
+                style={{ backgroundColor: '#242424', color: '#F5F3EC', padding: '4px 8px' }}
+                title="iOS supported"
+              >
+                <i className="ti ti-brand-apple text-[14px]" aria-hidden="true"></i>
               </span>
-              <span className="w-5 h-5 rounded-full bg-[#2a2a30] flex items-center justify-center text-white ml-1 shrink-0">
-                <Icon name="play" className="w-2.5 h-2.5" fill />
+              <span
+                className="chip"
+                style={{ backgroundColor: '#242424', color: '#F5F3EC', padding: '4px 8px' }}
+                title="Android supported"
+              >
+                <i className="ti ti-player-play text-[14px]" aria-hidden="true"></i>
               </span>
             </div>
 
-            {/* Action Row */}
-            <div
-              className="flex items-center gap-3 pt-2.5 flex-wrap"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {campaign.joined ? (
-                <div className="flex items-center gap-2">
-                  <span
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all"
-                    style={{
-                      backgroundColor: hexToRgba(activeColor, 0.15),
-                      color: '#ffffff',
-                      borderColor: hexToRgba(activeColor, 0.35),
-                    }}
-                  >
-                    <Icon name="check" className="w-3.5 h-3.5 text-emerald-400" />
-                    Joined
-                  </span>
-                  {redirectMode === 'analytics' && (
-                    <button
-                      onClick={handlePrimaryRedirect}
-                      className="px-3 py-1.5 rounded-full text-xs font-semibold text-white transition-all cursor-pointer shadow-xs active:scale-95"
-                      style={{
-                        backgroundColor: activeColor,
-                      }}
-                    >
-                      Analytics ↗
-                    </button>
-                  )}
-                </div>
-              ) : (
+            {/* Actions row */}
+            <div className="flex items-center gap-2.5 mt-3 flex-wrap">
+              {!isEnded && !isPaused && (
                 <button
+                  type="button"
                   onClick={handleJoinClick}
-                  disabled={isJoining}
-                  className="px-4 py-1.5 rounded-full text-xs font-semibold text-white transition-all shadow-xs cursor-pointer active:scale-95"
-                  style={{
-                    backgroundColor: isCardHovered ? activeColor : '#1a8cff',
-                  }}
+                  className={`pill text-[12px] py-1 px-3 min-h-[32px] h-[32px] font-medium ${
+                    campaign.joined ? 'out' : 'on'
+                  }`}
                 >
-                  {isJoining ? 'Joining…' : 'Join campaign'}
+                  {campaign.joined ? (
+                    <>
+                      <i className="ti ti-check text-[#C7F26B]" aria-hidden="true"></i>
+                      <span>Joined</span>
+                    </>
+                  ) : (
+                    <span>Join campaign</span>
+                  )}
                 </button>
               )}
 
-              {/* Creator Avatars stack */}
-              <div className="flex items-center">
-                <div className="flex -space-x-1 overflow-hidden">
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#3a3a42]">
-                    H
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#42424c]">
-                    C
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#484854]">
-                    F
-                  </span>
-                  <span className="inline-block w-5 h-5 rounded-full ring-2 ring-[#1e1e22] text-[9px] font-bold text-white flex items-center justify-center bg-[#525260]">
-                    A
-                  </span>
-                </div>
-                <span className="ml-2 text-xs font-mono text-[#8e8e93]">
-                  +{campaign.creators}
-                </span>
-              </div>
-
-              {/* Chevron expand indicator with smooth spring rotation */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsExpanded(!isExpanded);
-                }}
-                className="p-1 text-[#8e8e93] hover:text-white transition-colors ml-auto sm:ml-2 cursor-pointer"
-                aria-label={isExpanded ? 'Collapse' : 'Expand'}
-              >
-                <div
-                  className={`transition-transform duration-200 ${
-                    isExpanded ? 'rotate-180' : ''
-                  }`}
+              {/* Creator Avatars Cluster */}
+              <span className="inline-flex pl-1 select-none">
+                <span
+                  className="w-[22px] h-[22px] rounded-full border-2 border-[#161616] inline-flex items-center justify-center text-[10px] font-medium"
+                  style={{ backgroundColor: '#CECBF6', color: '#26215C' }}
                 >
-                  <Icon name="chev" className="w-4 h-4" />
-                </div>
+                  H
+                </span>
+                <span
+                  className="w-[22px] h-[22px] rounded-full border-2 border-[#161616] -ml-1.5 inline-flex items-center justify-center text-[10px] font-medium"
+                  style={{ backgroundColor: '#F5C4B3', color: '#4A1B0C' }}
+                >
+                  C
+                </span>
+                <span
+                  className="w-[22px] h-[22px] rounded-full border-2 border-[#161616] -ml-1.5 inline-flex items-center justify-center text-[10px] font-medium"
+                  style={{ backgroundColor: '#C0DD97', color: '#173404' }}
+                >
+                  F
+                </span>
+              </span>
+              <span className="text-[12px] text-[#9A9892]">+{campaign.creators}</span>
+
+              {/* Founder management shortcut if founder */}
+              {isFounder && onManage && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onManage(campaign);
+                  }}
+                  className="ol min-h-[36px] px-3 text-[12px] cursor-pointer"
+                >
+                  <i className="ti ti-adjustments text-[14px]"></i>
+                  <span>Manage</span>
+                </button>
+              )}
+
+              {/* Expand/Collapse Chevron Button */}
+              <button
+                type="button"
+                onClick={handleToggleExpand}
+                className="pill gh p-2! hover:bg-[#242424] rounded-full ml-auto sm:ml-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label={isExpanded ? 'Collapse card' : 'Expand card'}
+              >
+                <i
+                  className={`ti ti-chevron-${isExpanded ? 'up' : 'down'} text-[18px] text-[#9A9892]`}
+                  aria-hidden="true"
+                ></i>
               </button>
             </div>
           </div>
 
-          {/* Right Dark Colored App Card Tile */}
+          {/* Right Logo Tile */}
           <div
-            className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex flex-col items-center justify-center text-center p-2.5 border shrink-0 transition-all duration-200 relative group/tile"
-            style={{
-              backgroundColor: baseTheme.secondary,
-              borderColor: isCardHovered
-                ? hexToRgba(activeColor, 0.35)
-                : 'rgba(255, 255, 255, 0.08)',
-            }}
+            className="w-[84px] h-[84px] sm:w-[96px] sm:h-[96px] rounded-[20px] flex flex-col items-center justify-center gap-1.5 shrink-0 select-none shadow-xs"
+            style={{ backgroundColor: bg, color: fg }}
           >
-            <div style={{ color: activeColor }} className="mb-2 relative z-10">
-              <Icon name={campaign.icon} className="w-7 h-7" />
-            </div>
-            <span className="text-xs font-bold text-white tracking-tight line-clamp-1 relative z-10">
+            <i className={`ti ${icon} text-[26px]`} aria-hidden="true"></i>
+            <span className="text-[11px] sm:text-[12px] font-medium text-center px-1 truncate max-w-full">
               {campaign.name}
             </span>
           </div>
         </div>
 
-        {/* Expanded View: Animated Accordion */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mt-6 pt-6 border-t border-white/10 space-y-6">
-                {/* Two-Column Promotional Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-[140px_1fr] gap-6 items-start">
-                  {/* Left Sidebar Metadata */}
-                  <div className="space-y-3.5 text-xs text-[#8e8e93]">
-                    <div className="flex items-center gap-2 text-white">
-                      <Icon name="globe" className="w-4 h-4 text-[#8e8e93] shrink-0" />
-                      <span className="text-xs font-medium">Worldwide</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white">
-                      <Icon name="clock" className="w-4 h-4 text-[#8e8e93] shrink-0" />
-                      <span className="text-xs font-medium">{campaign.days} days</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-white">
-                      <Icon name="bill" className="w-4 h-4 text-[#8e8e93] shrink-0" />
-                      <span className="text-xs font-medium leading-tight">
-                        {campaign.rate.t === 'pct' ? 'Paid per payment' : 'Paid per verified install'}
-                      </span>
-                    </div>
-                    <div className="pt-2 text-[11px] text-[#636366] font-mono leading-tight">
-                      Posted {campaign.posted}
-                    </div>
-                  </div>
+        {/* EXPANDABLE SECTION */}
+        {isExpanded && (
+          <div className="mt-4 pt-4 border-t border-[#2A2A2A] space-y-4 animate-[fade-in_0.2s_ease-out]">
+            {/* Description */}
+            <div>
+              <div className="text-[12px] text-[#9A9892] uppercase font-mono tracking-wider mb-1">
+                About campaign
+              </div>
+              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+                {campaign.desc}
+              </p>
+            </div>
 
-                  {/* Right Promotion Column */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#8e8e93] font-mono block">
-                        WHAT YOU’LL BE PROMOTING
-                      </span>
-                      <span
-                        className="text-[11px] font-mono transition-colors"
-                        style={{ color: activeColor }}
-                      >
-                        ● Verified Attribution
-                      </span>
-                    </div>
+            {/* Campaign specs grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#1C1C1C] rounded-[16px] p-3 border border-[#2A2A2A]/40 text-left">
+              <div>
+                <span className="block text-[11px] text-[#9A9892]">Bounty</span>
+                <span className="block text-[13px] font-medium text-[#F5F3EC]">
+                  ${campaign.price} / install
+                </span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-[#9A9892]">Settlement</span>
+                <span className="block text-[13px] font-medium text-[#F5F3EC]">
+                  Weekly (Fridays)
+                </span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-[#9A9892]">Attribution hold</span>
+                <span className="block text-[13px] font-medium text-[#C7F26B]">
+                  14 days
+                </span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-[#9A9892]">Rating</span>
+                <span className="block text-[13px] font-medium text-[#F5F3EC]">
+                  ★ {campaign.rating} ({campaign.installsVerified || '12.4k'})
+                </span>
+              </div>
+            </div>
 
-                    <p className="text-xs sm:text-sm text-[#d1d5db] leading-relaxed">
-                      {campaign.desc}
-                    </p>
-
-                    {/* 4 Phone Mockup Screens */}
-                    <div className="grid grid-cols-4 gap-2.5 sm:gap-3 py-3">
-                      {promoIcons.map((ic, idx) => (
-                        <div
-                          key={idx}
-                          className="h-36 sm:h-40 rounded-[18px] border p-2 flex flex-col justify-between shrink-0 shadow-xs transition-colors relative overflow-hidden"
-                          style={{
-                            backgroundColor: '#0e0e11',
-                            borderColor: hexToRgba(activeColor, 0.2),
-                          }}
-                        >
-                          {/* Top Speaker / Camera Pill */}
-                          <div className="w-5 h-1 rounded-full bg-white/20 mx-auto" />
-
-                          {/* App Content Display with Feature Icon */}
-                          <div
-                            className="w-full h-16 sm:h-20 rounded-xl flex items-center justify-center my-auto border border-white/5"
-                            style={{ backgroundColor: '#16161b' }}
-                          >
-                            <div style={{ color: activeColor }}>
-                              <Icon name={ic} className="w-5 h-5 sm:w-6 sm:h-6" />
-                            </div>
-                          </div>
-
-                          {/* Bottom UI Bar and Placeholder */}
-                          <div className="space-y-1">
-                            <div className="h-1 rounded-full bg-white/15 w-3/4 mx-auto" />
-                            <div
-                              className="h-2.5 sm:h-3 rounded-full"
-                              style={{
-                                backgroundColor: hexToRgba(activeColor, 0.8),
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Action Row: Tracking Link if joined + Dynamic Redirect Button */}
-                    <div className="pt-3 border-t border-white/5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                      {campaign.joined ? (
-                        <div
-                          className="flex items-center gap-2 flex-1 max-w-sm rounded-xl px-3 py-1.5 border transition-all"
-                          style={{
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            borderColor: hexToRgba(activeColor, 0.35),
-                          }}
-                        >
-                          <code className="text-xs font-mono text-white truncate flex-1">
-                            https://{linkOf(campaign)}
-                          </code>
-                          <button
-                            onClick={handleCopy}
-                            className="px-2.5 py-1 text-white rounded-md text-xs font-semibold shrink-0 transition-all cursor-pointer active:scale-95"
-                            style={{
-                              backgroundColor: activeColor,
-                            }}
-                          >
-                            {copiedLink ? 'Copied' : 'Copy'}
-                          </button>
-                          <button
-                            onClick={() => onOpenQr(campaign)}
-                            className="p-1 text-[#8e8e93] hover:text-white transition-colors shrink-0 cursor-pointer"
-                            title="QR Code"
-                          >
-                            <Icon name="qr" className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-xs text-[#8e8e93]">
-                          Join to generate your custom tracking link &amp; QR code.
-                        </div>
-                      )}
-
-                      <button
-                        onClick={handlePrimaryRedirect}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-xs font-semibold text-white transition-all cursor-pointer self-end sm:self-auto shrink-0 hover:bg-white/5 active:scale-95"
-                        style={{
-                          borderColor: hexToRgba(activeColor, 0.35),
-                          backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        }}
-                      >
-                        <span>
-                          {redirectMode === 'analytics'
-                            ? 'View analytics'
-                            : redirectMode === 'created'
-                            ? 'Campaign details'
-                            : 'Go to campaign page'}
-                        </span>
-                        <span className="text-xs">↗</span>
-                      </button>
-                    </div>
+            {/* If Joined: Tracking link in expanded card */}
+            {campaign.joined && (
+              <div className="bg-[#1C1C1C] rounded-[16px] p-3 border border-[#2A2A2A]/40 flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] text-[#9A9892]">Your tracking link</div>
+                  <div className="font-mono text-[12px] text-[#F5F3EC] truncate">
+                    kred.link/{slug}/you
                   </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="pill on text-[12px] py-1.5 px-3 shrink-0 min-h-[38px]"
+                >
+                  {copied ? 'Copied' : 'Copy link'}
+                </button>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </article>
+            )}
+
+            {/* Bottom expanded buttons */}
+            <div className="flex items-center justify-between gap-2 pt-1 flex-wrap">
+              <button
+                type="button"
+                onClick={handleViewDetailPage}
+                className="ol min-h-[44px] px-4 hover:bg-[#242424] text-[#F5F3EC] cursor-pointer"
+              >
+                <span>View full campaign page</span>
+                <i className="ti ti-arrow-right text-[12px]" aria-hidden="true"></i>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleToggleExpand}
+                className="pill gh min-h-[44px] px-3 text-[#9A9892] hover:text-[#F5F3EC] cursor-pointer"
+              >
+                <span>Collapse</span>
+                <i className="ti ti-chevron-up text-[14px]"></i>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Icon } from './Icons';
 
 interface ToastProps {
   message: string | null;
@@ -21,17 +20,12 @@ export const Toast: React.FC<ToastProps> = ({ message, type = 'info', onClose })
   return (
     <div
       role="status"
-      className="fixed left-1/2 bottom-8 -translate-x-1/2 z-50 flex items-center gap-2.5 px-5 py-3 rounded-full text-sm font-medium shadow-2xl border transition-all animate-[rise_0.25s_cubic-bezier(0.16,1,0.3,1)]"
-      style={{
-        backgroundColor: 'var(--inv)',
-        color: 'var(--ton)',
-        borderColor: 'var(--line)',
-      }}
+      className="fixed left-1/2 bottom-8 -translate-x-1/2 z-50 flex items-center gap-2.5 px-5 py-2.5 rounded-full text-[13px] font-medium shadow-2xl bg-[#F5F3EC] text-[#0B0B0B] border border-[#2A2A2A]/20 transition-all select-none animate-[pop_0.2s_ease-out]"
     >
-      <Icon
-        name={type === 'success' ? 'check' : 'spark'}
-        className="w-4 h-4 shrink-0 text-[var(--blue)]"
-      />
+      <i
+        className={`ti ${type === 'success' ? 'ti-check' : 'ti-info-circle'} text-[16px] text-[#16140F]`}
+        aria-hidden="true"
+      ></i>
       <span>{message}</span>
     </div>
   );

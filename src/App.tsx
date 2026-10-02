@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ThemeProvider } from './context/ThemeContext';
 import { Campaign } from './types/campaign';
 import { INITIAL_CAMPAIGNS, linkOf } from './data/campaigns';
 import { Header } from './components/Header';
@@ -10,17 +9,19 @@ import { CampaignAnalyticsView } from './components/CampaignAnalyticsView';
 import { EarningsView } from './components/EarningsView';
 import { ProfileView } from './components/ProfileView';
 import { CreateCampaignView } from './components/CreateCampaignView';
+import { PayoutMethodsView } from './components/PayoutMethodsView';
+import { BillingView } from './components/BillingView';
+import { NotificationSettingsView } from './components/NotificationSettingsView';
 import { QrCodeModal } from './components/QrCodeModal';
 import { Toast } from './components/Toast';
 import { Confetti } from './components/Confetti';
 import {
-  AvatarMood,
   DEFAULT_AVATAR_PALETTE,
   DEFAULT_AVATAR_MOOD,
 } from './components/SmileyAvatar';
-import { getCampaignTheme } from './utils/campaignTheme';
+import { INITIAL_NOTIFICATIONS } from './components/NotificationsDropdown';
 
-const STORAGE_KEY = 'kred_campaigns_app_v6';
+const STORAGE_KEY = 'kred_campaigns_app_v11';
 
 export default function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>(() => {
@@ -38,18 +39,24 @@ export default function App() {
     return INITIAL_CAMPAIGNS;
   });
 
-  // Profile avatar orb palette and mood
+  // Account balances
+  const [balance, setBalance] = useState(248.6);
+  const [campaignBalance, setCampaignBalance] = useState(3420.0);
+
+  // Avatar customization
   const [avatarPalette, setAvatarPalette] = useState<string>(() => {
     try {
-      return localStorage.getItem('kred_avatar_palette') || DEFAULT_AVATAR_PALETTE;
+      const stored = localStorage.getItem('kred_avatar_palette');
+      if (stored && stored.startsWith('#')) return stored;
+      return DEFAULT_AVATAR_PALETTE;
     } catch {
       return DEFAULT_AVATAR_PALETTE;
     }
   });
 
-  const [avatarMood, setAvatarMood] = useState<AvatarMood>(() => {
+  const [avatarMood, setAvatarMood] = useState<string>(() => {
     try {
-      return (localStorage.getItem('kred_avatar_mood') as AvatarMood) || DEFAULT_AVATAR_MOOD;
+      return localStorage.getItem('kred_avatar_mood') || DEFAULT_AVATAR_MOOD;
     } catch {
       return DEFAULT_AVATAR_MOOD;
     }
@@ -62,22 +69,42 @@ export default function App() {
     } catch {}
   };
 
-  const handleSelectMood = (mood: AvatarMood) => {
+  const handleSelectMood = (mood: string) => {
     setAvatarMood(mood);
     try {
       localStorage.setItem('kred_avatar_mood', mood);
     } catch {}
   };
 
-  // Ambient profile color for user
-  const [ambientColor] = useState<string>('#252528');
-
-  // Navigation tabs: 'campaigns' | 'discover' | 'earnings' | 'profile' | 'create'
-  const [currentTab, setCurrentTab] = useState<'campaigns' | 'discover' | 'earnings' | 'profile' | 'create'>('campaigns');
-  // Campaign Filter: strictly 'open' | 'joined'
+  // Navigation tab states
+  const [currentTab, setCurrentTab] = useState<
+    'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings'
+  >('campaigns');
   const [filterTab, setFilterTab] = useState<'open' | 'joined'>('open');
   const [activeDetailId, setActiveDetailId] = useState<string | null>(null);
   const [activeAnalyticsId, setActiveAnalyticsId] = useState<string | null>(null);
+
+  // Notifications read map
+  const [readMap, setReadMap] = useState<Record<number, boolean>>({
+    3: true,
+    4: true,
+    8: true,
+  });
+
+  const handleMarkRead = (id: number) => {
+    setReadMap((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleMarkAllRead = () => {
+    const next: Record<number, boolean> = {};
+    INITIAL_NOTIFICATIONS.forEach((n) => {
+      next[n.id] = true;
+    });
+    setReadMap(next);
+    setToastMessage('All notifications marked as read');
+  };
+
+  const unreadCount = INITIAL_NOTIFICATIONS.filter((n) => !readMap[n.id]).length;
 
   // Modals & Feedback
   const [qrCampaign, setQrCampaign] = useState<Campaign | null>(null);
@@ -100,13 +127,18 @@ export default function App() {
     }
   }, [campaigns]);
 
-  // Handle URL Hash Routing
+  // Handle URL Hash Routing (Direct to page, no overlay display!)
   const parseHash = useCallback(() => {
     const hash = window.location.hash || '#/';
     if (hash.startsWith('#/analytics/')) {
       const id = hash.replace('#/analytics/', '');
       setActiveAnalyticsId(id);
       setActiveDetailId(null);
+      setCurrentTab('analytics');
+    } else if (hash.startsWith('#/analytics')) {
+      setActiveAnalyticsId(null);
+      setActiveDetailId(null);
+      setCurrentTab('analytics');
     } else if (hash.startsWith('#/c/')) {
       const id = hash.replace('#/c/', '');
       setActiveDetailId(id);
@@ -123,6 +155,18 @@ export default function App() {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
       setCurrentTab('earnings');
+    } else if (hash.startsWith('#/payout-methods')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('payout-methods');
+    } else if (hash.startsWith('#/billing')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('billing');
+    } else if (hash.startsWith('#/notification-settings')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('notification-settings');
     } else if (hash.startsWith('#/profile')) {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
@@ -140,7 +184,9 @@ export default function App() {
     return () => window.removeEventListener('hashchange', parseHash);
   }, [parseHash]);
 
-  const handleNavigateTab = (tab: 'campaigns' | 'discover' | 'earnings' | 'profile' | 'create') => {
+  const handleNavigateTab = (
+    tab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings'
+  ) => {
     setActiveDetailId(null);
     setActiveAnalyticsId(null);
     setCurrentTab(tab);
@@ -148,6 +194,14 @@ export default function App() {
       window.location.hash = '#/discover';
     } else if (tab === 'earnings') {
       window.location.hash = '#/earnings';
+    } else if (tab === 'analytics') {
+      window.location.hash = '#/analytics';
+    } else if (tab === 'payout-methods') {
+      window.location.hash = '#/payout-methods';
+    } else if (tab === 'billing') {
+      window.location.hash = '#/billing';
+    } else if (tab === 'notification-settings') {
+      window.location.hash = '#/notification-settings';
     } else if (tab === 'profile') {
       window.location.hash = '#/profile';
     } else if (tab === 'create') {
@@ -189,37 +243,49 @@ export default function App() {
 
   // Join Campaign Flow
   const handleJoin = (campaign: Campaign, targetEl?: HTMLElement) => {
-    const cTheme = getCampaignTheme(campaign);
-    setConfettiColors([
-      cTheme.primary,
-      cTheme.accentHover,
-      '#ffffff',
-      cTheme.secondary,
-      '#fcd34d',
-    ]);
+    const isNowJoined = !campaign.joined;
 
-    if (targetEl) {
-      const rect = targetEl.getBoundingClientRect();
-      setConfettiOrigin({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      });
+    if (isNowJoined) {
+      setConfettiColors([
+        campaign.bg || '#C7F26B',
+        '#ffffff',
+        campaign.fg || '#16140F',
+        '#C7F26B',
+      ]);
+
+      if (targetEl) {
+        const rect = targetEl.getBoundingClientRect();
+        setConfettiOrigin({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        });
+      } else {
+        setConfettiOrigin({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        });
+      }
+
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === campaign.id
+            ? { ...c, joined: true, creators: c.creators + 1 }
+            : c
+        )
+      );
+
+      setIsFreshJoin(true);
+      setToastMessage(`Joined ${campaign.name}. Tracking link ready.`);
     } else {
-      setConfettiOrigin({
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-      });
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === campaign.id
+            ? { ...c, joined: false, creators: Math.max(1, c.creators - 1) }
+            : c
+        )
+      );
+      setToastMessage(`Left ${campaign.name}.`);
     }
-
-    setCampaigns((prev) =>
-      prev.map((c) =>
-        c.id === campaign.id ? { ...c, joined: true, creators: c.creators + 1 } : c
-      )
-    );
-
-    setIsFreshJoin(true);
-    setQrCampaign(campaign);
-    setToastMessage(`Joined ${campaign.name}! Tracking link ready.`);
   };
 
   // Copy Link Handler
@@ -236,174 +302,224 @@ export default function App() {
         document.execCommand('copy');
         document.body.removeChild(textarea);
       }
-      setToastMessage('Link copied');
+      setToastMessage('Tracking link copied to clipboard');
     } catch {
       setToastMessage(`Link: ${linkOf(campaign)}`);
-    }
-  };
-
-  // Share Handler
-  const handleShare = async (campaign: Campaign) => {
-    const url = `https://${linkOf(campaign)}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: campaign.name,
-          text: `Try ${campaign.name}`,
-          url,
-        });
-      } catch {
-        // User cancelled
-      }
-    } else {
-      handleCopyLink(campaign);
     }
   };
 
   // Create Campaign Callback
   const handleCreateCampaign = (newCamp: Campaign) => {
     setCampaigns((prev) => [newCamp, ...prev]);
-    setToastMessage(`Campaign launched! Attribution live.`);
-    handleNavigateTab('campaigns');
+    setToastMessage(`Campaign published. Live in marketplace.`);
+  };
+
+  // Withdraw simulation
+  const handleExecuteWithdraw = () => {
+    if (balance <= 0) {
+      setToastMessage('No available balance to withdraw');
+      return;
+    }
+    const amountStr = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    setBalance(0);
+    setToastMessage(`Withdrawal of ${amountStr} scheduled for Friday settlement`);
+  };
+
+  // Add funds simulation
+  const handleExecuteAddFunds = (amount: number) => {
+    setCampaignBalance((prev) => prev + amount);
+    setToastMessage(`Funded $${amount.toLocaleString('en-US')} to campaign balance`);
   };
 
   const activeCampaign = activeDetailId
     ? campaigns.find((c) => c.id === activeDetailId) || null
     : null;
 
-  const activeAnalyticsCampaign = activeAnalyticsId
-    ? campaigns.find((c) => c.id === activeAnalyticsId) || null
-    : null;
-
   return (
-    <ThemeProvider>
-      <div className="min-h-screen flex flex-col font-sans transition-colors duration-200 relative overflow-x-hidden">
-        {/* Clean top hairline linear accent (strictly linear without heavy glow) */}
-        <div
-          className="pointer-events-none fixed top-0 left-0 right-0 h-[1.5px] -z-10"
-          style={{
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-          }}
-        />
+    <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F3EC] relative overflow-x-hidden selection:bg-[#C7F26B]/30 selection:text-white">
+      {/* Edge-to-Edge Topbar: spans corner-to-corner */}
+      <Header
+        currentTab={currentTab}
+        onNavigate={handleNavigateTab}
+        onNavigateCampaign={handleNavigateDetail}
+        avatarPalette={avatarPalette}
+        avatarMood={avatarMood}
+        unreadCount={unreadCount}
+        readMap={readMap}
+        onMarkRead={handleMarkRead}
+        onMarkAllRead={handleMarkAllRead}
+        balance={balance}
+      />
 
-        <Header
-          currentTab={currentTab}
-          onNavigate={handleNavigateTab}
-          onCreateClick={() => handleNavigateTab('create')}
-          onNavigateCampaign={handleNavigateDetail}
-          avatarPalette={avatarPalette}
-          avatarMood={avatarMood}
-        />
+      {/* Main Full-Width Content Container */}
+      <main className="flex-1 pb-20 sm:pb-12">
+        {activeCampaign ? (
+          /* Campaign Detail View */
+          <CampaignDetail
+            campaign={activeCampaign}
+            allCampaigns={campaigns}
+            onJoin={handleJoin}
+            onOpenQr={(c) => {
+              setIsFreshJoin(false);
+              setQrCampaign(c);
+            }}
+            onCopyLink={handleCopyLink}
+            onShare={() => handleCopyLink(activeCampaign)}
+            onNavigateDetail={handleNavigateDetail}
+            onNavigateAnalytics={handleNavigateAnalytics}
+            onBack={handleBackFromDetail}
+          />
+        ) : currentTab === 'payout-methods' ? (
+          /* Dedicated Payout Methods Page */
+          <PayoutMethodsView
+            onBack={() => handleNavigateTab('profile')}
+            availableBalance={balance}
+            onInitiateWithdraw={handleExecuteWithdraw}
+          />
+        ) : currentTab === 'billing' ? (
+          /* Dedicated Billing Page */
+          <BillingView
+            onBack={() => handleNavigateTab('profile')}
+            balance={campaignBalance}
+            onAddFunds={handleExecuteAddFunds}
+          />
+        ) : currentTab === 'notification-settings' ? (
+          /* Dedicated Notification Settings Page */
+          <NotificationSettingsView
+            onBack={() => handleNavigateTab('profile')}
+          />
+        ) : currentTab === 'analytics' ? (
+          /* DEDICATED Campaign Analytics for specific app */
+          <CampaignAnalyticsView
+            campaigns={campaigns}
+            initialCampaignId={activeAnalyticsId}
+            onNavigateCampaign={handleNavigateDetail}
+            onBack={() => handleNavigateTab('profile')}
+            onCreateCampaign={() => handleNavigateTab('create')}
+          />
+        ) : currentTab === 'earnings' ? (
+          /* DEDICATED Earnings Page */
+          <EarningsView
+            campaigns={campaigns}
+            onNavigateCampaign={handleNavigateDetail}
+            onBack={() => handleNavigateTab('campaigns')}
+            onWithdraw={() => handleNavigateTab('payout-methods')}
+            onBrowseCampaigns={() => handleNavigateTab('campaigns')}
+          />
+        ) : currentTab === 'create' ? (
+          /* Create Campaign Flow */
+          <CreateCampaignView
+            onBack={() => handleNavigateTab('campaigns')}
+            onCreate={handleCreateCampaign}
+          />
+        ) : currentTab === 'discover' ? (
+          /* Discover View */
+          <DiscoverView
+            campaigns={campaigns}
+            onJoin={handleJoin}
+            onNavigateDetail={handleNavigateDetail}
+          />
+        ) : currentTab === 'profile' ? (
+          /* Profile & App Analytics Launcher */
+          <ProfileView
+            onBack={() => handleNavigateTab('campaigns')}
+            campaigns={campaigns}
+            onNavigateCampaign={handleNavigateDetail}
+            onNavigateAnalytics={handleNavigateAnalytics}
+            onNavigatePayoutMethods={() => handleNavigateTab('payout-methods')}
+            onNavigateBilling={() => handleNavigateTab('billing')}
+            onNavigateNotificationSettings={() => handleNavigateTab('notification-settings')}
+            onCreateCampaign={() => handleNavigateTab('create')}
+            avatarPalette={avatarPalette}
+            avatarMood={avatarMood}
+            onSelectPalette={handleSelectPalette}
+            onSelectMood={handleSelectMood}
+          />
+        ) : (
+          /* Campaigns Marketplace List */
+          <CampaignsList
+            campaigns={campaigns}
+            filterTab={filterTab}
+            setFilterTab={setFilterTab}
+            onJoin={handleJoin}
+            onOpenQr={(c) => {
+              setIsFreshJoin(false);
+              setQrCampaign(c);
+            }}
+            onCopyLink={handleCopyLink}
+            onShare={() => {}}
+            onNavigateDetail={handleNavigateDetail}
+            onNavigateAnalytics={handleNavigateAnalytics}
+          />
+        )}
+      </main>
 
-        <main className="flex-1">
-          {activeAnalyticsCampaign ? (
-            <CampaignAnalyticsView
-              campaign={activeAnalyticsCampaign}
-              onBack={() => {
-                setActiveAnalyticsId(null);
-                setFilterTab('joined');
-                handleNavigateTab('campaigns');
-              }}
-              onOpenQr={(c) => {
-                setIsFreshJoin(false);
-                setQrCampaign(c);
-              }}
-              onCopyLink={handleCopyLink}
-              onShare={handleShare}
-            />
-          ) : activeCampaign ? (
-            <CampaignDetail
-              campaign={activeCampaign}
-              allCampaigns={campaigns}
-              onJoin={handleJoin}
-              onOpenQr={(c) => {
-                setIsFreshJoin(false);
-                setQrCampaign(c);
-              }}
-              onCopyLink={handleCopyLink}
-              onShare={handleShare}
-              onNavigateDetail={handleNavigateDetail}
-              onNavigateAnalytics={handleNavigateAnalytics}
-              onBack={handleBackFromDetail}
-            />
-          ) : currentTab === 'create' ? (
-            <CreateCampaignView
-              onBack={() => handleNavigateTab('campaigns')}
-              onCreate={handleCreateCampaign}
-            />
-          ) : currentTab === 'discover' ? (
-            <DiscoverView
-              campaigns={campaigns}
-              onJoin={handleJoin}
-              onNavigateDetail={handleNavigateDetail}
-              onSelectCategory={() => {
-                handleNavigateTab('campaigns');
-              }}
-            />
-          ) : currentTab === 'earnings' ? (
-            <EarningsView
-              campaigns={campaigns}
-              onNavigateCampaign={handleNavigateDetail}
-              onBack={() => handleNavigateTab('campaigns')}
-            />
-          ) : currentTab === 'profile' ? (
-            <ProfileView
-              onBack={() => handleNavigateTab('campaigns')}
-              onNavigateEarnings={() => handleNavigateTab('earnings')}
-              avatarPalette={avatarPalette}
-              avatarMood={avatarMood}
-              onSelectPalette={handleSelectPalette}
-              onSelectMood={handleSelectMood}
-              campaigns={campaigns}
-              onNavigateCampaign={handleNavigateDetail}
-              onNavigateAnalytics={handleNavigateAnalytics}
-              onJoin={handleJoin}
-              onOpenQr={(c) => {
-                setIsFreshJoin(false);
-                setQrCampaign(c);
-              }}
-              onCopyLink={handleCopyLink}
-              onShare={handleShare}
-            />
-          ) : (
-            <CampaignsList
-              campaigns={campaigns}
-              filterTab={filterTab}
-              setFilterTab={setFilterTab}
-              onJoin={handleJoin}
-              onOpenQr={(c) => {
-                setIsFreshJoin(false);
-                setQrCampaign(c);
-              }}
-              onCopyLink={handleCopyLink}
-              onShare={handleShare}
-              onNavigateDetail={handleNavigateDetail}
-              onNavigateAnalytics={handleNavigateAnalytics}
-            />
-          )}
-        </main>
+      {/* Mobile Bottom Tab Bar */}
+      <nav
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0E0E0E]/95 backdrop-blur-md border-t border-[#2A2A2A] px-2 py-1.5 flex items-center justify-around select-none"
+        aria-label="Mobile Navigation"
+      >
+        <button
+          onClick={() => handleNavigateTab('campaigns')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+            currentTab === 'campaigns' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          }`}
+        >
+          <i className="ti ti-speakerphone text-[18px]"></i>
+          <span className="text-[10px] font-medium">Campaigns</span>
+        </button>
 
-        {/* Modals & Overlays */}
-        <QrCodeModal
-          campaign={qrCampaign}
-          isOpen={!!qrCampaign}
-          onClose={() => setQrCampaign(null)}
-          onCopy={handleCopyLink}
-          onShare={handleShare}
-          isFreshJoin={isFreshJoin}
-        />
+        <button
+          onClick={() => handleNavigateTab('discover')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+            currentTab === 'discover' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          }`}
+        >
+          <i className="ti ti-compass text-[18px]"></i>
+          <span className="text-[10px] font-medium">Discover</span>
+        </button>
 
-        <Confetti
-          origin={confettiOrigin}
-          colors={confettiColors}
-          onComplete={() => {
-            setConfettiOrigin(null);
-            setConfettiColors(undefined);
-          }}
-        />
+        <button
+          onClick={() => handleNavigateTab('create')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+            currentTab === 'create' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          }`}
+        >
+          <i className="ti ti-plus text-[18px]"></i>
+          <span className="text-[10px] font-medium">Create</span>
+        </button>
 
-        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
-      </div>
-    </ThemeProvider>
+        <button
+          onClick={() => handleNavigateTab('profile')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+            currentTab === 'profile' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          }`}
+        >
+          <i className="ti ti-user text-[18px]"></i>
+          <span className="text-[10px] font-medium">Profile</span>
+        </button>
+      </nav>
+
+      {/* QR Code Modal */}
+      <QrCodeModal
+        campaign={qrCampaign}
+        isOpen={!!qrCampaign}
+        onClose={() => setQrCampaign(null)}
+        onCopy={handleCopyLink}
+        onShare={() => {}}
+        isFreshJoin={isFreshJoin}
+      />
+
+      <Confetti
+        origin={confettiOrigin}
+        colors={confettiColors}
+        onComplete={() => {
+          setConfettiOrigin(null);
+          setConfettiColors(undefined);
+        }}
+      />
+
+      <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+    </div>
   );
 }

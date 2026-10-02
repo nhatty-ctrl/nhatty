@@ -5,57 +5,48 @@
     /* Fonts */
     --font-sans: "Inter", "SF Pro Text", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-serif: "Source Serif 4", Georgia, serif;
+    --font-voice: var(--font-serif);
     --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-    /* KRED Original Design System Palette matching Screenshot */
-    --bg: #141416;
-    --surface: #1e1e22;
-    --surface-raised: #28282d;
-    --hover: #29292e;
-    --active: #323238;
-    --border: rgba(255, 255, 255, 0.07);
-    --border-strong: rgba(255, 255, 255, 0.12);
-    --line: rgba(255, 255, 255, 0.07);
-    
-    --t1: #ffffff;
-    --t2: #8e8e93;
-    --t3: #636366;
-    --inv: #ffffff;
-    --ton: #141416;
-    
-    --blue: #1a8cff;
-    --blue-h: #3d9eff;
-    --blue-p: #1478db;
-    --conf: #1b5a8f;
-    --conf-t: #e6f1fb;
-    --ring: #6db8ff;
-    --overlay: rgba(0, 0, 0, 0.65);
+    /* kred official design system palette */
+    --bg: #0B0B0B;
+    --surface: #161616;
+    --surface-2: #1C1C1C;
+    --surface-3: #242424;
+    --line: #2A2A2A;
 
-    color-scheme: dark;
-  }
+    --text: #F5F3EC;
+    --text-2: #B9B7AF;
+    --text-3: #9A9892;
 
-  /* Temporary / Quick Low-Light OLED Pure Black Mode */
-  [data-oled="true"] {
-    --bg: #000000;
-    --surface: #0e0e0e;
-    --surface-raised: #181818;
-    --hover: #1e1e1e;
-    --active: #282828;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.16);
-    --line: rgba(255, 255, 255, 0.08);
-    
-    --t1: #f5f5f5;
-    --t2: #999999;
-    --t3: #666666;
-    --inv: #ffffff;
-    --ton: #000000;
+    --accent: #C7F26B; /* Lime accent for active/latest/on/success */
+    --danger: #FF8A80;
+    --warn: #FFC857;
 
-    --blue: #258cfb;
-    --blue-h: #4da3fc;
-    --conf: #132b47;
-    --conf-t: #dbeafe;
-    --overlay: rgba(0, 0, 0, 0.85);
+    /* Pastel pairs: fill + dark on-color */
+    --purple: #CECBF6;
+    --on-purple: #26215C;
+    --coral: #F5C4B3;
+    --on-coral: #4A1B0C;
+    --blue: #B5D4F4;
+    --on-blue: #042C53;
+    --green: #C0DD97;
+    --on-green: #173404;
+    --pink: #F4C0D1;
+    --on-pink: #4B1528;
+    --amber: #FAC775;
+    --on-amber: #412402;
+    --teal: #9FE1CB;
+    --on-teal: #04342C;
+    --tools: #D3D1C7;
+    --on-tools: #2C2C2A;
+
+    /* Radii */
+    --r-pill: 999px;
+    --r-card: 20px;
+    --r-inner: 16px;
+    --r-input: 14px;
+    --r-tile: 12px;
 
     color-scheme: dark;
   }
@@ -64,34 +55,336 @@
 html {
   min-height: 100%;
   background-color: var(--bg);
-  color: var(--t1);
+  color: var(--text);
   font-family: var(--font-sans);
   scroll-behavior: smooth;
   scroll-padding-top: 72px;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background-color: var(--bg);
-  color: var(--t1);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numerals for telemetry and stats */
+/* KRED Design System Utility Classes */
+.pill {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: #B9B7AF;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.pill:active {
+  transform: scale(0.97);
+}
+
+.pill.on {
+  background: #F5F3EC;
+  color: #0B0B0B;
+}
+
+.pill.on:hover {
+  background: #E4E1D6;
+}
+
+.pill.out {
+  background: #1C1C1C;
+  color: #F5F3EC;
+}
+
+.pill.out:hover {
+  background: #242424;
+}
+
+.pill.gh {
+  background: transparent;
+  color: #B9B7AF;
+}
+
+.pill.gh:hover {
+  color: #F5F3EC;
+}
+
+.card {
+  background: #161616;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 0;
+  background: #1C1C1C;
+  color: #B9B7AF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip:hover {
+  color: #F5F3EC;
+}
+
+.chip.sel {
+  background: #F5F3EC;
+  color: #0B0B0B;
+}
+
+.in {
+  width: 100%;
+  height: 46px;
+  background: #1C1C1C;
+  border: 1px solid #1C1C1C;
+  border-radius: 14px;
+  color: #F5F3EC;
+  padding: 0 14px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.in:focus {
+  outline: none;
+  border-color: #F5F3EC;
+}
+
+.fl {
+  font-size: 12px;
+  color: #9A9892;
+  margin: 12px 0 6px;
+  display: block;
+}
+
+.sec {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 24px 0 2px;
+}
+
+.sub {
+  font-size: 12px;
+  color: #9A9892;
+}
+
+.row2 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 10px 0;
+  border-top: 0.5px solid #2A2A2A;
+}
+
+.row2 span:first-child {
+  color: #9A9892;
+}
+
+.code {
+  background: #0F0F0F;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #D8D7D2;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.opt {
+  width: 100%;
+  text-align: left;
+  background: #1C1C1C;
+  border: 1.5px solid #1C1C1C;
+  border-radius: 16px;
+  padding: 12px 14px;
+  color: #F5F3EC;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.opt.sel {
+  border-color: #F5F3EC;
+}
+
+.ex {
+  background: #1C1C1C;
+  border-radius: 16px;
+  padding: 14px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #9A9892;
+}
+
+/* Custom switch toggle */
+.sw {
+  width: 42px;
+  height: 24px;
+  border-radius: 12px;
+  border: 0;
+  background: #2E2E2E;
+  position: relative;
+  padding: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sw.on {
+  background: #C7F26B;
+}
+
+.sw i {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #F5F3EC;
+  transition: left 0.2s ease, background 0.2s ease;
+}
+
+.sw.on i {
+  left: 21px;
+  background: #16140F;
+}
+
+/* Segments progress bar */
+.seg {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: #242424;
+  transition: background 0.25s ease;
+}
+
+.seg.on {
+  background: #F5F3EC;
+}
+
+/* Phone mockup frames */
+.ph {
+  width: 76px;
+  border-radius: 18px;
+  border: 3px solid #2A2A2A;
+  background: #0F0F0F;
+  padding: 8px 6px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.ph:hover {
+  transform: translateY(-2px);
+}
+
+/* Split button */
+.split {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 999px;
+  background: #F5F3EC;
+  color: #0B0B0B;
+  overflow: hidden;
+}
+
+.split button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.split button:hover {
+  background: #E4E1D6;
+}
+
+.split .m {
+  padding: 10px 18px;
+}
+
+.split .c {
+  padding: 0 13px;
+  border-left: 1px solid rgba(11, 11, 11, 0.18);
+}
+
+.split.j {
+  background: #1C1C1C;
+  color: #F5F3EC;
+}
+
+.split.j button:hover {
+  background: #242424;
+}
+
+.split.j .c {
+  border-left-color: #2E2E2E;
+}
+
+/* Outline button */
+.ol {
+  background: transparent;
+  border: 1px solid #2E2E2E;
+  color: #F5F3EC;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s ease;
+}
+
+button.ol:hover {
+  border-color: #F5F3EC;
+}
+
+.ci {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  justify-content: center;
+  font-size: 17px;
+}
+
+/* Tabular numerals for stats */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* Focus styles */
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-/* Custom subtle scrollbar */
+/* Subtle scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -100,19 +393,18 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--line);
+  background: #2A2A2A;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--t3);
+  background: #9A9892;
 }
 
-@keyframes pop {
-  0% { transform: scale(0.94); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+@keyframes sp {
+  to { transform: rotate(360deg); }
 }
 
-@keyframes rise {
-  0% { transform: translateY(10px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+.spin {
+  display: inline-block;
+  animation: sp 1s linear infinite;
 }

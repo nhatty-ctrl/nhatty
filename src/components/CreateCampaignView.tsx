@@ -41,6 +41,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Step 0: Campaign form
   const [apple, setApple] = useState('');
@@ -175,21 +176,31 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
   // Step validation and transition
   const handleNext = () => {
     setErr('');
+    setFieldErrors({});
+
     if (step === 0) {
+      const errors: Record<string, string> = {};
       if (!apple && !play) {
-        setErr('Add an App Store or Google Play link.');
-        return;
+        errors.links = 'Add at least one valid store link (App Store or Google Play).';
+      } else if ((apple && !isValidUrl(apple)) || (play && !isValidUrl(play))) {
+        errors.links = 'Store links must start with https://';
       }
-      if ((apple && !isValidUrl(apple)) || (play && !isValidUrl(play))) {
-        setErr('Links need to start with https://');
-        return;
-      }
+
       if (!name.trim()) {
-        setErr('Enter your app name.');
-        return;
+        errors.name = 'App name is required.';
       }
       if (!co.trim()) {
-        setErr('Enter your company name.');
+        errors.co = 'Company name is required (enter manually if not present in store link).';
+      }
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        const firstErrMsg = Object.values(errors)[0];
+        setErr(firstErrMsg);
+        // Scroll to the first invalid field
+        const firstFieldId = errors.links ? 'apple-link' : errors.name ? 'app-name' : 'company-name';
+        document.getElementById(firstFieldId)?.focus();
+        document.getElementById(firstFieldId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
     }
@@ -375,62 +386,83 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[15px] font-medium">{name || 'Your app'}</div>
-                    <div className="text-[12px] text-[#9A9892] mt-0.5">
-                      {co ? `By ${co}` : 'Company not found, add it below'} · {cat}
+                    <div className="text-[12px] text-[#A8A69E] mt-0.5">
+                      {co ? `By ${co}` : 'Company not in store URL · enter below'} · {cat}
                     </div>
                   </div>
                   <span className="text-[12px] text-[#C7F26B] flex items-center gap-1 whitespace-nowrap">
                     <i className="ti ti-check" aria-hidden="true"></i>
-                    <span>Pulled from link</span>
+                    <span>Name & Category pulled</span>
                   </span>
                 </div>
               ) : ex === 'error' ? (
                 <div className="ex border border-[#FF8A80]/30 text-[#F5F3EC]">
                   <i className="ti ti-info-circle text-[20px] text-[#FF8A80]" aria-hidden="true"></i>
                   <span className="text-[13px] text-[#B9B7AF]">
-                    We could not read this store link. Enter your app name, company, and category manually below.
+                    We could not auto-read this store link. Enter your app name, company, and category manually below.
                   </span>
                 </div>
               ) : (
-                <div className="ex border border-dashed border-[#333] bg-transparent">
-                  <i className="ti ti-wand text-[18px]" aria-hidden="true"></i>
-                  <span>Paste a store link and we fill in the name, company, and category.</span>
+                <div className="ex border border-dashed border-[#333] bg-transparent text-[12.5px] text-[#A8A69E]">
+                  <i className="ti ti-wand text-[18px] text-[#C7F26B]" aria-hidden="true"></i>
+                  <span>Enter an App Store or Google Play link to auto-fill app name and category. Company name and payout settings are set below.</span>
                 </div>
               )}
             </div>
+
+            {fieldErrors.links && (
+              <div className="text-[12px] text-[#FF8A80] mt-1.5 flex items-center gap-1">
+                <i className="ti ti-alert-circle"></i>
+                <span>{fieldErrors.links}</span>
+              </div>
+            )}
 
             {/* Details Section */}
             <div className="sec">Details</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label className="fl" htmlFor="app-name">
-                  App name
+                  App name *
                 </label>
                 <input
                   id="app-name"
-                  className="in"
+                  className={`in ${fieldErrors.name ? 'border-[#FF8A80] focus:border-[#FF8A80]' : ''}`}
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
                     autoNameRef.current = false;
+                    setFieldErrors((prev) => ({ ...prev, name: '' }));
                   }}
                   placeholder="Pixel Pop"
                 />
+                {fieldErrors.name && (
+                  <div className="text-[11px] text-[#FF8A80] mt-1 flex items-center gap-1">
+                    <i className="ti ti-alert-circle"></i>
+                    <span>{fieldErrors.name}</span>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="fl" htmlFor="company-name">
-                  Company name
+                  Company name *
                 </label>
                 <input
                   id="company-name"
-                  className="in"
+                  className={`in ${fieldErrors.co ? 'border-[#FF8A80] focus:border-[#FF8A80]' : ''}`}
                   placeholder="Nova Play Studio"
                   value={co}
                   onChange={(e) => {
                     setCo(e.target.value);
                     autoCoRef.current = false;
+                    setFieldErrors((prev) => ({ ...prev, co: '' }));
                   }}
                 />
+                {fieldErrors.co && (
+                  <div className="text-[11px] text-[#FF8A80] mt-1 flex items-center gap-1">
+                    <i className="ti ti-alert-circle"></i>
+                    <span>{fieldErrors.co}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -833,8 +865,13 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
           </div>
         )}
 
-        {/* Error message */}
-        {err && <div className="text-[13px] text-[#FF8A80] min-h-[18px]">{err}</div>}
+        {/* Error banner prominently above Continue */}
+        {err && (
+          <div className="p-3 bg-[#FF8A80]/15 border border-[#FF8A80]/40 rounded-[14px] text-[13px] text-[#FF8A80] flex items-center gap-2">
+            <i className="ti ti-alert-circle text-[16px] shrink-0"></i>
+            <span>{err}</span>
+          </div>
+        )}
       </div>
 
       {/* Footer Navigation Buttons */}

@@ -37,7 +37,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   const visibleCampaigns = filterTab === 'open' ? openCampaigns : joinedCampaigns;
 
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       {/* Title & Filter bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>

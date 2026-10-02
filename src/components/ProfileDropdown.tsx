@@ -1,34 +1,31 @@
 import React, { useRef, useEffect } from 'react';
-import { SmileyAvatar, DEFAULT_AVATAR_PALETTE, DEFAULT_AVATAR_MOOD } from './SmileyAvatar';
 
 interface ProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  avatarPalette?: string;
-  avatarMood?: string;
   balance?: number;
-  onNavigateProfile: () => void;
   onNavigateEarnings: () => void;
   onNavigateAnalytics: () => void;
   onNavigatePayoutMethods: () => void;
   onNavigateBilling: () => void;
-  onNavigateNotificationSettings: () => void;
+  onNavigateSettings: () => void;
 }
 
 export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   isOpen,
   onClose,
-  avatarPalette = DEFAULT_AVATAR_PALETTE,
-  avatarMood = DEFAULT_AVATAR_MOOD,
   balance = 248.6,
-  onNavigateProfile,
   onNavigateEarnings,
   onNavigateAnalytics,
   onNavigatePayoutMethods,
   onNavigateBilling,
-  onNavigateNotificationSettings,
+  onNavigateSettings,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
+
+  const firstName = localStorage.getItem('kred_fname') || 'Amara';
+  const lastName = localStorage.getItem('kred_lname') || 'Bekele';
+  const username = localStorage.getItem('kred_uname') || '@amara';
 
   useEffect(() => {
     if (!isOpen) return;
@@ -59,26 +56,30 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
       {/* Profile Header */}
       <div
         onClick={() => {
-          onNavigateProfile();
+          onNavigateSettings();
           onClose();
         }}
         className="flex items-center gap-3 p-2.5 rounded-[16px] hover:bg-[#1C1C1C] cursor-pointer transition-colors"
       >
-        <div className="shrink-0">
-          <SmileyAvatar paletteId={avatarPalette} personaId={avatarMood} size={44} />
+        <div className="w-[42px] h-[42px] rounded-full bg-[#388BFD] text-white flex items-center justify-center text-[18px] shrink-0">
+          <i className="ti ti-user" aria-hidden="true"></i>
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[15px] font-medium text-[#F5F3EC]">Alex Rivera</div>
-          <div className="sub text-[12px]">@alex.rivera · View profile</div>
+          <div className="text-[15px] font-medium text-[#F5F3EC]">
+            {firstName} {lastName}
+          </div>
+          <div className="text-[12px] text-[#A8A69E] truncate">
+            {username} · Account settings
+          </div>
         </div>
-        <i className="ti ti-chevron-right text-[14px] text-[#9A9892]"></i>
+        <i className="ti ti-chevron-right text-[14px] text-[#A8A69E]"></i>
       </div>
 
       {/* Available Balance Card */}
       <div className="mx-1 my-1.5 bg-[#1C1C1C] rounded-[18px] p-3 px-3.5 flex items-center justify-between border border-[#2A2A2A]/40">
         <div>
-          <div className="sub text-[11px]">Available balance</div>
-          <div className="text-[20px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5">
+          <div className="text-[11px] text-[#A8A69E]">Available balance</div>
+          <div className="text-[20px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5 font-mono">
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
         </div>
@@ -88,13 +89,13 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigatePayoutMethods();
             onClose();
           }}
-          className="ol text-[11px] py-1 px-2.5 cursor-pointer"
+          className="pill on text-[11px] py-1 px-3 cursor-pointer"
         >
           Withdraw
         </button>
       </div>
 
-      {/* Menu Navigation Items (Direct Page Links, No Overlay Modals!) */}
+      {/* Menu Navigation Items */}
       <div className="space-y-0.5 px-1 pt-1">
         <button
           type="button"
@@ -125,25 +126,12 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         <button
           type="button"
           onClick={() => {
-            onNavigatePayoutMethods();
-            onClose();
-          }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
-        >
-          <i className="ti ti-wallet text-[17px] text-[#B9B7AF]" aria-hidden="true"></i>
-          <span className="flex-1">Payout methods</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
             onNavigateBilling();
             onClose();
           }}
           className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
         >
-          <i className="ti ti-receipt text-[17px] text-[#B9B7AF]" aria-hidden="true"></i>
+          <i className="ti ti-receipt text-[17px] text-[#FAC775]" aria-hidden="true"></i>
           <span className="flex-1">Billing & invoices</span>
           <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
         </button>
@@ -151,13 +139,27 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         <button
           type="button"
           onClick={() => {
-            onNavigateNotificationSettings();
+            onNavigatePayoutMethods();
             onClose();
           }}
           className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
         >
-          <i className="ti ti-bell text-[17px] text-[#B9B7AF]" aria-hidden="true"></i>
-          <span className="flex-1">Notification settings</span>
+          <i className="ti ti-wallet text-[17px] text-[#CECBF6]" aria-hidden="true"></i>
+          <span className="flex-1">Payout methods</span>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+        </button>
+
+        {/* Dedicated Settings with Gear icon (as specifically requested) */}
+        <button
+          type="button"
+          onClick={() => {
+            onNavigateSettings();
+            onClose();
+          }}
+          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+        >
+          <i className="ti ti-settings text-[17px] text-[#388BFD]" aria-hidden="true"></i>
+          <span className="flex-1 font-medium">Settings</span>
           <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
         </button>
       </div>

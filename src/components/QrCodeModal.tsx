@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { linkOf } from '../data/campaigns';
+import { TrackingQrCode } from './TrackingQrCode';
 
 interface QrCodeModalProps {
   campaign: Campaign | null;
@@ -19,70 +20,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
   onShare,
   isFreshJoin = false,
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen || !campaign || !canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const size = 180;
-    canvas.width = size * 2;
-    canvas.height = size * 2;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
-
-    ctx.scale(2, 2);
-    ctx.fillStyle = '#F5F3EC';
-    ctx.fillRect(0, 0, size, size);
-
-    const url = `https://${linkOf(campaign)}`;
-    const grid = 21;
-    const cellSize = (size - 24) / grid;
-    const offset = 12;
-
-    ctx.fillStyle = '#0B0B0B';
-
-    const drawFinder = (gx: number, gy: number) => {
-      ctx.fillStyle = '#0B0B0B';
-      ctx.fillRect(offset + gx * cellSize, offset + gy * cellSize, 7 * cellSize, 7 * cellSize);
-      ctx.fillStyle = '#F5F3EC';
-      ctx.fillRect(offset + (gx + 1) * cellSize, offset + (gy + 1) * cellSize, 5 * cellSize, 5 * cellSize);
-      ctx.fillStyle = '#0B0B0B';
-      ctx.fillRect(offset + (gx + 2) * cellSize, offset + (gy + 2) * cellSize, 3 * cellSize, 3 * cellSize);
-    };
-
-    drawFinder(0, 0);
-    drawFinder(grid - 7, 0);
-    drawFinder(0, grid - 7);
-
-    let hash = 0;
-    for (let i = 0; i < url.length; i++) {
-      hash = (hash << 5) - hash + url.charCodeAt(i);
-      hash |= 0;
-    }
-
-    ctx.fillStyle = '#0B0B0B';
-    for (let r = 0; r < grid; r++) {
-      for (let c = 0; c < grid; c++) {
-        if (
-          (r < 8 && c < 8) ||
-          (r < 8 && c >= grid - 8) ||
-          (r >= grid - 8 && c < 8)
-        ) {
-          continue;
-        }
-
-        const bit = ((hash ^ (r * 33 + c * 47)) & (1 << ((r + c) % 8))) !== 0;
-        if (bit) {
-          ctx.fillRect(offset + c * cellSize, offset + r * cellSize, cellSize - 0.5, cellSize - 0.5);
-        }
-      }
-    }
-  }, [isOpen, campaign]);
 
   if (!isOpen || !campaign) return null;
 
@@ -94,6 +32,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
 
   const bg = campaign.bg || '#CECBF6';
   const fg = campaign.fg || '#26215C';
+  const exactUrl = `https://${linkOf(campaign)}`;
 
   return (
     <div
@@ -125,17 +64,22 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
             <div className="text-[16px] font-medium text-[#F5F3EC]">
               {isFreshJoin ? 'Joined' : campaign.name}
             </div>
-            <div className="text-[12px] text-[#9A9892]">
-              ${campaign.price} per verified install
+            <div className="text-[12px] text-[#A8A69E]">
+              ${campaign.price} per verified install · Real attribution QR
             </div>
           </div>
         </div>
 
-        {/* QR Code container */}
-        <div className="flex flex-col items-center justify-center my-5 p-4 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40">
-          <canvas ref={canvasRef} className="rounded-[10px]" />
-          <span className="text-[12px] text-[#9A9892] mt-3">
-            Scan to test your creator tracking link
+        {/* QR Code container with true URL encoding */}
+        <div className="flex flex-col items-center justify-center my-4 p-4 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40">
+          <TrackingQrCode
+            url={exactUrl}
+            size={180}
+            showDownload={true}
+            downloadFileName={`kred_qr_${campaign.slug || campaign.id}.png`}
+          />
+          <span className="text-[11px] text-[#A8A69E] mt-2 text-center">
+            Standards-compliant QR encoded to {exactUrl}
           </span>
         </div>
 

@@ -8,6 +8,9 @@ interface DiscoverViewProps {
   campaigns: Campaign[];
   onJoin: (campaign: Campaign, targetEl?: HTMLElement) => void;
   onNavigateDetail: (id: string) => void;
+  onOpenQr?: (campaign: Campaign) => void;
+  onCopyLink?: (campaign: Campaign) => void;
+  onShare?: (campaign: Campaign) => void;
   onSelectCategory?: (cat: string) => void;
 }
 
@@ -15,6 +18,9 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   campaigns,
   onJoin,
   onNavigateDetail,
+  onOpenQr,
+  onCopyLink,
+  onShare,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCat, setActiveCat] = useState('All');
@@ -35,7 +41,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       {/* Breadcrumb with icons */}
       <Breadcrumbs
         items={[

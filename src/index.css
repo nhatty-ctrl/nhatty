@@ -17,7 +17,7 @@
 
     --text: #F5F3EC;
     --text-2: #B9B7AF;
-    --text-3: #9A9892;
+    --text-3: #A8A69E; /* elevated from #9A9892 for WCAG AA (>= 4.5:1) compliance */
 
     --accent: #C7F26B; /* Lime accent for active/latest/on/success */
     --danger: #FF8A80;
@@ -167,7 +167,7 @@ body {
 
 .fl {
   font-size: 12px;
-  color: #9A9892;
+  color: #A8A69E;
   margin: 12px 0 6px;
   display: block;
 }
@@ -180,7 +180,7 @@ body {
 
 .sub {
   font-size: 12px;
-  color: #9A9892;
+  color: #A8A69E;
 }
 
 .row2 {
@@ -192,7 +192,7 @@ body {
 }
 
 .row2 span:first-child {
-  color: #9A9892;
+  color: #A8A69E;
 }
 
 .code {

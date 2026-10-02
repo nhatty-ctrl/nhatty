@@ -1,9 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { UserRole } from '../types/campaign';
+import React, { useRef, useEffect } from 'react';
 
 export interface NotificationItem {
   id: number;
-  r: UserRole;
   ic: string;
   bg: string;
   fg: string;
@@ -15,7 +13,6 @@ export interface NotificationItem {
 export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
     id: 1,
-    r: 'creator',
     ic: 'ti-coin',
     bg: '#C0DD97',
     fg: '#173404',
@@ -25,7 +22,6 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 2,
-    r: 'creator',
     ic: 'ti-circle-check',
     bg: '#B5D4F4',
     fg: '#042C53',
@@ -35,7 +31,6 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 3,
-    r: 'creator',
     ic: 'ti-clock',
     bg: '#FAC775',
     fg: '#412402',
@@ -45,7 +40,6 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 4,
-    r: 'creator',
     ic: 'ti-speakerphone',
     bg: '#CECBF6',
     fg: '#26215C',
@@ -55,66 +49,40 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   },
   {
     id: 5,
-    r: 'founder',
     ic: 'ti-plug',
     bg: '#9FE1CB',
     fg: '#04342C',
     t: 'SDK connected',
-    d: 'Pixel Pop sent its first event.',
-    tm: '1h',
+    d: 'Attribution verified for incoming events.',
+    tm: '3d',
   },
   {
     id: 6,
-    r: 'founder',
     ic: 'ti-users',
     bg: '#F4C0D1',
     fg: '#4B1528',
-    t: '600 creators joined',
-    d: 'Pixel Pop reached a new milestone.',
-    tm: '4h',
-  },
-  {
-    id: 7,
-    r: 'founder',
-    ic: 'ti-alert-triangle',
-    bg: '#FAC775',
-    fg: '#412402',
-    t: '80% of budget used',
-    d: 'Stride has $580 left. Add funds to keep it running.',
-    tm: 'Yesterday',
-  },
-  {
-    id: 8,
-    r: 'founder',
-    ic: 'ti-shield-check',
-    bg: '#B5D4F4',
-    fg: '#042C53',
-    t: '7 installs rejected',
-    d: 'They failed verification, so you were not charged.',
-    tm: '2d',
+    t: 'Install milestone reached',
+    d: 'Over 600 verified installs recorded this week.',
+    tm: '4d',
   },
 ];
 
 interface NotificationsDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  role: UserRole;
   readMap: Record<number, boolean>;
   onMarkRead: (id: number) => void;
   onMarkAllRead: () => void;
-  onNavigateCampaign?: (id: string) => void;
-  onOpenNotificationSettings?: () => void;
+  onNavigateSettings?: () => void;
 }
 
 export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
   isOpen,
   onClose,
-  role,
   readMap,
   onMarkRead,
   onMarkAllRead,
-  onNavigateCampaign,
-  onOpenNotificationSettings,
+  onNavigateSettings,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
@@ -140,125 +108,124 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
 
   if (!isOpen) return null;
 
-  const roleList = INITIAL_NOTIFICATIONS.filter((n) => n.r === role);
-  const unreadCount = roleList.filter((n) => !readMap[n.id]).length;
-  const filteredRows = roleList.filter((n) => filter === 'all' || !readMap[n.id]);
+  const unreadCount = INITIAL_NOTIFICATIONS.filter((n) => !readMap[n.id]).length;
+  const filteredRows = INITIAL_NOTIFICATIONS.filter((n) => filter === 'all' || !readMap[n.id]);
 
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-12 z-50 w-[350px] sm:w-[372px] rounded-[24px] bg-[#161616] border border-[#2A2A2A] shadow-2xl p-2 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
+      className="absolute right-0 top-12 z-50 w-[360px] max-w-[calc(100vw-24px)] rounded-[24px] bg-[#161616] border border-[#2A2A2A] shadow-2xl p-3 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-2.5 pt-2 pb-2">
-        <div className="text-[16px] font-medium text-[#F5F3EC]">Notifications</div>
-        <button
-          type="button"
-          onClick={onMarkAllRead}
-          className="pill text-[12px] py-1 px-2.5 hover:bg-[#1C1C1C] border-0 bg-transparent text-[#9A9892] hover:text-[#F5F3EC] cursor-pointer"
-        >
-          Mark all as read
-        </button>
+      {/* Top Header */}
+      <div className="flex items-center justify-between pb-2.5 px-1 border-b border-[#2A2A2A]">
+        <div className="flex items-center gap-2">
+          <span className="text-[15px] font-medium text-[#F5F3EC]">Notifications</span>
+          {unreadCount > 0 && (
+            <span className="chip text-[10.5px] py-0.5 px-2 bg-[#C7F26B] text-[#0B0B0B] font-semibold">
+              {unreadCount} new
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {unreadCount > 0 && (
+            <button
+              type="button"
+              onClick={onMarkAllRead}
+              className="text-[11.5px] text-[#A8A69E] hover:text-[#F5F3EC] transition-colors cursor-pointer bg-transparent border-0"
+            >
+              Mark all read
+            </button>
+          )}
+
+          {onNavigateSettings && (
+            <button
+              type="button"
+              onClick={() => {
+                onNavigateSettings();
+                onClose();
+              }}
+              className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#252525] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center transition-colors cursor-pointer border-0"
+              title="Notification settings"
+            >
+              <i className="ti ti-settings text-[14px]"></i>
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-1.5 px-2.5 pb-2">
+      {/* Filter Tabs: All | Unread */}
+      <div className="flex items-center gap-2 py-2 px-1">
         <button
           type="button"
           onClick={() => setFilter('all')}
-          className={`pill text-[12px] py-1.5 px-3 border-0 ${
-            filter === 'all' ? 'on' : 'bg-[#1C1C1C] text-[#F5F3EC]'
-          }`}
+          className={`chip text-[11.5px] py-1 px-3 cursor-pointer ${filter === 'all' ? 'sel font-medium' : ''}`}
         >
-          All
+          All ({INITIAL_NOTIFICATIONS.length})
         </button>
         <button
           type="button"
           onClick={() => setFilter('unread')}
-          className={`pill text-[12px] py-1.5 px-3 border-0 ${
-            filter === 'unread' ? 'on' : 'bg-[#1C1C1C] text-[#F5F3EC]'
-          }`}
+          className={`chip text-[11.5px] py-1 px-3 cursor-pointer ${filter === 'unread' ? 'sel font-medium' : ''}`}
         >
-          Unread{unreadCount > 0 ? ` · ${unreadCount}` : ''}
+          Unread ({unreadCount})
         </button>
       </div>
 
-      {/* List */}
-      <div className="max-h-[360px] overflow-y-auto space-y-1 px-1">
+      {/* Notifications List */}
+      <div className="max-h-[360px] overflow-y-auto space-y-1 py-1 pr-0.5">
         {filteredRows.length > 0 ? (
           filteredRows.map((n) => {
             const isRead = !!readMap[n.id];
             return (
-              <button
+              <div
                 key={n.id}
-                type="button"
-                onClick={() => {
-                  onMarkRead(n.id);
-                  if (onNavigateCampaign) {
-                    if (n.d.includes('Pixel Pop')) onNavigateCampaign('pixelpop');
-                    else if (n.d.includes('Stride')) onNavigateCampaign('stride');
-                    else if (n.d.includes('Focusly')) onNavigateCampaign('focusly');
-                  }
-                }}
-                className="w-full border-0 bg-transparent text-[#F5F3EC] flex gap-3 items-start text-left p-2.5 rounded-[16px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+                onClick={() => onMarkRead(n.id)}
+                className={`p-2.5 rounded-[16px] transition-colors cursor-pointer flex items-start gap-3 relative group ${
+                  isRead ? 'hover:bg-[#1C1C1C]/60 opacity-80' : 'bg-[#1C1C1C]/70 hover:bg-[#1C1C1C]'
+                }`}
               >
-                {/* Tile Icon */}
-                <span
-                  className="w-[36px] h-[36px] rounded-[12px] flex items-center justify-center text-[17px] shrink-0"
+                {/* Icon Tile */}
+                <div
+                  className="w-[36px] h-[36px] rounded-[10px] flex items-center justify-center text-[17px] shrink-0"
                   style={{ backgroundColor: n.bg, color: n.fg }}
                 >
-                  <i className={`ti ${n.ic}`} aria-hidden="true"></i>
-                </span>
+                  <i className={`ti ${n.ic}`}></i>
+                </div>
 
-                {/* Text */}
-                <span className="flex-1 min-w-0">
-                  <span
-                    className={`block text-[14px] ${
-                      isRead ? 'font-normal text-[#B9B7AF]' : 'font-medium text-[#F5F3EC]'
-                    }`}
-                  >
-                    {n.t}
-                  </span>
-                  <span className="block text-[12px] text-[#9A9892] mt-0.5 leading-[1.45]">
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[13px] font-medium text-[#F5F3EC] truncate">{n.t}</span>
+                    <span className="text-[11px] text-[#A8A69E] shrink-0 font-mono">{n.tm}</span>
+                  </div>
+                  <p className="text-[12px] text-[#A8A69E] mt-0.5 leading-snug line-clamp-2">
                     {n.d}
-                  </span>
-                </span>
+                  </p>
+                </div>
 
-                {/* Time & Unread Indicator */}
-                <span className="flex flex-col items-end gap-1.5 shrink-0 pt-0.5">
-                  <span className="sub text-[11px]">{n.tm}</span>
-                  {!isRead && (
-                    <span className="w-2 h-2 rounded-full bg-[#C7F26B]" />
-                  )}
-                </span>
-              </button>
+                {!isRead && (
+                  <span className="w-2 h-2 rounded-full bg-[#388BFD] shrink-0 mt-2" title="Unread" />
+                )}
+              </div>
             );
           })
         ) : (
-          <div className="text-center py-8 px-2">
-            <div className="text-[14px] font-medium text-[#F5F3EC]">
-              You are all caught up
-            </div>
-            <div className="sub mt-1">New activity shows up here.</div>
+          <div className="py-8 text-center text-[12.5px] text-[#A8A69E]">
+            No unread notifications
           </div>
         )}
       </div>
 
-      {/* Divider */}
-      <div className="h-[0.5px] bg-[#2A2A2A] mx-2 my-1.5" />
-
-      {/* Footer link */}
-      <div className="px-2 pb-1">
+      {/* Footer */}
+      <div className="pt-2 px-1 border-t border-[#2A2A2A] flex justify-between items-center text-[11.5px] text-[#A8A69E]">
+        <span>Weekly settlements released every Friday</span>
         <button
           type="button"
-          onClick={() => {
-            onClose();
-            if (onOpenNotificationSettings) onOpenNotificationSettings();
-          }}
-          className="ol w-full justify-between py-2 text-[12px] cursor-pointer"
+          onClick={onClose}
+          className="hover:text-[#F5F3EC] cursor-pointer bg-transparent border-0"
         >
-          <span>Notification settings</span>
-          <i className="ti ti-arrow-up-right" aria-hidden="true"></i>
+          Close
         </button>
       </div>
     </div>

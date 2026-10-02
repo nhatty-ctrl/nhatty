@@ -8,6 +8,7 @@ interface CampaignAnalyticsViewProps {
   onBack?: () => void;
   onNavigateCampaign?: (id: string) => void;
   onCreateCampaign?: () => void;
+  onNavigateEarnings?: () => void;
 }
 
 const TODAY = new Date(2026, 9, 2);
@@ -102,9 +103,11 @@ function dstr(ago: number) {
 }
 
 export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
+  campaigns = [],
   initialCampaignId,
   onNavigateCampaign,
   onCreateCampaign,
+  onNavigateEarnings,
   onBack,
 }) => {
   const [range, setRange] = useState<number>(30);
@@ -115,8 +118,14 @@ export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
     }
     return -1;
   });
-  const [hoveredTip, setHoveredTip] = useState<string | null>(null);
+  const [hoveredTip, setHoveredTip] = useState<{ label: string; v: number; m: number } | null>(null);
   const [showDataTable, setShowDataTable] = useState(false);
+
+  // Check if requested campaign is a creator-joined app
+  const requestedApp = initialCampaignId
+    ? campaigns.find((c) => c.id === initialCampaignId)
+    : null;
+  const isJoinedCreatorApp = requestedApp && requestedApp.joined && !FOUNDER_CAMPAIGNS.some((c) => c.id === initialCampaignId);
 
   const getBuckets = () => {
     const nb = NB[range] || 15;
@@ -164,18 +173,47 @@ export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
     totalIos += v * c.ios;
   });
 
-  const cr = totalRawInst / (totalClicks || 1);
-  const vr = totalVerInst / (totalRawInst || 1);
-  const ip = totalIos / (totalVerInst || 1);
-
+  const costPerInstall = totalSpend / (totalVerInst || 1);
+  const conversionRate = (totalVerInst / (totalClicks || 1)) * 100;
   const hasData = totalVerInst > 0;
 
+  // Build SVG Path for modern area graph
+  const svgWidth = 800;
+  const svgHeight = 220;
+  const paddingX = 20;
+  const paddingY = 25;
+
+  const points = buckets.map((b, idx) => {
+    const x = paddingX + (idx / (buckets.length - 1 || 1)) * (svgWidth - paddingX * 2);
+    const y = svgHeight - paddingY - (b.v / (maxChartVal || 1)) * (svgHeight - paddingY * 2);
+    return { x, y, b };
+  });
+
+  let linePath = '';
+  let areaPath = '';
+  if (points.length > 0) {
+    linePath = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const cx1 = prev.x + (curr.x - prev.x) / 2;
+      const cy1 = prev.y;
+      const cx2 = prev.x + (curr.x - prev.x) / 2;
+      const cy2 = curr.y;
+      linePath += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${curr.x} ${curr.y}`;
+    }
+    const lastX = points[points.length - 1].x;
+    const firstX = points[0].x;
+    const bottomY = svgHeight - paddingY;
+    areaPath = `${linePath} L ${lastX} ${bottomY} L ${firstX} ${bottomY} Z`;
+  }
+
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-5">
-      {/* Breadcrumbs with icons */}
+    <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6">
+      {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: 'Profile', icon: 'ti-user', onClick: onBack },
+          { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
           ...(selCamp >= 0
             ? [
                 {
@@ -191,27 +229,56 @@ export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
         ]}
       />
 
-      {/* Title & Date Range Filter */}
+      {/* Role / Ownership Notice if accessing a creator-joined app */}
+      {isJoinedCreatorApp && requestedApp && (
+        <div className="p-4 bg-[#1C1C1C] border border-[#388BFD]/40 rounded-[18px] text-[13px] text-[#F5F3EC] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-[fade-in_0.15s_ease-out]">
+          <div className="flex items-start gap-2.5">
+            <i className="ti ti-info-circle text-[#388BFD] text-[20px] shrink-0 mt-0.5"></i>
+            <div>
+              <div className="font-medium text-[#F5F3EC]">
+                Creator attribution summary for {requestedApp.name}
+              </div>
+              <div className="text-[#A8A69E] text-[12px] mt-0.5 leading-snug">
+                You participate in {requestedApp.name}. Real-time individual creator referral payouts are tracked in Earnings.
+              </div>
+            </div>
+          </div>
+          {onNavigateEarnings && (
+            <button
+              type="button"
+              onClick={onNavigateEarnings}
+              className="pill on text-[12px] py-1.5 px-3.5 shrink-0 whitespace-nowrap cursor-pointer font-medium self-end sm:self-auto"
+            >
+              <i className="ti ti-coin"></i>
+              <span>Go to Earnings</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="sub text-[12px] uppercase tracking-wider font-mono">
-            Attribution telemetry
+          <div className="text-[11px] font-mono tracking-wider uppercase text-[#388BFD]">
+            CAMPAIGN TELEMETRY
           </div>
-          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC] mt-0.5">
+          <h1 className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.6px] text-[#F5F3EC] mt-0.5">
             {selCamp >= 0 ? `${FOUNDER_CAMPAIGNS[selCamp].n} analytics` : 'Campaign analytics'}
           </h1>
-          <p className="text-[13px] text-[#9A9892] mt-1">
+          <p className="text-[13.5px] text-[#A8A69E] mt-1">
             Real-time attribution telemetry, verification rates, and creator spend.
           </p>
         </div>
 
-        {/* Date range filter chips */}
-        <div className="flex gap-1.5 self-start sm:self-auto shrink-0">
+        {/* Date Range Chips */}
+        <div className="flex gap-1.5 self-start sm:self-auto shrink-0 bg-[#161616] p-1 rounded-full border border-[#2A2A2A]">
           {[7, 30, 90].map((d) => (
             <button
               key={`range-${d}`}
               onClick={() => setRange(d)}
-              className={`chip min-h-[38px] px-3.5 cursor-pointer ${range === d ? 'sel' : ''}`}
+              className={`pill text-[12px] py-1.5 px-3.5 cursor-pointer border-0 ${
+                range === d ? 'on font-medium' : 'bg-transparent text-[#A8A69E] hover:text-[#F5F3EC]'
+              }`}
             >
               {d} days
             </button>
@@ -219,298 +286,252 @@ export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
         </div>
       </div>
 
+      {/* Campaign Selector Pills */}
+      <div className="flex gap-2 flex-wrap items-center">
+        <button
+          onClick={() => setSelCamp(-1)}
+          className={`chip text-[12px] py-1.5 px-3.5 cursor-pointer ${selCamp < 0 ? 'sel font-medium' : ''}`}
+        >
+          All campaigns
+        </button>
+        {FOUNDER_CAMPAIGNS.map((c, i) => (
+          <button
+            key={c.id}
+            onClick={() => setSelCamp(i)}
+            className={`chip text-[12px] py-1.5 px-3.5 cursor-pointer ${selCamp === i ? 'sel font-medium' : ''}`}
+          >
+            {c.n}
+          </button>
+        ))}
+      </div>
+
       {!hasData ? (
-        /* Empty State */
-        <div className="card text-center py-14 px-6 space-y-3 bg-[#161616] border border-[#2A2A2A] rounded-[24px]">
-          <div className="w-12 h-12 rounded-full bg-[#1C1C1C] text-[#9A9892] flex items-center justify-center text-[22px] mx-auto">
+        <div className="card text-center py-16 px-6 bg-[#161616] border border-[#2A2A2A] rounded-[24px]">
+          <div className="w-12 h-12 rounded-full bg-[#1C1C1C] text-[#A8A69E] flex items-center justify-center text-[22px] mx-auto mb-3">
             <i className="ti ti-chart-bar"></i>
           </div>
-          <div>
-            <div className="text-[16px] font-medium text-[#F5F3EC]">No analytics data yet</div>
-            <div className="text-[13px] text-[#9A9892] mt-1 max-w-[420px] mx-auto leading-relaxed">
-              Create a campaign and integrate the SDK to see real-time install attribution.
-            </div>
+          <div className="text-[16px] font-medium text-[#F5F3EC]">No analytics data yet</div>
+          <div className="text-[13px] text-[#A8A69E] mt-1 max-w-[420px] mx-auto">
+            Create a campaign and distribute links to see verified install activity.
           </div>
-
-          <div className="pt-2">
+          {onCreateCampaign && (
             <button
               type="button"
               onClick={onCreateCampaign}
-              className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+              className="pill on mt-4 px-6 min-h-[42px] cursor-pointer font-medium"
             >
               Create campaign
             </button>
-          </div>
+          )}
         </div>
       ) : (
         <>
-          {/* Campaign Selector Chips */}
-          <div className="flex gap-1.5 flex-wrap pt-1">
-            <button
-              onClick={() => setSelCamp(-1)}
-              className={`chip min-h-[36px] px-3 cursor-pointer ${selCamp < 0 ? 'sel' : ''}`}
-            >
-              All campaigns
-            </button>
-            {FOUNDER_CAMPAIGNS.map((c, i) => (
-              <button
-                key={c.id}
-                onClick={() => setSelCamp(i)}
-                className={`chip min-h-[36px] px-3 cursor-pointer ${selCamp === i ? 'sel' : ''}`}
-              >
-                {c.n}
-              </button>
-            ))}
-          </div>
-
-          {/* Big Installs Banner */}
-          <div className="bg-[#161616] rounded-[20px] p-5 border border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="sub text-[12px]">Verified installs in the last {range} days</div>
-              <div className="text-[36px] font-medium tracking-[-0.8px] text-[#F5F3EC] mt-0.5">
-                {num(totalVerInst)}
+          {/* 4 INDEPENDENT TOP KPI CARDS TAKING UP FULL WIDTH (Like Earnings page cards) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Verified installs (Long block with highlight) */}
+            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+                  <i className="ti ti-shield-check text-[16px] text-[#C7F26B]"></i>
+                  <span className="font-medium text-[#F5F3EC]">Verified installs</span>
+                </div>
+                <span className="chip text-[11px] py-0.5 px-2 bg-[#C7F26B]/20 text-[#C7F26B] font-medium">
+                  Active
+                </span>
               </div>
-              <div className="text-[12px] text-[#C7F26B] flex items-center gap-1.5 mt-1 font-medium">
-                <i className="ti ti-shield-check" aria-hidden="true"></i>
-                <span>Fraud-shielded attribution SDK active</span>
+              <div className="my-3">
+                <div className="text-[34px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                  {num(totalVerInst)}
+                </div>
+              </div>
+              <div className="text-[12px] text-[#C7F26B] leading-snug flex items-center gap-1 font-medium">
+                <i className="ti ti-check text-[13px]"></i>
+                <span>Fraud-shielded attribution SDK</span>
               </div>
             </div>
 
-            <div className="flex gap-2">
-              {selCamp >= 0 && onNavigateCampaign && (
+            {/* Card 2: Clicks */}
+            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+                <i className="ti ti-pointer text-[16px] text-[#B5D4F4]"></i>
+                <span className="font-medium text-[#F5F3EC]">Attribution clicks</span>
+              </div>
+              <div className="my-3">
+                <div className="text-[34px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                  {num(totalClicks)}
+                </div>
+              </div>
+              <div className="text-[12px] text-[#A8A69E] leading-snug">
+                {conversionRate.toFixed(1)}% verified conversion rate
+              </div>
+            </div>
+
+            {/* Card 3: Spend */}
+            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+                <i className="ti ti-currency-dollar text-[16px] text-[#FAC775]"></i>
+                <span className="font-medium text-[#F5F3EC]">Total creator spend</span>
+              </div>
+              <div className="my-3">
+                <div className="text-[34px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                  {money(totalSpend)}
+                </div>
+              </div>
+              <div className="text-[12px] text-[#A8A69E] leading-snug">
+                Across {selCamp >= 0 ? FOUNDER_CAMPAIGNS[selCamp].n : 'all active campaigns'}
+              </div>
+            </div>
+
+            {/* Card 4: Cost per install (Clean block without icon as requested) */}
+            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="text-[13px] text-[#A8A69E] font-medium text-[#F5F3EC]">
+                Cost per verified install
+              </div>
+              <div className="my-3">
+                <div className="text-[34px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                  {money(costPerInstall)}
+                </div>
+              </div>
+              <div className="text-[12px] text-[#A8A69E] leading-snug">
+                Average guaranteed creator bounty
+              </div>
+            </div>
+          </div>
+
+          {/* HIGH-END ELEGANT AREA CHART (Replacing clunky bar graph) */}
+          <div className="card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#2A2A2A]">
+              <div>
+                <h2 className="text-[17px] font-medium text-[#F5F3EC]">Verified Installs Over Time</h2>
+                <p className="text-[12px] text-[#A8A69E] mt-0.5">
+                  Smoothed attribution volume matching your selected {range}-day telemetry period.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => onNavigateCampaign(FOUNDER_CAMPAIGNS[selCamp].id)}
-                  className="pill on min-h-[44px] px-4 shadow-sm cursor-pointer"
+                  onClick={() => setShowDataTable(!showDataTable)}
+                  className="pill text-[12px] py-1 px-3 cursor-pointer text-[#A8A69E] hover:text-[#F5F3EC] flex items-center gap-1.5"
                 >
-                  <span>View campaign page</span>
-                  <i className="ti ti-arrow-right" aria-hidden="true"></i>
+                  <i className={`ti ${showDataTable ? 'ti-chart-area-line' : 'ti-table'}`}></i>
+                  <span>{showDataTable ? 'Show area graph' : 'Show data table'}</span>
                 </button>
-              )}
-            </div>
-          </div>
-
-          {/* 4-Stat Numbers Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-0 bg-[#161616] rounded-[20px] p-4 border border-[#2A2A2A]/40">
-            <div className="p-2 sm:px-3 border-r border-[#2A2A2A]/60">
-              <div className="sub text-[11px]">Clicks</div>
-              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5">
-                {num(totalClicks)}
               </div>
-            </div>
-            <div className="p-2 sm:px-3 sm:border-r border-[#2A2A2A]/60">
-              <div className="sub text-[11px]">Installs</div>
-              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#B5D4F4] mt-0.5">
-                {num(totalRawInst)}
-              </div>
-            </div>
-            <div className="p-2 sm:px-3 border-r border-[#2A2A2A]/60">
-              <div className="sub text-[11px]">Spend</div>
-              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5">
-                {money(totalSpend)}
-              </div>
-            </div>
-            <div className="p-2 sm:px-3">
-              <div className="sub text-[11px]">Cost per install</div>
-              <div className="text-[22px] font-medium tracking-[-0.4px] text-[#C7F26B] mt-0.5">
-                {money(totalSpend / (totalVerInst || 1))}
-              </div>
-            </div>
-          </div>
-
-          {/* Verified Installs Over Time Bar Chart Card with Tap & Data Table Toggle */}
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div className="font-medium text-[15px] text-[#F5F3EC]">
-                Verified installs over time
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowDataTable(!showDataTable)}
-                className="pill gh text-[12px] py-1 px-2.5 text-[#9A9892] hover:text-[#F5F3EC] cursor-pointer min-h-[36px]"
-              >
-                <i className={`ti ${showDataTable ? 'ti-chart-bar' : 'ti-table'}`}></i>
-                <span>{showDataTable ? 'Show chart' : 'Data table'}</span>
-              </button>
             </div>
 
-            {showDataTable ? (
-              /* Accessible Table Alternative */
-              <div className="mt-3 overflow-x-auto text-[13px]">
-                <table className="w-full text-left border-collapse">
+            {!showDataTable ? (
+              <div className="relative pt-2">
+                {/* Chart Header Meta */}
+                <div className="flex items-center justify-between text-[12px] text-[#A8A69E] mb-2 px-1">
+                  <span>Volume Curve</span>
+                  <span className="font-mono text-[#F5F3EC]">Peak bucket: {num(maxChartVal)} installs</span>
+                </div>
+
+                {/* SVG Area Graph */}
+                <div className="w-full bg-[#121212] rounded-[16px] p-3 sm:p-5 border border-[#222] overflow-hidden">
+                  <svg
+                    viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                    className="w-full h-[220px] overflow-visible"
+                    preserveAspectRatio="none"
+                  >
+                    <defs>
+                      <linearGradient id="analyticsGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#388BFD" stopOpacity="0.45" />
+                        <stop offset="60%" stopColor="#388BFD" stopOpacity="0.08" />
+                        <stop offset="100%" stopColor="#388BFD" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* Subtle Horizontal Grid lines */}
+                    {[0.25, 0.5, 0.75].map((factor, i) => {
+                      const yVal = svgHeight - paddingY - factor * (svgHeight - paddingY * 2);
+                      return (
+                        <line
+                          key={i}
+                          x1={paddingX}
+                          y1={yVal}
+                          x2={svgWidth - paddingX}
+                          y2={yVal}
+                          stroke="#2A2A2A"
+                          strokeDasharray="4 4"
+                          strokeWidth="1"
+                        />
+                      );
+                    })}
+
+                    {/* Gradient Fill Area */}
+                    {areaPath && <path d={areaPath} fill="url(#analyticsGradient)" />}
+
+                    {/* Glowing Stroke Line */}
+                    {linePath && (
+                      <path
+                        d={linePath}
+                        fill="none"
+                        stroke="#388BFD"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    )}
+
+                    {/* Interactive Data Points */}
+                    {points.map((pt, idx) => (
+                      <g key={idx} className="cursor-pointer group">
+                        <circle
+                          cx={pt.x}
+                          cy={pt.y}
+                          r="4"
+                          fill="#0E0E0E"
+                          stroke="#388BFD"
+                          strokeWidth="2"
+                          className="transition-all duration-150 group-hover:r-6 group-hover:fill-[#388BFD]"
+                          onMouseEnter={() => setHoveredTip({ label: pt.b.label, v: pt.b.v, m: pt.b.m })}
+                          onMouseLeave={() => setHoveredTip(null)}
+                        />
+                      </g>
+                    ))}
+                  </svg>
+
+                  {/* Hover Tooltip display */}
+                  <div className="h-6 flex items-center justify-center mt-2 text-[12.5px] font-mono text-[#F5F3EC]">
+                    {hoveredTip ? (
+                      <span className="bg-[#1C1C1C] px-3 py-1 rounded-full border border-[#333] shadow-md animate-[fade-in_0.1s_ease-out]">
+                        {hoveredTip.label} · <strong className="text-[#388BFD]">{num(hoveredTip.v)} installs</strong> ({money(hoveredTip.m)} spend)
+                      </span>
+                    ) : (
+                      <span className="text-[#666]">Hover over data points to inspect attribution details</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Data Table View */
+              <div className="overflow-x-auto pt-1">
+                <table className="w-full text-left text-[13px]">
                   <thead>
-                    <tr className="border-b border-[#2A2A2A] text-[#9A9892]">
-                      <th className="py-2 px-2 font-normal">Period</th>
-                      <th className="py-2 px-2 font-normal">Verified installs</th>
-                      <th className="py-2 px-2 font-normal text-right">Spend</th>
+                    <tr className="border-b border-[#2A2A2A] text-[#A8A69E]">
+                      <th className="pb-2 font-medium">Interval Window</th>
+                      <th className="pb-2 font-medium">Verified Installs</th>
+                      <th className="pb-2 font-medium">Attribution Spend</th>
+                      <th className="pb-2 font-medium text-right">Avg Bounty</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {buckets.map((b, idx) => (
-                      <tr key={idx} className="border-b border-[#2A2A2A]/40 hover:bg-[#1C1C1C]">
-                        <td className="py-2 px-2 text-[#F5F3EC]">{b.label}</td>
-                        <td className="py-2 px-2 text-[#B9B7AF]">{num(b.v)}</td>
-                        <td className="py-2 px-2 text-right font-medium text-[#F5F3EC]">{money(b.m)}</td>
+                  <tbody className="divide-y divide-[#222]">
+                    {buckets.map((b, i) => (
+                      <tr key={i} className="hover:bg-[#1C1C1C]/40">
+                        <td className="py-2.5 font-mono text-[#F5F3EC]">{b.label}</td>
+                        <td className="py-2.5 font-medium text-[#F5F3EC]">{num(b.v)}</td>
+                        <td className="py-2.5 font-mono text-[#388BFD]">{money(b.m)}</td>
+                        <td className="py-2.5 font-mono text-right text-[#A8A69E]">
+                          {money(b.m / (b.v || 1))}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <div>
-                <div className="flex items-end gap-1 sm:gap-1.5 h-[150px] mt-4">
-                  {buckets.map((b, i) => {
-                    const isLast = i === buckets.length - 1;
-                    const pctHeight = Math.max(4, Math.round((b.v / (maxChartVal || 1)) * 100));
-                    return (
-                      <div
-                        key={`ba-${i}`}
-                        tabIndex={0}
-                        role="button"
-                        aria-label={`${b.label}: ${num(b.v)} verified installs, ${money(b.m)} spend`}
-                        onClick={() => setHoveredTip(`${b.label} · ${num(b.v)} verified installs · ${money(b.m)} spend`)}
-                        onMouseEnter={() => setHoveredTip(`${b.label} · ${num(b.v)} verified installs · ${money(b.m)} spend`)}
-                        onMouseLeave={() => setHoveredTip(null)}
-                        className="flex-1 rounded-t-[6px] rounded-b-[2px] transition-colors cursor-pointer focus:outline-hidden focus:ring-1 focus:ring-[#F5F3EC]"
-                        style={{
-                          height: `${pctHeight}%`,
-                          backgroundColor: isLast ? '#C7F26B' : '#3A3A37',
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-                <div className="flex justify-between items-center sub mt-2.5">
-                  <span>{dstr(range - 1)}</span>
-                  <span className="text-[#F5F3EC] font-mono text-[12px] truncate px-2 text-center">
-                    {hoveredTip || 'Tap or hover a bar for details'}
-                  </span>
-                  <span>Today</span>
-                </div>
-              </div>
             )}
-          </div>
-
-          {/* Funnel Card */}
-          <div className="card">
-            <div className="font-medium text-[15px] text-[#F5F3EC]">Conversion funnel</div>
-            <div className="space-y-3 mt-3.5">
-              {/* Clicks */}
-              <div>
-                <div className="flex justify-between text-[13px]">
-                  <span>Clicks</span>
-                  <span className="sub">{num(totalClicks)}</span>
-                </div>
-                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
-                  <div className="h-full bg-[#3A3A37] w-full" />
-                </div>
-              </div>
-
-              {/* Installs */}
-              <div>
-                <div className="flex justify-between text-[13px]">
-                  <span>Installs</span>
-                  <span className="sub">
-                    {num(totalRawInst)} · {(cr * 100).toFixed(1)}% of clicks
-                  </span>
-                </div>
-                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
-                  <div
-                    className="h-full bg-[#B5D4F4]"
-                    style={{ width: `${Math.min(100, Math.max(4, cr * 100))}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Verified */}
-              <div>
-                <div className="flex justify-between text-[13px]">
-                  <span>Verified</span>
-                  <span className="sub">
-                    {num(totalVerInst)} · {(vr * 100).toFixed(0)}% of installs
-                  </span>
-                </div>
-                <div className="h-[10px] rounded-[3px] bg-[#242424] overflow-hidden mt-1.5">
-                  <div
-                    className="h-full bg-[#C7F26B]"
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        Math.max(4, (totalVerInst / (totalClicks || 1)) * 100)
-                      )}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="sub mt-3 text-[12px]">
-              {num(totalRawInst - totalVerInst)} installs rejected as unverified, so you were not charged for them.
-            </div>
-          </div>
-
-          {/* Top Creators & Platforms Row */}
-          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-3">
-            {/* Top Creators Card */}
-            <div className="card">
-              <div className="font-medium text-[15px] text-[#F5F3EC]">Top creators</div>
-              <div className="space-y-1 mt-2">
-                {[
-                  { handle: 'maya.makes', pct: 0.31, bg: '#CECBF6', fg: '#26215C' },
-                  { handle: 'devon', pct: 0.24, bg: '#F5C4B3', fg: '#4A1B0C' },
-                  { handle: 'luna_k', pct: 0.19, bg: '#C0DD97', fg: '#173404' },
-                  { handle: 'theo.tv', pct: 0.14, bg: '#B5D4F4', fg: '#042C53' },
-                  { handle: 'ada', pct: 0.12, bg: '#FAC775', fg: '#412402' },
-                ].map((tc) => (
-                  <div
-                    key={tc.handle}
-                    className="flex items-center gap-2.5 py-2 border-t border-[#2A2A2A]"
-                  >
-                    <div
-                      className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[12px] font-medium"
-                      style={{ backgroundColor: tc.bg, color: tc.fg }}
-                    >
-                      {tc.handle[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0 text-[13px] font-medium text-[#F5F3EC]">
-                      @{tc.handle}
-                    </div>
-                    <div className="sub text-[12px]">{num(totalVerInst * tc.pct)} installs</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Platforms Card */}
-            <div className="card">
-              <div className="font-medium text-[15px] text-[#F5F3EC]">Platforms</div>
-              <div className="h-[12px] rounded-[6px] overflow-hidden flex mt-4 bg-[#242424]">
-                <div
-                  className="h-full bg-[#F5F3EC]"
-                  style={{ width: `${ip * 100}%` }}
-                />
-                <div
-                  className="h-full bg-[#C7F26B]"
-                  style={{ width: `${(1 - ip) * 100}%` }}
-                />
-              </div>
-
-              <div className="flex justify-between items-center text-[13px] mt-3.5">
-                <span className="flex items-center gap-1.5 text-[#F5F3EC]">
-                  <i className="ti ti-brand-apple" aria-hidden="true"></i>
-                  <span>iOS</span>
-                </span>
-                <span className="text-[#F5F3EC]">{Math.round(ip * 100)}%</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[13px] mt-2">
-                <span className="flex items-center gap-1.5 text-[#F5F3EC]">
-                  <i className="ti ti-player-play" aria-hidden="true"></i>
-                  <span>Android</span>
-                </span>
-                <span className="text-[#F5F3EC]">{Math.round((1 - ip) * 100)}%</span>
-              </div>
-            </div>
           </div>
         </>
       )}

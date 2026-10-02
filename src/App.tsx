@@ -13,6 +13,7 @@ import { PayoutMethodsView } from './components/PayoutMethodsView';
 import { BillingView } from './components/BillingView';
 import { NotificationSettingsView } from './components/NotificationSettingsView';
 import { QrCodeModal } from './components/QrCodeModal';
+import { JoinedSuccessModal } from './components/JoinedSuccessModal';
 import { Toast } from './components/Toast';
 import { Confetti } from './components/Confetti';
 import {
@@ -20,6 +21,7 @@ import {
   DEFAULT_AVATAR_MOOD,
 } from './components/SmileyAvatar';
 import { INITIAL_NOTIFICATIONS } from './components/NotificationsDropdown';
+import { UserRole } from './types/campaign';
 
 const STORAGE_KEY = 'kred_campaigns_app_v11';
 
@@ -76,6 +78,9 @@ export default function App() {
     } catch {}
   };
 
+  // User Role Workspace (Finding 8 & 10)
+  const [userRole, setUserRole] = useState<UserRole>('creator');
+
   // Navigation tab states
   const [currentTab, setCurrentTab] = useState<
     'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings'
@@ -104,10 +109,14 @@ export default function App() {
     setToastMessage('All notifications marked as read');
   };
 
-  const unreadCount = INITIAL_NOTIFICATIONS.filter((n) => !readMap[n.id]).length;
+  // Badge count strictly scoped to the active role (Finding 8)
+  const creatorUnread = INITIAL_NOTIFICATIONS.filter((n) => n.r === 'creator' && !readMap[n.id]).length;
+  const founderUnread = INITIAL_NOTIFICATIONS.filter((n) => n.r === 'founder' && !readMap[n.id]).length;
+  const unreadCount = userRole === 'creator' ? creatorUnread : founderUnread;
 
   // Modals & Feedback
   const [qrCampaign, setQrCampaign] = useState<Campaign | null>(null);
+  const [justJoinedCampaign, setJustJoinedCampaign] = useState<Campaign | null>(null);
   const [isFreshJoin, setIsFreshJoin] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [confettiOrigin, setConfettiOrigin] = useState<{ x: number; y: number } | null>(null);
@@ -275,8 +284,10 @@ export default function App() {
       );
 
       setIsFreshJoin(true);
+      setJustJoinedCampaign(campaign);
       setToastMessage(`Joined ${campaign.name}. Tracking link ready.`);
     } else {
+      setJustJoinedCampaign(null);
       setCampaigns((prev) =>
         prev.map((c) =>
           c.id === campaign.id
@@ -349,6 +360,8 @@ export default function App() {
         onMarkRead={handleMarkRead}
         onMarkAllRead={handleMarkAllRead}
         balance={balance}
+        userRole={userRole}
+        onRoleChange={setUserRole}
       />
 
       {/* Main Full-Width Content Container */}
@@ -367,7 +380,9 @@ export default function App() {
             onShare={() => handleCopyLink(activeCampaign)}
             onNavigateDetail={handleNavigateDetail}
             onNavigateAnalytics={handleNavigateAnalytics}
+            onNavigateEarnings={() => handleNavigateTab('earnings')}
             onBack={handleBackFromDetail}
+            isOwner={userRole === 'founder' || !activeCampaign.joined}
           />
         ) : currentTab === 'payout-methods' ? (
           /* Dedicated Payout Methods Page */
@@ -396,6 +411,7 @@ export default function App() {
             onNavigateCampaign={handleNavigateDetail}
             onBack={() => handleNavigateTab('profile')}
             onCreateCampaign={() => handleNavigateTab('create')}
+            onNavigateEarnings={() => handleNavigateTab('earnings')}
           />
         ) : currentTab === 'earnings' ? (
           /* DEDICATED Earnings Page */
@@ -454,7 +470,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile Bottom Tab Bar */}
+      {/* Mobile Bottom Tab Bar with Role-Aware Destinations (Finding 10 & 18) */}
       <nav
         className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0E0E0E]/95 backdrop-blur-md border-t border-[#2A2A2A] px-2 py-1.5 flex items-center justify-around select-none"
         aria-label="Mobile Navigation"
@@ -479,15 +495,27 @@ export default function App() {
           <span className="text-[10px] font-medium">Discover</span>
         </button>
 
-        <button
-          onClick={() => handleNavigateTab('create')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-            currentTab === 'create' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
-          }`}
-        >
-          <i className="ti ti-plus text-[18px]"></i>
-          <span className="text-[10px] font-medium">Create</span>
-        </button>
+        {userRole === 'creator' ? (
+          <button
+            onClick={() => handleNavigateTab('earnings')}
+            className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+              currentTab === 'earnings' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+            }`}
+          >
+            <i className="ti ti-coin text-[18px]"></i>
+            <span className="text-[10px] font-medium">Earnings</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => handleNavigateTab('create')}
+            className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
+              currentTab === 'create' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+            }`}
+          >
+            <i className="ti ti-plus text-[18px]"></i>
+            <span className="text-[10px] font-medium">Create</span>
+          </button>
+        )}
 
         <button
           onClick={() => handleNavigateTab('profile')}
@@ -499,6 +527,15 @@ export default function App() {
           <span className="text-[10px] font-medium">Profile</span>
         </button>
       </nav>
+
+      {/* Immediate Post-Join Modal surfacing link and scannable QR (Finding 11) */}
+      <JoinedSuccessModal
+        campaign={justJoinedCampaign}
+        isOpen={!!justJoinedCampaign}
+        onClose={() => setJustJoinedCampaign(null)}
+        onCopyLink={handleCopyLink}
+        onViewCampaign={handleNavigateDetail}
+      />
 
       {/* QR Code Modal */}
       <QrCodeModal

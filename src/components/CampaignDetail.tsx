@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { CATS } from '../data/campaigns';
 import { Breadcrumbs } from './Breadcrumbs';
+import { TrackingQrCode } from './TrackingQrCode';
 
 interface CampaignDetailProps {
   campaign: Campaign;
@@ -12,65 +13,9 @@ interface CampaignDetailProps {
   onShare: (campaign: Campaign) => void;
   onNavigateDetail?: (id: string) => void;
   onNavigateAnalytics?: (id: string) => void;
+  onNavigateEarnings?: () => void;
   onBack: () => void;
-}
-
-// Procedural QR Code generator
-function generateQrSvg(seed: number) {
-  const n = 21;
-  const s = 5;
-  const rects: React.ReactNode[] = [];
-
-  function rnd(x: number) {
-    let s2 = (x + 0x6d2b79f5) | 0;
-    const t = Math.imul(s2 ^ (s2 >>> 15), 1 | s2);
-    const t2 = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t2 ^ (t2 >>> 14)) >>> 0) / 4294967296;
-  }
-
-  function fin(fx: number, fy: number, keyPrefix: string) {
-    return (
-      <g key={keyPrefix}>
-        <rect x={fx * s} y={fy * s} width={7 * s} height={7 * s} fill="#0B0B0B" />
-        <rect x={(fx + 1) * s} y={(fy + 1) * s} width={5 * s} height={5 * s} fill="#F5F3EC" />
-        <rect x={(fx + 2) * s} y={(fy + 2) * s} width={3 * s} height={3 * s} fill="#0B0B0B" />
-      </g>
-    );
-  }
-
-  for (let y = 0; y < n; y++) {
-    for (let x = 0; x < n; x++) {
-      if ((x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9)) continue;
-      if (rnd(seed * 131 + y * n + x) > 0.5) {
-        rects.push(
-          <rect
-            key={`dot-${x}-${y}`}
-            x={x * s}
-            y={y * s}
-            width={s}
-            height={s}
-            fill="#0B0B0B"
-          />
-        );
-      }
-    }
-  }
-
-  return (
-    <svg
-      width={n * s}
-      height={n * s}
-      viewBox={`0 0 ${n * s} ${n * s}`}
-      role="img"
-      aria-label="Creator QR code"
-      className="bg-[#F5F3EC] rounded-[10px] p-1.5 shrink-0"
-    >
-      {rects}
-      {fin(0, 0, 'fin-tl')}
-      {fin(n - 7, 0, 'fin-tr')}
-      {fin(0, n - 7, 'fin-bl')}
-    </svg>
-  );
+  isOwner?: boolean;
 }
 
 export const CampaignDetail: React.FC<CampaignDetailProps> = ({
@@ -80,7 +25,9 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   onCopyLink,
   onNavigateDetail,
   onNavigateAnalytics,
+  onNavigateEarnings,
   onBack,
+  isOwner = false,
 }) => {
   const [showTerms, setShowTerms] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -183,16 +130,27 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               )}
             </div>
 
-            {onNavigateAnalytics && (
+            {isOwner && onNavigateAnalytics ? (
               <button
                 type="button"
                 onClick={() => onNavigateAnalytics(campaign.id)}
                 className="pill text-[12px] min-h-[34px] px-3 cursor-pointer"
+                title="View founder attribution dashboard"
               >
                 <i className="ti ti-chart-bar text-[13px] text-[#B5D4F4]"></i>
-                <span>App analytics</span>
+                <span>App analytics (Owner)</span>
               </button>
-            )}
+            ) : campaign.joined && onNavigateEarnings ? (
+              <button
+                type="button"
+                onClick={onNavigateEarnings}
+                className="pill text-[12px] min-h-[34px] px-3 cursor-pointer"
+                title="View your creator link performance and payouts"
+              >
+                <i className="ti ti-coin text-[13px] text-[#C7F26B]"></i>
+                <span>My link earnings</span>
+              </button>
+            ) : null}
           </div>
 
           {/* Big App Title */}
@@ -213,7 +171,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             </span>
             <span className="flex items-center gap-1 text-[#B9B7AF]">
               <i className="ti ti-users" aria-hidden="true"></i>
-              <span>{campaign.creators + (campaign.joined ? 1 : 0)} creators</span>
+              <span>{campaign.creators} creators</span>
             </span>
             <span className="flex items-center gap-1 text-[#B9B7AF]">
               <i className="ti ti-circle-check" aria-hidden="true"></i>
@@ -333,9 +291,14 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             </div>
           </div>
 
-          {/* QR Code */}
-          <div className="shrink-0">
-            {generateQrSvg(campaign.name.length * 17 + 9)}
+          {/* Scannable Tracking QR Code */}
+          <div className="shrink-0 flex flex-col items-center">
+            <TrackingQrCode
+              url={`https://${linkText}`}
+              size={120}
+              showDownload={true}
+              downloadFileName={`kred_qr_${slug}.png`}
+            />
           </div>
         </div>
       )}

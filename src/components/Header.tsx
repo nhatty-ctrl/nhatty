@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { SmileyAvatar } from './SmileyAvatar';
 import { ProfileDropdown } from './ProfileDropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 
 interface HeaderProps {
-  currentTab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings';
-  onNavigate: (tab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings') => void;
+  currentTab: string;
+  onNavigate: (tab: any) => void;
   onNavigateCampaign: (id: string) => void;
-  avatarPalette?: string;
-  avatarMood?: string;
   unreadCount: number;
   readMap: Record<number, boolean>;
   onMarkRead: (id: number) => void;
@@ -19,9 +16,6 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   currentTab,
   onNavigate,
-  onNavigateCampaign,
-  avatarPalette = '#C7F26B',
-  avatarMood = 'builder',
   unreadCount,
   readMap,
   onMarkRead,
@@ -32,34 +26,46 @@ export const Header: React.FC<HeaderProps> = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#0B0B0B] border-b border-[#2A2A2A] px-3 sm:px-6 py-3 select-none">
-      {/* Edge-to-Edge corner-to-corner container (no max-w constrain) */}
+    <header className="sticky top-0 z-40 w-full bg-[#0B0B0B]/95 backdrop-blur-md border-b border-[#2A2A2A] px-3 sm:px-6 py-2.5 sm:py-3 select-none">
+      {/* Edge-to-Edge corner-to-corner container */}
       <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left Corner: Logo & Navigation Tabs */}
+        {/* Left: Brand & Navigation */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
             onClick={() => onNavigate('campaigns')}
-            className="w-[36px] h-[36px] rounded-[12px] bg-[#1C1C1C] hover:bg-[#242424] text-[#F5F3EC] flex items-center justify-center text-[18px] border-0 cursor-pointer transition-colors shrink-0"
+            className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-[12px] bg-[#1C1C1C] hover:bg-[#242424] text-[#F5F3EC] flex items-center justify-center text-[18px] border-0 cursor-pointer transition-colors shrink-0"
             aria-label="KRED home"
           >
             <i className="ti ti-asterisk" aria-hidden="true"></i>
           </button>
 
-          {/* Navigation Pills: Campaigns, Discover, Earnings */}
-          <nav className="flex items-center gap-1 sm:gap-1.5" aria-label="Main navigation">
+          {/* Wordmark */}
+          <div className="flex items-center gap-2">
+            <span
+              onClick={() => onNavigate('campaigns')}
+              className="text-[17px] font-semibold tracking-tight text-[#F5F3EC] cursor-pointer hover:text-white transition-colors"
+            >
+              kred
+            </span>
+          </div>
+
+          {/* Desktop Navigation: ONLY Campaigns & Discover (Per explicit requirement) */}
+          <nav className="flex items-center gap-1 sm:gap-1.5 ml-2" aria-label="Main navigation">
             <button
               onClick={() => onNavigate('campaigns')}
-              className={`pill ${currentTab === 'campaigns' ? 'on' : ''}`}
+              className={`pill text-[13px] px-3.5 py-1.5 min-h-[36px] ${
+                currentTab === 'campaigns' ? 'on' : ''
+              }`}
             >
-              <i className="ti ti-speakerphone" aria-hidden="true"></i>
               <span>Campaigns</span>
             </button>
 
             <button
               onClick={() => onNavigate('discover')}
-              className={`pill ${currentTab === 'discover' ? 'on' : ''}`}
+              className={`pill text-[13px] px-3.5 py-1.5 min-h-[36px] ${
+                currentTab === 'discover' ? 'on' : ''
+              }`}
             >
-              <i className="ti ti-compass" aria-hidden="true"></i>
               <span>Discover</span>
             </button>
           </nav>
@@ -67,20 +73,16 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Corner: Create Campaign, Notifications, Profile Avatar */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Create campaign button (Available for everyone) */}
+          {/* Create campaign button (Solid Blue as shown in screenshots) */}
           <button
             type="button"
             onClick={() => onNavigate('create')}
-            className={`pill on font-medium text-[13px] py-1.5 px-3.5 cursor-pointer ${
-              currentTab === 'create' ? 'ring-2 ring-[#C7F26B]' : ''
-            }`}
+            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-medium py-1.5 px-4 rounded-full bg-[#388BFD] hover:bg-[#2f75d3] text-white cursor-pointer transition-colors shadow-sm"
           >
-            <i className="ti ti-plus" aria-hidden="true"></i>
-            <span className="hidden sm:inline">Create campaign</span>
-            <span className="sm:hidden">Create</span>
+            <span>Create campaign</span>
           </button>
 
-          {/* Notifications Button with Live Unread Badge */}
+          {/* Notifications Bell */}
           <div className="relative">
             <button
               type="button"
@@ -88,37 +90,35 @@ export const Header: React.FC<HeaderProps> = ({
                 setIsNotifOpen(!isNotifOpen);
                 setIsProfileOpen(false);
               }}
-              className={`w-[36px] h-[36px] rounded-full border-0 flex items-center justify-center text-[17px] transition-colors relative cursor-pointer ${
+              className={`w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full border-0 cursor-pointer flex items-center justify-center text-[17px] relative transition-colors ${
                 isNotifOpen
-                  ? 'bg-[#F5F3EC] text-[#0B0B0B]'
-                  : 'bg-[#1C1C1C] text-[#F5F3EC] hover:bg-[#242424]'
+                  ? 'bg-[#2A2A2A] text-[#F5F3EC]'
+                  : 'bg-[#1C1C1C] hover:bg-[#242424] text-[#A8A69E] hover:text-[#F5F3EC]'
               }`}
               aria-label="Notifications"
             >
-              <i className="ti ti-bell" aria-hidden="true"></i>
+              <i className="ti ti-bell"></i>
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] rounded-full bg-[#C7F26B] text-[#16140F] text-[10px] font-semibold flex items-center justify-center px-1 border-2 border-[#0B0B0B] box-content">
-                  {unreadCount}
-                </span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#388BFD] ring-2 ring-[#0B0B0B]" />
               )}
             </button>
 
-            <NotificationsDropdown
-              isOpen={isNotifOpen}
-              onClose={() => setIsNotifOpen(false)}
-              role="creator"
-              readMap={readMap}
-              onMarkRead={onMarkRead}
-              onMarkAllRead={onMarkAllRead}
-              onNavigateCampaign={onNavigateCampaign}
-              onOpenNotificationSettings={() => {
-                setIsNotifOpen(false);
-                onNavigate('notification-settings');
-              }}
-            />
+            {isNotifOpen && (
+              <NotificationsDropdown
+                isOpen={isNotifOpen}
+                onClose={() => setIsNotifOpen(false)}
+                readMap={readMap}
+                onMarkRead={onMarkRead}
+                onMarkAllRead={onMarkAllRead}
+                onNavigateSettings={() => {
+                  setIsNotifOpen(false);
+                  onNavigate('settings');
+                }}
+              />
+            )}
           </div>
 
-          {/* Profile Avatar Button with Dropdown directing to pages */}
+          {/* Profile Avatar Button (Blue circle matching screenshot avatar) */}
           <div className="relative">
             <button
               type="button"
@@ -126,27 +126,24 @@ export const Header: React.FC<HeaderProps> = ({
                 setIsProfileOpen(!isProfileOpen);
                 setIsNotifOpen(false);
               }}
-              className={`w-[36px] h-[36px] rounded-full p-0 border-0 bg-transparent cursor-pointer flex items-center justify-center transition-all ${
-                isProfileOpen ? 'ring-2 ring-[#F5F3EC]' : ''
-              }`}
-              aria-label="Profile menu"
+              className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full bg-[#388BFD] text-white flex items-center justify-center text-[17px] border-0 cursor-pointer hover:brightness-110 transition-all shadow-sm"
+              aria-label="Account and workspace menu"
             >
-              <SmileyAvatar paletteId={avatarPalette} personaId={avatarMood} size={36} />
+              <i className="ti ti-user" aria-hidden="true"></i>
             </button>
 
-            <ProfileDropdown
-              isOpen={isProfileOpen}
-              onClose={() => setIsProfileOpen(false)}
-              avatarPalette={avatarPalette}
-              avatarMood={avatarMood}
-              balance={balance}
-              onNavigateProfile={() => onNavigate('profile')}
-              onNavigateEarnings={() => onNavigate('earnings')}
-              onNavigateAnalytics={() => onNavigate('profile')}
-              onNavigatePayoutMethods={() => onNavigate('payout-methods')}
-              onNavigateBilling={() => onNavigate('billing')}
-              onNavigateNotificationSettings={() => onNavigate('notification-settings')}
-            />
+            {isProfileOpen && (
+              <ProfileDropdown
+                isOpen={isProfileOpen}
+                onClose={() => setIsProfileOpen(false)}
+                balance={balance}
+                onNavigateEarnings={() => onNavigate('earnings')}
+                onNavigateAnalytics={() => onNavigate('analytics')}
+                onNavigatePayoutMethods={() => onNavigate('payout-methods')}
+                onNavigateBilling={() => onNavigate('billing')}
+                onNavigateSettings={() => onNavigate('settings')}
+              />
+            )}
           </div>
         </div>
       </div>

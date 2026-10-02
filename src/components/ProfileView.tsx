@@ -144,36 +144,39 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
           </div>
 
-          {/* Social Links Row (like in screenshot) */}
-          <div className="flex items-center justify-center sm:justify-start gap-2.5 pt-1 text-[#9A9892]">
+          {/* Social Links Row */}
+          <div className="flex items-center justify-center sm:justify-start gap-2.5 pt-1 text-[#A8A69E]">
             <a
-              href="https://linkedin.com"
+              href="https://linkedin.com/in/alexrivera-creator"
               target="_blank"
               rel="noreferrer"
               className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="LinkedIn"
+              aria-label="LinkedIn: Alex Rivera"
+              title="LinkedIn: /in/alexrivera-creator"
             >
               <i className="ti ti-brand-linkedin"></i>
             </a>
             <a
-              href="https://x.com"
+              href="https://x.com/alexrivera"
               target="_blank"
               rel="noreferrer"
               className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="Twitter / X"
+              aria-label="Twitter / X: @alexrivera"
+              title="X: @alexrivera"
             >
               <i className="ti ti-brand-x"></i>
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/alexrivera"
               target="_blank"
               rel="noreferrer"
               className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="GitHub"
+              aria-label="GitHub: @alexrivera"
+              title="GitHub: @alexrivera"
             >
               <i className="ti ti-brand-github"></i>
             </a>
-            <span className="text-[12px] text-[#9A9892] pl-2 font-mono">
+            <span className="text-[12px] text-[#A8A69E] pl-2 font-mono">
               kred.id/alex
             </span>
           </div>

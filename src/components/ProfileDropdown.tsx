@@ -9,6 +9,7 @@ interface ProfileDropdownProps {
   onNavigatePayoutMethods: () => void;
   onNavigateBilling: () => void;
   onNavigateSettings: () => void;
+  onNavigateDocs?: () => void;
 }
 
 export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
@@ -20,6 +21,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   onNavigatePayoutMethods,
   onNavigateBilling,
   onNavigateSettings,
+  onNavigateDocs,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -146,6 +148,19 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         >
           <i className="ti ti-wallet text-[17px] text-[#CECBF6]" aria-hidden="true"></i>
           <span className="flex-1">Payout methods</span>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (onNavigateDocs) onNavigateDocs();
+            onClose();
+          }}
+          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+        >
+          <i className="ti ti-book text-[17px] text-[#C7F26B]" aria-hidden="true"></i>
+          <span className="flex-1">Documentation & SDK</span>
           <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
         </button>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Campaign } from '../types/campaign';
+import { Campaign, CampaignApplication, UserSocialLinks } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
 import {
   SmileyAvatar,
@@ -8,6 +8,8 @@ import {
   DEFAULT_AVATAR_PALETTE,
   DEFAULT_AVATAR_MOOD,
 } from './SmileyAvatar';
+import { KredAnalyticsEngine } from './KredAnalyticsEngine';
+import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface ProfileViewProps {
   onBack: () => void;
@@ -17,11 +19,17 @@ interface ProfileViewProps {
   onNavigatePayoutMethods?: () => void;
   onNavigateBilling?: () => void;
   onNavigateNotificationSettings?: () => void;
+  onNavigateSettings?: () => void;
+  onNavigateEarnings?: () => void;
+  onOpenQr?: (campaign: Campaign) => void;
   onCreateCampaign?: () => void;
+  onOpenOnboarding?: () => void;
   avatarPalette?: string;
   avatarMood?: string;
   onSelectPalette?: (palette: string) => void;
   onSelectMood?: (mood: string) => void;
+  username?: string;
+  onUpdateUsername?: (newUsername: string) => void;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
@@ -32,495 +40,838 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onNavigatePayoutMethods,
   onNavigateBilling,
   onNavigateNotificationSettings,
+  onNavigateSettings,
+  onNavigateEarnings,
+  onOpenQr,
   onCreateCampaign,
+  onOpenOnboarding,
   avatarPalette = DEFAULT_AVATAR_PALETTE,
   avatarMood = DEFAULT_AVATAR_MOOD,
   onSelectPalette,
   onSelectMood,
+  username = 'alex',
+  onUpdateUsername,
 }) => {
-  const [profileTab, setProfileTab] = useState<'created' | 'joined' | 'payouts' | 'avatar'>('created');
-  const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'created' | 'joined' | 'settings'>('created');
+  const [showFounderAnalytics, setShowFounderAnalytics] = useState(false);
+  const [showCreatorAnalytics, setShowCreatorAnalytics] = useState(false);
+  const [expandedJoinedId, setExpandedJoinedId] = useState<string | null>(null);
+  const [expandedCreatedId, setExpandedCreatedId] = useState<string | null>(null);
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  // Profile fields state
+  const [displayName, setDisplayName] = useState('Alex Rivera');
+  const [currentUsername, setCurrentUsername] = useState(username);
+  const [bio, setBio] = useState('Mobile tech reviewer and developer. Testing indie apps with real audiences.');
+  const [profileSaved, setProfileSaved] = useState(false);
+
+  // Social accounts state
+  const [socials, setSocials] = useState<UserSocialLinks>({
+    twitter: '@alex_builds',
+    tiktok: '@alex_clips',
+    youtube: 'AlexTechReviews',
+    instagram: '@alex.rivera',
+    twitch: 'alex_live',
+  });
+
+  // Founder creator applications review state
+  const [applications, setApplications] = useState<CampaignApplication[]>([
+    {
+      id: 'app_101',
+      campaignId: 'pixelpop',
+      creatorHandle: 'maya.makes',
+      creatorName: '@maya.makes',
+      primaryChannel: 'tiktok',
+      followerCount: '120k followers',
+      pitchNote: 'Daily indie mobile gaming streams. Would love to feature Pixel Pop on our Thursday lineup.',
+      status: 'pending',
+      submittedAt: '2026-09-28T14:20:00Z',
+    },
+    {
+      id: 'app_102',
+      campaignId: 'stride',
+      creatorHandle: 'devon.art',
+      creatorName: '@devon.art',
+      primaryChannel: 'youtube',
+      followerCount: '45k subscribers',
+      pitchNote: 'Focusing on fitness lifestyle tech. Planning a dedicated review segment.',
+      status: 'pending',
+      submittedAt: '2026-10-01T09:15:00Z',
+    },
+  ]);
 
   const currentPersona =
     AVATAR_PERSONAS.find((p) => p.id === avatarMood) || AVATAR_PERSONAS[0];
 
-  const handleShuffleColor = () => {
-    const randomColor =
-      AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
-    if (onSelectPalette) onSelectPalette(randomColor);
-  };
-
-  const createdCampaigns = campaigns.filter((c) => !c.joined);
+  const createdCampaigns = campaigns.filter((c) => c.isCreatedByMe || !c.joined);
   const joinedCampaigns = campaigns.filter((c) => c.joined);
 
-  const handleCopy = (slug: string) => {
-    navigator.clipboard?.writeText(`https://kred.link/${slug}/you`);
-    setCopiedLink(slug);
-    setTimeout(() => setCopiedLink(null), 1200);
+  const handleCopyLink = (c: Campaign) => {
+    const slug = c.slug || c.id;
+    const url = `https://kred.link/${slug}/${currentUsername}`;
+    navigator.clipboard?.writeText(url);
+    setCopiedSlug(slug);
+    setTimeout(() => setCopiedSlug(null), 1200);
+  };
+
+  const handleAppDecision = (appId: string, decision: 'approved' | 'rejected') => {
+    setApplications((prev) =>
+      prev.map((a) => (a.id === appId ? { ...a, status: decision } : a))
+    );
+  };
+
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onUpdateUsername) {
+      onUpdateUsername(currentUsername);
+    }
+    try {
+      localStorage.setItem('kred_username', currentUsername);
+      localStorage.setItem('kred_display_name', displayName);
+      localStorage.setItem('kred_bio', bio);
+      localStorage.setItem('kred_socials', JSON.stringify(socials));
+    } catch {}
+    setProfileSaved(true);
+    setTimeout(() => setProfileSaved(false), 1500);
   };
 
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-      {/* Breadcrumbs with Icons */}
+    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left select-none">
+      {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
           { label: 'Home', icon: 'ti-home', onClick: onBack },
-          { label: 'Profile', icon: 'ti-user', active: true },
+          { label: 'Profile & Settings', icon: 'ti-user', active: true },
         ]}
       />
 
-      {/* Profile Header (Matching Screenshot Design) */}
-      <div className="pt-2 pb-6 border-b border-[#2A2A2A]/70 flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
-        {/* Glowing Gradient Circle Avatar */}
+      {/* Profile Header */}
+      <div className="pt-2 pb-6 border-b border-[#27272A] flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+        {/* Avatar with Glow Ring */}
         <div className="relative shrink-0">
           <div
-            className="w-[104px] h-[104px] rounded-full p-[2px] flex items-center justify-center shadow-lg transition-transform hover:scale-105"
+            className="w-[100px] h-[100px] rounded-full p-[2px] flex items-center justify-center shadow-lg transition-transform hover:scale-105"
             style={{
-              background: `radial-gradient(circle at 30% 30%, ${avatarPalette}, #161616 80%)`,
+              background: `radial-gradient(circle at 30% 30%, ${avatarPalette}, #141414 80%)`,
             }}
           >
-            <div className="w-full h-full rounded-full bg-[#121212] flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full rounded-full bg-[#121215] flex items-center justify-center overflow-hidden">
               <SmileyAvatar
                 paletteId={avatarPalette}
                 personaId={currentPersona.id}
-                size={98}
+                size={94}
               />
             </div>
           </div>
         </div>
 
-        {/* User Info & Stats */}
+        {/* User Info & Quick Stats */}
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-[28px] font-medium tracking-[-0.6px] text-[#F5F3EC]">
-                Alex Rivera
-              </h1>
-              <div className="flex items-center justify-center sm:justify-start gap-3 text-[13px] text-[#9A9892] mt-0.5">
-                <span className="flex items-center gap-1.5">
-                  <i className="ti ti-calendar text-[14px]"></i>
-                  <span>Joined April 2026</span>
-                </span>
-                <span>·</span>
-                <span className="text-[#F5F3EC] font-medium">
-                  <span className="text-[#C7F26B] font-semibold">{createdCampaigns.length}</span> Created
-                </span>
-                <span>·</span>
-                <span className="text-[#F5F3EC] font-medium">
-                  <span className="text-[#C7F26B] font-semibold">{joinedCampaigns.length}</span> Joined
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <h1 className="text-[26px] font-semibold tracking-tight text-[#F5F3EC]">
+                  {displayName}
+                </h1>
+                <span className="chip py-0.5 px-2 bg-[#C7F26B]/15 text-[#C7F26B] font-mono text-[11px] font-medium">
+                  @{currentUsername}
                 </span>
               </div>
+              <p className="text-[13px] text-[#A1A1AA] mt-1 max-w-[480px]">
+                {bio}
+              </p>
             </div>
 
-            {/* Quick Action Pills */}
+            {/* Quick Actions */}
             <div className="flex items-center justify-center sm:justify-end gap-2 pt-1 sm:pt-0">
               <button
                 type="button"
                 onClick={onNavigatePayoutMethods}
-                className="pill text-[12px] min-h-[38px] px-3.5 cursor-pointer"
-                title="Payout methods"
+                className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                title="Manage linked bank & payout methods"
               >
                 <i className="ti ti-wallet"></i>
                 <span>Payouts</span>
               </button>
+
               <button
                 type="button"
                 onClick={onNavigateBilling}
-                className="pill text-[12px] min-h-[38px] px-3.5 cursor-pointer"
-                title="Billing and invoices"
+                className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                title="Founder campaign escrow balance"
               >
                 <i className="ti ti-receipt"></i>
                 <span>Billing</span>
               </button>
-              <button
-                type="button"
-                onClick={onNavigateNotificationSettings}
-                className="pill text-[12px] min-h-[38px] px-3 cursor-pointer"
-                title="Notification settings"
-                aria-label="Notification settings"
-              >
-                <i className="ti ti-bell"></i>
-              </button>
-            </div>
-          </div>
 
-          {/* Social Links Row */}
-          <div className="flex items-center justify-center sm:justify-start gap-2.5 pt-1 text-[#A8A69E]">
-            <a
-              href="https://linkedin.com/in/alexrivera-creator"
-              target="_blank"
-              rel="noreferrer"
-              className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="LinkedIn: Alex Rivera"
-              title="LinkedIn: /in/alexrivera-creator"
-            >
-              <i className="ti ti-brand-linkedin"></i>
-            </a>
-            <a
-              href="https://x.com/alexrivera"
-              target="_blank"
-              rel="noreferrer"
-              className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="Twitter / X: @alexrivera"
-              title="X: @alexrivera"
-            >
-              <i className="ti ti-brand-x"></i>
-            </a>
-            <a
-              href="https://github.com/alexrivera"
-              target="_blank"
-              rel="noreferrer"
-              className="w-8 h-8 rounded-[8px] bg-[#161616] hover:bg-[#242424] hover:text-[#F5F3EC] flex items-center justify-center text-[15px] transition-colors border border-[#2A2A2A]/40"
-              aria-label="GitHub: @alexrivera"
-              title="GitHub: @alexrivera"
-            >
-              <i className="ti ti-brand-github"></i>
-            </a>
-            <span className="text-[12px] text-[#A8A69E] pl-2 font-mono">
-              kred.id/alex
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Section Tabs (like in screenshot) */}
-      <div className="flex items-center gap-1.5 border-b border-[#2A2A2A]/60 pb-3 overflow-x-auto scrollbar-none select-none">
-        {[
-          { id: 'created', label: 'My Campaigns', icon: 'ti-speakerphone', count: createdCampaigns.length },
-          { id: 'joined', label: 'Joined Campaigns', icon: 'ti-link', count: joinedCampaigns.length },
-          { id: 'payouts', label: 'Financials', icon: 'ti-coin', count: null },
-          { id: 'avatar', label: 'Avatar & Theme', icon: 'ti-mood-smile', count: null },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setProfileTab(tab.id as any)}
-            className={`pill min-h-[40px] px-4 cursor-pointer text-[13px] ${
-              profileTab === tab.id ? 'on' : 'text-[#9A9892] hover:text-[#F5F3EC]'
-            }`}
-          >
-            <i className={`ti ${tab.icon}`}></i>
-            <span>{tab.label}</span>
-            {tab.count !== null && (
-              <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-mono ${
-                profileTab === tab.id ? 'bg-[#0B0B0B] text-[#F5F3EC]' : 'bg-[#1C1C1C] text-[#9A9892]'
-              }`}>
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Tab Content 1: Created Campaigns (Click any campaign to see that app's analytics!) */}
-      {profileTab === 'created' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[16px] font-medium text-[#F5F3EC]">Apps & campaigns</div>
-              <div className="sub text-[12px]">Click any campaign to view live telemetry and install attribution.</div>
-            </div>
-            {onCreateCampaign && (
-              <button
-                type="button"
-                onClick={onCreateCampaign}
-                className="pill on min-h-[38px] px-4 text-[12px] cursor-pointer"
-              >
-                <i className="ti ti-plus"></i>
-                <span>New campaign</span>
-              </button>
-            )}
-          </div>
-
-          {createdCampaigns.length > 0 ? (
-            <div className="space-y-2.5">
-              {createdCampaigns.map((camp) => (
-                <div
-                  key={camp.id}
-                  onClick={() => onNavigateAnalytics && onNavigateAnalytics(camp.id)}
-                  className="card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#2A2A2A] hover:border-[#F5F3EC]/30 hover:bg-[#181818] transition-all cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span
-                      className="w-12 h-12 rounded-[16px] flex items-center justify-center text-[24px] shrink-0"
-                      style={{ backgroundColor: camp.bg, color: camp.fg }}
-                    >
-                      <i className={`ti ${camp.icon}`}></i>
-                    </span>
-                    <div className="min-w-0">
-                      <div className="text-[16px] font-medium text-[#F5F3EC] group-hover:text-white flex items-center gap-2">
-                        <span>{camp.name}</span>
-                        <span className="chip text-[11px] py-0.5 px-2 bg-[#222] text-[#B9B7AF]">
-                          {camp.cat}
-                        </span>
-                      </div>
-                      <div className="sub text-[12px] mt-0.5">
-                        ${camp.price} per install · {camp.creators} creators · {camp.days} days left
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onNavigateCampaign) onNavigateCampaign(camp.id);
-                      }}
-                      className="ol min-h-[38px] px-3 text-[12px] cursor-pointer"
-                    >
-                      <span>Public page</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onNavigateAnalytics) onNavigateAnalytics(camp.id);
-                      }}
-                      className="pill on min-h-[38px] px-4 text-[12px] cursor-pointer font-medium"
-                    >
-                      <i className="ti ti-chart-bar text-[14px]"></i>
-                      <span>View analytics</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            /* Screenshot Empty State Replication */
-            <div className="card text-center py-16 px-6 space-y-4 bg-[#141414] border border-[#242424] rounded-[24px]">
-              {/* Embossed slate empty state badge icon */}
-              <div className="relative inline-flex items-center justify-center">
-                <div className="w-20 h-20 rounded-[22px] bg-[#1F1F1F] border border-[#2F2F2F] flex items-center justify-center text-[#555] text-[36px] shadow-inner">
-                  <i className="ti ti-layout-grid"></i>
-                </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#2A2A2A] border-2 border-[#141414] text-[#888] font-mono text-[12px] font-bold flex items-center justify-center">
-                  0
-                </div>
-              </div>
-
-              <div>
-                <div className="text-[17px] font-medium text-[#F5F3EC]">Nothing here, yet</div>
-                <div className="text-[13px] text-[#9A9892] mt-1 max-w-[340px] mx-auto leading-relaxed">
-                  Alex has no public campaigns at this time.
-                </div>
-              </div>
-
-              {onCreateCampaign && (
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={onCreateCampaign}
-                    className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
-                  >
-                    Create a campaign
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab Content 2: Joined Campaigns */}
-      {profileTab === 'joined' && (
-        <div className="space-y-4">
-          <div className="text-[16px] font-medium text-[#F5F3EC]">Campaigns you promote</div>
-
-          {joinedCampaigns.length > 0 ? (
-            <div className="space-y-2.5">
-              {joinedCampaigns.map((camp) => (
-                <div
-                  key={camp.id}
-                  className="card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#2A2A2A]"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span
-                      className="w-12 h-12 rounded-[16px] flex items-center justify-center text-[24px] shrink-0"
-                      style={{ backgroundColor: camp.bg, color: camp.fg }}
-                    >
-                      <i className={`ti ${camp.icon}`}></i>
-                    </span>
-                    <div className="min-w-0">
-                      <div className="text-[16px] font-medium text-[#F5F3EC] flex items-center gap-2">
-                        <span>{camp.name}</span>
-                        <span className="chip text-[11px] py-0.5 px-2 bg-[#C7F26B] text-[#16140F] font-semibold">
-                          Active link
-                        </span>
-                      </div>
-                      <div className="sub text-[12px] font-mono mt-0.5">
-                        kred.link/{camp.slug || camp.id}/you
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(camp.slug || camp.id)}
-                      className="pill on min-h-[38px] px-3.5 text-[12px] cursor-pointer"
-                    >
-                      {copiedLink === (camp.slug || camp.id) ? 'Copied' : 'Copy link'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onNavigateCampaign && onNavigateCampaign(camp.id)}
-                      className="ol min-h-[38px] px-3 text-[12px] cursor-pointer"
-                    >
-                      View details
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            /* Screenshot Empty State Replication */
-            <div className="card text-center py-16 px-6 space-y-4 bg-[#141414] border border-[#242424] rounded-[24px]">
-              <div className="relative inline-flex items-center justify-center">
-                <div className="w-20 h-20 rounded-[22px] bg-[#1F1F1F] border border-[#2F2F2F] flex items-center justify-center text-[#555] text-[36px] shadow-inner">
-                  <i className="ti ti-link"></i>
-                </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#2A2A2A] border-2 border-[#141414] text-[#888] font-mono text-[12px] font-bold flex items-center justify-center">
-                  0
-                </div>
-              </div>
-
-              <div>
-                <div className="text-[17px] font-medium text-[#F5F3EC]">Nothing here, yet</div>
-                <div className="text-[13px] text-[#9A9892] mt-1 max-w-[340px] mx-auto leading-relaxed">
-                  Alex has not joined any campaigns to promote yet.
-                </div>
-              </div>
-
-              <div className="pt-2">
+              {onOpenOnboarding && (
                 <button
                   type="button"
-                  onClick={onBack}
-                  className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+                  onClick={onOpenOnboarding}
+                  className="pill text-[12px] min-h-[36px] px-3 cursor-pointer"
+                  title="Replay Onboarding Guide"
                 >
-                  Browse open marketplace
+                  <i className="ti ti-help"></i>
+                  <span>Guide</span>
                 </button>
+              )}
+            </div>
+          </div>
+
+          {/* Social Badges Row */}
+          <div className="flex items-center justify-center sm:justify-start gap-2 pt-1 flex-wrap">
+            {socials.tiktok && (
+              <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C20] text-[#A1A1AA] flex items-center gap-1.5">
+                <i className="ti ti-brand-tiktok text-[#EE1D52]"></i>
+                <span className="font-mono">{socials.tiktok}</span>
+              </span>
+            )}
+            {socials.youtube && (
+              <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C20] text-[#A1A1AA] flex items-center gap-1.5">
+                <i className="ti ti-brand-youtube text-[#FF0000]"></i>
+                <span className="font-mono">{socials.youtube}</span>
+              </span>
+            )}
+            {socials.twitter && (
+              <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C20] text-[#A1A1AA] flex items-center gap-1.5">
+                <i className="ti ti-brand-x text-white"></i>
+                <span className="font-mono">{socials.twitter}</span>
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Two Core Tabs: Created (Founder View) vs Joined (Creator Performance) vs Settings */}
+      <div className="flex items-center gap-2 border-b border-[#27272A] pb-3 overflow-x-auto scrollbar-none">
+        <button
+          type="button"
+          onClick={() => setActiveTab('created')}
+          className={`pill min-h-[40px] px-4 cursor-pointer text-[13px] font-medium ${
+            activeTab === 'created' ? 'on' : 'gh text-[#A1A1AA]'
+          }`}
+        >
+          <i className="ti ti-device-mobile"></i>
+          <span>Created (Founder Analytics)</span>
+          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#161616]">
+            {createdCampaigns.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('joined')}
+          className={`pill min-h-[40px] px-4 cursor-pointer text-[13px] font-medium ${
+            activeTab === 'joined' ? 'on' : 'gh text-[#A1A1AA]'
+          }`}
+        >
+          <i className="ti ti-link"></i>
+          <span>Joined (Creator Performance)</span>
+          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#161616]">
+            {joinedCampaigns.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('settings')}
+          className={`pill min-h-[40px] px-4 cursor-pointer text-[13px] font-medium ${
+            activeTab === 'settings' ? 'on' : 'gh text-[#A1A1AA]'
+          }`}
+        >
+          <i className="ti ti-settings"></i>
+          <span>Account & Social Links</span>
+        </button>
+      </div>
+
+      {/* TAB 1: Created (Founder Analytics View) */}
+      {activeTab === 'created' && (
+        <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="text-[16px] font-medium text-[#F5F3EC]">Your Founded Campaigns</div>
+              <div className="text-[12px] text-[#A1A1AA]">
+                Monitor real-time install attribution, escrow balances, and RavenCore SDK connectivity.
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowFounderAnalytics(!showFounderAnalytics)}
+                className="pill out text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
+              >
+                <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                <span>{showFounderAnalytics ? 'Hide Telemetry Charts' : 'View Founder Attribution Charts'}</span>
+              </button>
+              {onCreateCampaign && (
+                <button
+                  type="button"
+                  onClick={onCreateCampaign}
+                  className="pill on text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
+                >
+                  <i className="ti ti-plus"></i>
+                  <span>Create New</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Founder Escrow & Telemetry KPI strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#161616] p-4 rounded-[20px] border border-[#2A2A2A] text-left">
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Total Escrow Deposited</span>
+              <span className="text-[20px] font-semibold font-mono text-[#F5F3EC] mt-0.5 block">$20,000.00</span>
+              <span className="text-[10.5px] text-[#C7F26B] font-mono">100% Guaranteed</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Settled to Creators</span>
+              <span className="text-[20px] font-semibold font-mono text-[#C7F26B] mt-0.5 block">$14,580.00</span>
+              <span className="text-[10.5px] text-[#A8A69E]">Via RavenCore attestation</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Verified Mobile Installs</span>
+              <span className="text-[20px] font-semibold font-mono text-[#B5D4F4] mt-0.5 block">5,240</span>
+              <span className="text-[10.5px] text-[#A8A69E]">Hardware fingerprint checked</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Active Creators</span>
+              <span className="text-[20px] font-semibold font-mono text-[#FAC775] mt-0.5 block">68</span>
+              <span className="text-[10.5px] text-[#A8A69E]">Promoting across TikTok & X</span>
+            </div>
+          </div>
+
+          {/* Expandable Founder Analytics */}
+          {showFounderAnalytics && (
+            <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
+              <KredTelemetryBarChart
+                title="Let’s look at your latest install runs and verify incoming creator traffic."
+                pillLabel="Founder telemetry overview · Escrow backed"
+                icon="ti-speakerphone"
+                barColor="#C7F26B"
+                bountyPrice={2.0}
+              />
+              <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
+                <KredAnalyticsEngine
+                  campaigns={campaigns}
+                  onNavigateEarnings={onNavigateEarnings}
+                />
               </div>
             </div>
           )}
-        </div>
-      )}
 
-      {/* Tab Content 3: Financials Quick Links */}
-      {profileTab === 'payouts' && (
-        <div className="space-y-4">
-          <div className="text-[16px] font-medium text-[#F5F3EC]">Financial management</div>
+          {/* Founded Campaigns List with Founder Telemetry */}
+          <div className="space-y-3">
+            {createdCampaigns.map((camp) => (
+              <div
+                key={camp.id}
+                className="card p-4 sm:p-5 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-3.5 text-left"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-11 h-11 rounded-[14px] flex items-center justify-center text-[22px] shrink-0"
+                      style={{ backgroundColor: camp.bg, color: camp.fg }}
+                    >
+                      <i className={`ti ${camp.icon}`}></i>
+                    </div>
+                    <div>
+                      <div className="text-[16px] font-semibold text-[#F5F3EC]">{camp.name}</div>
+                      <div className="text-[12px] text-[#A8A69E] flex items-center gap-2 mt-0.5">
+                        <span>{camp.cat}</span>
+                        <span>·</span>
+                        <span className="font-mono text-[#C7F26B]">${camp.price} / verified install</span>
+                      </div>
+                    </div>
+                  </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div
-              onClick={onNavigatePayoutMethods}
-              className="card p-5 border border-[#2A2A2A] hover:bg-[#181818] cursor-pointer transition-colors space-y-3 group"
-            >
-              <div className="w-11 h-11 rounded-[14px] bg-[#C0DD97] text-[#173404] flex items-center justify-center text-[22px]">
-                <i className="ti ti-wallet"></i>
-              </div>
-              <div>
-                <div className="text-[16px] font-medium text-[#F5F3EC] group-hover:text-white flex items-center justify-between">
-                  <span>Payout methods</span>
-                  <i className="ti ti-arrow-right text-[14px] text-[#9A9892]"></i>
+                  {/* RavenCore SDK status */}
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1C1C1C] text-[11px] font-mono border border-[#2A2A2A]">
+                    <span className="w-2 h-2 rounded-full bg-[#C7F26B]" />
+                    <span className="text-[#C7F26B]">RavenCore Active</span>
+                  </div>
                 </div>
-                <div className="sub text-[12px] mt-1">
-                  Manage bank ACH accounts, debit cards, and USDC wallets on Polygon.
+
+                {/* Metrics Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#1C1C1C] p-3 rounded-[14px] border border-[#2A2A2A]/40 text-[12px] font-mono">
+                  <div>
+                    <span className="text-[#A8A69E] block text-[11px]">Active Escrow</span>
+                    <span className="text-[#F5F3EC] font-semibold">${camp.budget?.toLocaleString() || '5,000'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#A8A69E] block text-[11px]">Verified Installs</span>
+                    <span className="text-[#C7F26B] font-semibold">{camp.installsVerified || '0'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#A8A69E] block text-[11px]">Active Creators</span>
+                    <span className="text-[#F5F3EC] font-semibold">{camp.creators}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#A8A69E] block text-[11px]">Next Settlement</span>
+                    <span className="text-[#B5D4F4] font-semibold">Friday 17:00 UTC</span>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div
-              onClick={onNavigateBilling}
-              className="card p-5 border border-[#2A2A2A] hover:bg-[#181818] cursor-pointer transition-colors space-y-3 group"
-            >
-              <div className="w-11 h-11 rounded-[14px] bg-[#B5D4F4] text-[#042C53] flex items-center justify-center text-[22px]">
-                <i className="ti ti-receipt"></i>
-              </div>
-              <div>
-                <div className="text-[16px] font-medium text-[#F5F3EC] group-hover:text-white flex items-center justify-between">
-                  <span>Billing and invoices</span>
-                  <i className="ti ti-arrow-right text-[14px] text-[#9A9892]"></i>
+                {/* Founder Actions */}
+                <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
+                  <span className="text-[11.5px] text-[#A8A69E] font-mono">
+                    Key: {camp.sdkKey || 'kred_live_pixelpop7k2'}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedCreatedId(expandedCreatedId === camp.id ? null : camp.id)}
+                      className={`pill text-[12px] py-1 px-3 cursor-pointer font-medium flex items-center gap-1.5 ${
+                        expandedCreatedId === camp.id ? 'on' : 'out'
+                      }`}
+                    >
+                      <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                      <span>{expandedCreatedId === camp.id ? 'Hide Graph' : 'Telemetry Graph'}</span>
+                    </button>
+                    {onNavigateAnalytics && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateAnalytics(camp.id)}
+                        className="pill text-[12px] py-1 px-3 out cursor-pointer font-medium"
+                      >
+                        <i className="ti ti-activity text-[#B5D4F4]"></i>
+                        <span>Attribution</span>
+                      </button>
+                    )}
+                    {onNavigateCampaign && (
+                      <button
+                        type="button"
+                        onClick={() => onNavigateCampaign(camp.id)}
+                        className="pill on text-[12px] py-1 px-3 cursor-pointer"
+                      >
+                        <span>Manage</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="sub text-[12px] mt-1">
-                  Fund campaign balances and download official settlement invoices.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Tab Content 4: Avatar Persona Customizer */}
-      {profileTab === 'avatar' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-[16px] font-medium text-[#F5F3EC]">Avatar customizer</div>
-              <div className="sub text-[12px]">Choose your smiling persona and palette highlight.</div>
-            </div>
-            <button
-              type="button"
-              onClick={handleShuffleColor}
-              className="pill text-[12px] py-1 px-3 min-h-[36px] cursor-pointer"
-            >
-              <i className="ti ti-dice-3"></i>
-              <span>Shuffle color</span>
-            </button>
-          </div>
-
-          {/* Color Swatches Grid */}
-          <div className="card space-y-2">
-            <div className="text-[13px] font-medium text-[#F5F3EC]">Highlight color</div>
-            <div className="flex gap-2.5 flex-wrap pt-1">
-              {AVATAR_COLORS.map((cHex) => {
-                const isSelected = avatarPalette === cHex;
-                return (
-                  <button
-                    key={cHex}
-                    type="button"
-                    onClick={() => onSelectPalette && onSelectPalette(cHex)}
-                    aria-label={`Color ${cHex}`}
-                    className="w-[32px] h-[32px] rounded-full border-2 border-[#0B0B0B] p-0 cursor-pointer transition-transform hover:scale-110"
-                    style={{
-                      backgroundColor: cHex,
-                      boxShadow: isSelected ? '0 0 0 2px #F5F3EC' : 'none',
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Personas Grid */}
-          <div className="card space-y-3">
-            <div className="text-[13px] font-medium text-[#F5F3EC]">Face expressions</div>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1">
-              {AVATAR_PERSONAS.map((p, i) => {
-                const isSelected = currentPersona.id === p.id;
-                const previewColor = isSelected
-                  ? avatarPalette
-                  : AVATAR_COLORS[(i * 3 + 1) % AVATAR_COLORS.length];
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => onSelectMood && onSelectMood(p.id)}
-                    className={`bg-[#1C1C1C] rounded-[20px] p-3 flex flex-col items-center gap-2 border-2 transition-all cursor-pointer ${
-                      isSelected
-                        ? 'border-[#F5F3EC] text-[#F5F3EC]'
-                        : 'border-transparent text-[#B9B7AF] hover:bg-[#242424]'
-                    }`}
-                  >
-                    <SmileyAvatar
-                      paletteId={previewColor}
-                      personaId={p.id}
-                      size={60}
+                {/* Expandable Image 1 Telemetry Bar Chart for Created Campaign */}
+                {expandedCreatedId === camp.id && (
+                  <div className="pt-2 animate-[fade-in_0.15s_ease-out]">
+                    <KredTelemetryBarChart
+                      title={`Let’s look at your verified install runs for ${camp.name}.`}
+                      pillLabel={`Founder attribution telemetry · Escrow backed`}
+                      icon={camp.icon || 'ti-cube'}
+                      bountyPrice={parseFloat(camp.price || '2.0')}
+                      barColor={camp.bg || '#C7F26B'}
+                      badgeBg={camp.bg}
+                      badgeFg={camp.fg}
                     />
-                    <span className="text-[12px] font-medium">{p.name}</span>
-                  </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Pending Creator Applications Review Queue */}
+          <div className="card p-5 bg-[#141417] border border-[#27272A] rounded-[20px] space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[15px] font-medium text-[#F5F3EC]">Creator Applications Queue</div>
+                <div className="text-[12px] text-[#A1A1AA]">
+                  Creators requesting access to your approval-required campaigns.
+                </div>
+              </div>
+              <span className="chip text-[11px] py-0.5 px-2 bg-[#FAC775]/20 text-[#FAC775] font-mono">
+                {applications.filter((a) => a.status === 'pending').length} pending
+              </span>
+            </div>
+
+            <div className="space-y-2.5 pt-2">
+              {applications.map((app) => (
+                <div
+                  key={app.id}
+                  className="p-3.5 bg-[#18181C] rounded-[14px] border border-[#27272A]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-[13.5px] text-[#F5F3EC]">{app.creatorName}</span>
+                      <span className="chip text-[10.5px] py-0.2 px-2 bg-[#2A2A2A] text-[#A1A1AA] uppercase font-mono">
+                        {app.primaryChannel} · {app.followerCount}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-[#A1A1AA] max-w-[480px]">
+                      "{app.pitchNote}"
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                    {app.status === 'pending' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleAppDecision(app.id, 'rejected')}
+                          className="pill out text-[12px] py-1 px-3 cursor-pointer"
+                        >
+                          Decline
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleAppDecision(app.id, 'approved')}
+                          className="pill on text-[12px] py-1 px-3 cursor-pointer font-medium"
+                        >
+                          Approve Creator
+                        </button>
+                      </>
+                    ) : (
+                      <span className={`chip text-[11px] py-0.5 px-2.5 font-mono ${
+                        app.status === 'approved' ? 'bg-[#C7F26B]/20 text-[#C7F26B]' : 'bg-[#FF8A80]/20 text-[#FF8A80]'
+                      }`}>
+                        {app.status === 'approved' ? 'Approved' : 'Declined'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: Joined (Creator Performance & Payments Analytics) */}
+      {activeTab === 'joined' && (
+        <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="text-[16px] font-medium text-[#F5F3EC]">Creator Performance & Payments Analytics</div>
+              <div className="text-[12px] text-[#A1A1AA]">
+                Track personal shortened link clicks, verified install attestation, and Friday payment settlements.
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowCreatorAnalytics(!showCreatorAnalytics)}
+                className="pill out text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
+              >
+                <i className="ti ti-chart-line text-[#C7F26B]"></i>
+                <span>{showCreatorAnalytics ? 'Hide Performance Chart' : 'View Performance Charts'}</span>
+              </button>
+              {onNavigateEarnings && (
+                <button
+                  type="button"
+                  onClick={onNavigateEarnings}
+                  className="pill on text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
+                >
+                  <i className="ti ti-wallet"></i>
+                  <span>Payouts & Ledger</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Creator Performance & Payments KPI Summary */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#161616] p-4 rounded-[20px] border border-[#2A2A2A] text-left">
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Total Earnings</span>
+              <span className="text-[20px] font-semibold font-mono text-[#C7F26B] mt-0.5 block">$648.20</span>
+              <span className="text-[10.5px] text-[#A8A69E]">Across joined campaigns</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Verified Installs</span>
+              <span className="text-[20px] font-semibold font-mono text-[#F5F3EC] mt-0.5 block">248</span>
+              <span className="text-[10.5px] text-[#C7F26B] font-mono">100% verified</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Referral Link Clicks</span>
+              <span className="text-[20px] font-semibold font-mono text-[#B5D4F4] mt-0.5 block">1,420</span>
+              <span className="text-[10.5px] text-[#A8A69E]">17.5% conversion rate</span>
+            </div>
+            <div>
+              <span className="text-[11.5px] text-[#A8A69E] block">Next Settlement</span>
+              <span className="text-[20px] font-semibold font-mono text-[#FAC775] mt-0.5 block">Friday</span>
+              <span className="text-[10.5px] text-[#A8A69E]">17:00 UTC · $184.50 pending</span>
+            </div>
+          </div>
+
+          {/* Expandable Creator Performance Analytics */}
+          {showCreatorAnalytics && (
+            <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
+              <KredTelemetryBarChart
+                title="Let’s look at your latest runs and verified installs across all joined campaigns."
+                pillLabel="Creator attribution telemetry · Verified runs"
+                icon="ti-heart-filled"
+                barColor="#F4C0D1"
+                bountyPrice={2.5}
+              />
+              <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
+                <KredAnalyticsEngine
+                  campaigns={campaigns}
+                  onNavigateEarnings={onNavigateEarnings}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Joined Campaigns List */}
+          <div className="space-y-3">
+            {joinedCampaigns.length > 0 ? (
+              joinedCampaigns.map((camp) => {
+                const slug = camp.slug || camp.id;
+                const linkUrl = `kred.link/${slug}/${currentUsername}`;
+                const isCardExpanded = expandedJoinedId === camp.id;
+
+                return (
+                  <div
+                    key={camp.id}
+                    className="card p-4 sm:p-5 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-3.5 text-left"
+                  >
+                    <div className="flex items-start justify-between gap-3 flex-wrap">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-11 h-11 rounded-[14px] flex items-center justify-center text-[22px] shrink-0"
+                          style={{ backgroundColor: camp.bg, color: camp.fg }}
+                        >
+                          <i className={`ti ${camp.icon}`}></i>
+                        </div>
+                        <div>
+                          <div className="text-[16px] font-semibold text-[#F5F3EC]">{camp.name}</div>
+                          <div className="text-[12px] text-[#A8A69E] mt-0.5">
+                            ${camp.price} per verified install · Guaranteed Escrow
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedJoinedId(isCardExpanded ? null : camp.id)}
+                          className={`pill text-[12px] py-1 px-3 cursor-pointer flex items-center gap-1.5 ${
+                            isCardExpanded ? 'on font-medium' : 'out'
+                          }`}
+                        >
+                          <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                          <span>{isCardExpanded ? 'Hide Analytics' : 'Analytics Graph'}</span>
+                        </button>
+                        {onOpenQr && (
+                          <button
+                            type="button"
+                            onClick={() => onOpenQr(camp)}
+                            className="pill text-[12px] py-1 px-3 out cursor-pointer flex items-center gap-1.5"
+                          >
+                            <i className="ti ti-qrcode text-[#C7F26B]"></i>
+                            <span>QR Code</span>
+                          </button>
+                        )}
+                        {onNavigateAnalytics && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateAnalytics(camp.id)}
+                            className="pill text-[12px] py-1 px-3 out cursor-pointer flex items-center gap-1.5"
+                          >
+                            <i className="ti ti-activity text-[#B5D4F4]"></i>
+                            <span>Attribution</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => onNavigateCampaign && onNavigateCampaign(camp.id)}
+                          className="pill on text-[12px] py-1 px-3 cursor-pointer"
+                        >
+                          <span>Details</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Personal Shortened Referral Link Box with 1-click copy */}
+                    <div className="p-2.5 pl-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/60 flex items-center justify-between gap-2">
+                      <span className="font-mono text-[13px] text-[#C7F26B] truncate">
+                        {linkUrl}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyLink(camp)}
+                        className="pill on text-[11.5px] py-1 px-3 cursor-pointer shrink-0 font-medium"
+                      >
+                        {copiedSlug === slug ? 'Copied!' : 'Copy Link'}
+                      </button>
+                    </div>
+
+                    {/* Expandable Image 1 Telemetry Bar Chart for Joined Campaign */}
+                    {isCardExpanded && (
+                      <div className="pt-2 animate-[fade-in_0.15s_ease-out]">
+                        <KredTelemetryBarChart
+                          title={`Let’s look at your latest runs and verified installs for ${camp.name}.`}
+                          pillLabel={`Read attribution telemetry · $${camp.price} bounty`}
+                          icon={camp.icon || 'ti-heart-filled'}
+                          bountyPrice={parseFloat(camp.price || '2.5')}
+                          barColor={camp.bg || '#F4C0D1'}
+                          badgeBg={camp.bg}
+                          badgeFg={camp.fg}
+                        />
+                      </div>
+                    )}
+                  </div>
                 );
-              })}
+              })
+            ) : (
+              <div className="p-8 text-center bg-[#141417] border border-[#27272A] rounded-[20px] text-[#A1A1AA]">
+                <i className="ti ti-speakerphone text-[24px] block mb-2 text-[#71717A]"></i>
+                <div className="text-[14px] font-medium text-[#F5F3EC]">No joined campaigns yet</div>
+                <div className="text-[12px] mt-1">Join active campaigns from the directory to start earning bounties.</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Settings, Social Media Connections & Avatar */}
+      {activeTab === 'settings' && (
+        <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
+          {/* Account Profile Form */}
+          <form onSubmit={handleSaveProfile} className="card p-6 bg-[#141417] border border-[#27272A] rounded-[24px] space-y-4">
+            <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
+              <div>
+                <div className="text-[16px] font-medium text-[#F5F3EC]">Profile & Short Link Handle</div>
+                <div className="text-[12px] text-[#A1A1AA]">
+                  Your username determines vanity short URLs e.g. <span className="font-mono text-[#C7F26B]">kred.link/app/{currentUsername}</span>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="pill on text-[12px] py-1.5 px-4 cursor-pointer font-medium"
+              >
+                {profileSaved ? 'Saved!' : 'Save changes'}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[12px] font-medium text-[#A1A1AA] mb-1">
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] px-3.5 py-2 text-[13.5px] text-[#F5F3EC] focus:outline-none focus:border-[#388BFD]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-medium text-[#A1A1AA] mb-1">
+                  Unique Username / Vanity Handle
+                </label>
+                <div className="flex items-center bg-[#18181C] border border-[#27272A] rounded-[12px] px-3 py-2 text-[13.5px] font-mono">
+                  <span className="text-[#71717A]">@</span>
+                  <input
+                    type="text"
+                    value={currentUsername}
+                    onChange={(e) => setCurrentUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
+                    className="w-full bg-transparent text-[#F5F3EC] focus:outline-none pl-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[12px] font-medium text-[#A1A1AA] mb-1">
+                Bio
+              </label>
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={2}
+                className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] p-3 text-[13px] text-[#F5F3EC] focus:outline-none resize-none"
+              />
+            </div>
+
+            {/* Social Media Link Connections */}
+            <div className="pt-2 border-t border-[#27272A] space-y-3">
+              <div className="text-[14px] font-medium text-[#F5F3EC]">
+                Connected Social Channels
+              </div>
+              <p className="text-[12px] text-[#A1A1AA]">
+                Shown to founders when applying to approval-required campaigns.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="flex items-center gap-2.5 bg-[#18181C] p-2.5 rounded-[12px] border border-[#27272A]">
+                  <i className="ti ti-brand-tiktok text-[#EE1D52] text-[18px]"></i>
+                  <input
+                    type="text"
+                    value={socials.tiktok || ''}
+                    onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
+                    placeholder="TikTok handle"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-[#18181C] p-2.5 rounded-[12px] border border-[#27272A]">
+                  <i className="ti ti-brand-youtube text-[#FF0000] text-[18px]"></i>
+                  <input
+                    type="text"
+                    value={socials.youtube || ''}
+                    onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
+                    placeholder="YouTube channel"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-[#18181C] p-2.5 rounded-[12px] border border-[#27272A]">
+                  <i className="ti ti-brand-x text-white text-[18px]"></i>
+                  <input
+                    type="text"
+                    value={socials.twitter || ''}
+                    onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
+                    placeholder="Twitter/X handle"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2.5 bg-[#18181C] p-2.5 rounded-[12px] border border-[#27272A]">
+                  <i className="ti ti-brand-instagram text-[#E4405F] text-[18px]"></i>
+                  <input
+                    type="text"
+                    value={socials.instagram || ''}
+                    onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
+                    placeholder="Instagram handle"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+
+          {/* Avatar Persona & Mood Selector */}
+          <div className="card p-6 bg-[#141417] border border-[#27272A] rounded-[24px] space-y-4">
+            <div className="text-[16px] font-medium text-[#F5F3EC]">Smiley Avatar Expression & Color</div>
+            
+            <div className="flex items-center gap-2.5 flex-wrap">
+              {AVATAR_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => onSelectPalette && onSelectPalette(c)}
+                  className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${
+                    avatarPalette === c ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-80'
+                  }`}
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
+              {AVATAR_PERSONAS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => onSelectMood && onSelectMood(p.id)}
+                  className={`p-3 rounded-[14px] border text-left cursor-pointer transition-all flex items-center gap-2.5 ${
+                    avatarMood === p.id
+                      ? 'bg-[#1C1C22] border-[#C7F26B] text-white'
+                      : 'bg-[#18181C] border-[#27272A] text-[#A1A1AA] hover:text-white'
+                  }`}
+                >
+                  <SmileyAvatar paletteId={avatarPalette} personaId={p.id} size={28} />
+                  <span className="text-[12.5px] font-medium">{p.name}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>

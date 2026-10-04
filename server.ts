@@ -361,6 +361,58 @@ let transactionHistoryDb = [
   }
 ];
 
+let userProfileDb = {
+  username: 'alex',
+  displayName: 'Alex Rivera',
+  bio: 'Mobile tech reviewer and developer. Testing indie apps with real audiences.',
+  role: 'creator',
+  avatarPalette: '#CECBF6',
+  avatarMood: 'chill',
+  socials: {
+    twitter: '@alex_builds',
+    tiktok: '@alex_clips',
+    youtube: 'AlexTech',
+    instagram: '@alex.rivera',
+    twitch: '',
+  },
+  onboardingCompleted: true,
+};
+
+let campaignApplicationsDb: Array<{
+  id: string;
+  campaignId: string;
+  creatorHandle: string;
+  creatorName: string;
+  primaryChannel: string;
+  followerCount: string;
+  pitchNote: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+}> = [
+  {
+    id: 'app_101',
+    campaignId: 'pixelpop',
+    creatorHandle: 'maya.makes',
+    creatorName: '@maya.makes',
+    primaryChannel: 'tiktok',
+    followerCount: '120k followers',
+    pitchNote: 'Daily indie mobile gaming streams. Would love to feature Pixel Pop on our Thursday lineup.',
+    status: 'approved',
+    submittedAt: '2026-09-28T14:20:00Z',
+  },
+  {
+    id: 'app_102',
+    campaignId: 'stride',
+    creatorHandle: 'devon.art',
+    creatorName: '@devon.art',
+    primaryChannel: 'youtube',
+    followerCount: '45k subscribers',
+    pitchNote: 'Focusing on fitness lifestyle tech. Planning a dedicated review segment.',
+    status: 'pending',
+    submittedAt: '2026-10-01T09:15:00Z',
+  },
+];
+
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -617,12 +669,114 @@ async function startServer() {
     };
     transactionHistoryDb.unshift(newTx);
 
+    const receipt = {
+      id: `rcpt_${Math.random().toString(36).substring(2, 9)}`,
+      amount: withdrawAmount,
+      fee: 0,
+      net: withdrawAmount,
+      destination: payoutMethodsDb[0]?.label || 'Chase Checking (••4821)',
+      methodType: (payoutMethodsDb[0]?.type || 'bank') as any,
+      timestamp: new Date().toISOString(),
+      status: 'completed',
+      hash: `0x${Array.from({ length: 40 }).map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+      creatorHandle: userProfileDb.username || 'alex',
+      settlementBatch: 'Friday Oct 09, 17:00 UTC',
+    };
+
     res.json({
       success: true,
       withdrawn: withdrawAmount,
       newBalance: creatorBalance,
       transaction: newTx,
+      receipt,
       message: `Withdrawal of $${withdrawAmount.toFixed(2)} scheduled for Friday settlement`,
+    });
+  });
+
+  // User Profile API
+  app.get('/api/user/profile', (_req: Request, res: Response) => {
+    res.json({
+      success: true,
+      profile: userProfileDb,
+    });
+  });
+
+  app.put('/api/user/profile', (req: Request, res: Response) => {
+    const { username, displayName, bio, role, socials, avatarPalette, avatarMood } = req.body;
+    if (username) userProfileDb.username = username.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (displayName) userProfileDb.displayName = displayName;
+    if (bio !== undefined) userProfileDb.bio = bio;
+    if (role) userProfileDb.role = role;
+    if (avatarPalette) userProfileDb.avatarPalette = avatarPalette;
+    if (avatarMood) userProfileDb.avatarMood = avatarMood;
+    if (socials) userProfileDb.socials = { ...userProfileDb.socials, ...socials };
+
+    res.json({
+      success: true,
+      profile: userProfileDb,
+      message: 'Profile updated successfully',
+    });
+  });
+
+  // Campaign Applications (for Approval-Required Campaigns)
+  app.post('/api/campaigns/:id/apply', (req: Request, res: Response) => {
+    const campaign = campaignsDb.find((c) => c.id === req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ success: false, error: 'Campaign not found' });
+    }
+
+    const { creatorHandle, creatorName, primaryChannel, followerCount, pitchNote } = req.body;
+    const newApp = {
+      id: `app_${Date.now()}`,
+      campaignId: campaign.id,
+      creatorHandle: creatorHandle || userProfileDb.username,
+      creatorName: creatorName || `@${userProfileDb.username}`,
+      primaryChannel: primaryChannel || 'tiktok',
+      followerCount: followerCount || '25k - 100k',
+      pitchNote: pitchNote || '',
+      status: 'pending' as const,
+      submittedAt: new Date().toISOString(),
+    };
+
+    campaignApplicationsDb.unshift(newApp);
+
+    res.status(201).json({
+      success: true,
+      application: newApp,
+      message: 'Application submitted for founder review',
+    });
+  });
+
+  app.get('/api/campaigns/:id/applications', (req: Request, res: Response) => {
+    const apps = campaignApplicationsDb.filter((a) => a.campaignId === req.params.id);
+    res.json({
+      success: true,
+      applications: apps,
+    });
+  });
+
+  app.post('/api/campaigns/:id/applications/:appId/decision', (req: Request, res: Response) => {
+    const appRecord = campaignApplicationsDb.find(
+      (a) => a.campaignId === req.params.id && a.id === req.params.appId
+    );
+    if (!appRecord) {
+      return res.status(404).json({ success: false, error: 'Application not found' });
+    }
+
+    const { decision } = req.body; // 'approve' | 'reject'
+    appRecord.status = decision === 'approve' ? 'approved' : 'rejected';
+
+    if (decision === 'approve') {
+      const campaign = campaignsDb.find((c) => c.id === req.params.id);
+      if (campaign) {
+        campaign.creators += 1;
+      }
+    }
+
+    res.json({
+      success: true,
+      application: appRecord,
+      message: `Creator application ${decision === 'approve' ? 'approved' : 'declined'}`,
     });
   });
 

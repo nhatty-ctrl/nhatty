@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
+import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -44,11 +45,12 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
+    const handle = localStorage.getItem(`kred_handle_${slug}`) || 'you';
+    const fullUrl = `https://kred.link/${slug}/${handle}`;
     if (onCopyLink) {
       onCopyLink(campaign);
-    } else {
-      navigator.clipboard?.writeText(`https://kred.link/${campaign.slug || campaign.id}/you`);
     }
+    navigator.clipboard?.writeText(fullUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
   };
@@ -92,7 +94,8 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
       {/* Right Column: Expandable Card */}
       <div
         onClick={handleToggleExpand}
-        className={`card cursor-pointer transition-all duration-200 relative group border w-full text-left p-4 sm:p-5 ${
+        style={{ width: '720px' }}
+        className={`card cursor-pointer transition-all duration-200 relative group border max-w-full text-left p-4 sm:p-5 ${
           isExpanded ? 'border-[#F5F3EC]/30 bg-[#191919]' : 'border-transparent hover:bg-[#1a1a1a]'
         }`}
       >
@@ -298,34 +301,47 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
               </div>
             </div>
 
-            {/* If Joined: Tracking link in expanded card with Copy and QR buttons */}
+            {/* If Joined: Tracking link & Image 1 Analytics Graph */}
             {campaign.joined && (
-              <div className="bg-[#1C1C1C] rounded-[16px] p-3 border border-[#2A2A2A]/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="text-[11px] text-[#A8A69E]">Your attribution link</div>
-                  <div className="font-mono text-[12px] text-[#F5F3EC] truncate select-all">
-                    kred.link/{slug}/you
+              <div className="space-y-3 pt-1">
+                <div className="bg-[#1C1C1C] rounded-[16px] p-3 border border-[#2A2A2A]/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] text-[#A8A69E]">Your attribution link</div>
+                    <div className="font-mono text-[12px] text-[#F5F3EC] truncate select-all">
+                      kred.link/{slug}/{localStorage.getItem(`kred_handle_${slug}`) || 'you'}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {onOpenQr && (
+                  <div className="flex items-center gap-2 shrink-0">
+                    {onOpenQr && (
+                      <button
+                        type="button"
+                        onClick={handleOpenQrClick}
+                        className="pill out text-[12px] py-1.5 px-3 min-h-[36px] cursor-pointer"
+                      >
+                        <i className="ti ti-qrcode"></i>
+                        <span>QR Code</span>
+                      </button>
+                    )}
                     <button
                       type="button"
-                      onClick={handleOpenQrClick}
-                      className="pill out text-[12px] py-1.5 px-3 min-h-[36px] cursor-pointer"
+                      onClick={handleCopy}
+                      className="pill on text-[12px] py-1.5 px-3.5 min-h-[36px] font-medium cursor-pointer"
                     >
-                      <i className="ti ti-qrcode"></i>
-                      <span>QR Code</span>
+                      {copied ? 'Copied' : 'Copy link'}
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleCopy}
-                    className="pill on text-[12px] py-1.5 px-3.5 min-h-[36px] font-medium cursor-pointer"
-                  >
-                    {copied ? 'Copied' : 'Copy link'}
-                  </button>
+                  </div>
                 </div>
+
+                {/* Image 1 Graph inside Expanded Joined Card with kred color system */}
+                <KredTelemetryBarChart
+                  title={`Let’s look at your latest runs and verified installs for ${campaign.name}.`}
+                  pillLabel={`Read attribution telemetry · $${campaign.price || '2.50'} bounty`}
+                  icon={campaign.icon || 'ti-heart-filled'}
+                  bountyPrice={parseFloat(campaign.price || '2.5')}
+                  barColor={campaign.bg || '#F4C0D1'}
+                  badgeBg={campaign.bg}
+                  badgeFg={campaign.fg}
+                />
               </div>
             )}
 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Campaign } from '../types/campaign';
+import { Campaign, WithdrawalReceipt, SettlementReceipt } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
+import { ReceiptModal } from './ReceiptModal';
+import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface EarningsViewProps {
   campaigns?: Campaign[];
@@ -115,6 +117,8 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
   const [withdrawMethod, setWithdrawMethod] = useState<'bank' | 'card' | 'usdc'>('bank');
   const [isProcessingWithdraw, setIsProcessingWithdraw] = useState(false);
   const [withdrawalSuccess, setWithdrawalSuccess] = useState<any | null>(null);
+  const [activeReceipt, setActiveReceipt] = useState<WithdrawalReceipt | SettlementReceipt | null>(null);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
   const [payoutsHistory, setPayoutsHistory] = useState([
     { id: 'PO-2026-1009', date: 'Oct 9, 2026', daysAgo: -7, status: 'Awaiting payout', val: 78.4, bg: '#FAC775', fg: '#412402', icon: 'ti-clock' },
@@ -203,17 +207,36 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
       };
       setPayoutsHistory((prev) => [newRecord, ...prev]);
 
+      const destLabel =
+        withdrawMethod === 'bank'
+          ? 'Chase Checking (••••5821)'
+          : withdrawMethod === 'card'
+          ? 'Visa Debit (••••4242)'
+          : 'Polygon USDC (0x71C...4e8B)';
+
       setWithdrawalSuccess({
         id: newRecord.id,
         amount: amountNum,
-        method:
-          withdrawMethod === 'bank'
-            ? 'Chase Checking (••••5821)'
-            : withdrawMethod === 'card'
-            ? 'Visa Debit (••••4242)'
-            : 'Polygon USDC (0x71C...4e8B)',
+        method: destLabel,
         settleDate: 'Friday, Oct 9, 2026 at 17:00 UTC',
       });
+
+      const receiptObj: WithdrawalReceipt = {
+        id: newRecord.id,
+        amount: amountNum,
+        fee: 0,
+        net: amountNum,
+        destination: destLabel,
+        methodType: withdrawMethod,
+        timestamp: new Date().toISOString(),
+        status: 'completed',
+        hash: `0x${Array.from({ length: 40 })
+          .map(() => Math.floor(Math.random() * 16).toString(16))
+          .join('')}`,
+        creatorHandle: 'alex',
+        settlementBatch: 'Friday Oct 09, 17:00 UTC',
+      };
+      setActiveReceipt(receiptObj);
       setWithdrawStep(3);
     }, 800);
   };
@@ -353,6 +376,17 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Image 1 Graph: Telemetry & Verified Install Runs */}
+          <KredTelemetryBarChart
+            title="Let’s look at your latest runs and verified earnings across campaigns."
+            pillLabel="Read attribution telemetry · Verified runs"
+            icon="ti-heart-filled"
+            barColor="#F4C0D1"
+            badgeBg="#F4C0D1"
+            badgeFg="#4B1528"
+            bountyPrice={2.5}
+          />
 
           {/* IN-PAGE EMBEDDED WITHDRAWAL FLOW MODAL / BANNER */}
           {isWithdrawOpen && (
@@ -563,11 +597,19 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                   <div className="text-[13px] text-[#A8A69E] max-w-[420px] mx-auto">
                     Settlement {withdrawalSuccess.id} sent to {withdrawalSuccess.method}. Releases on {withdrawalSuccess.settleDate}.
                   </div>
-                  <div className="pt-2">
+                  <div className="pt-2 flex items-center justify-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => setIsReceiptModalOpen(true)}
+                      className="pill on min-h-[40px] px-5 cursor-pointer font-medium flex items-center gap-1.5"
+                    >
+                      <i className="ti ti-receipt"></i>
+                      <span>View animated receipt</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => setIsWithdrawOpen(false)}
-                      className="pill on min-h-[40px] px-6 cursor-pointer font-medium"
+                      className="pill min-h-[40px] px-5 cursor-pointer"
                     >
                       Done
                     </button>
@@ -836,7 +878,26 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
               {payoutsHistory.map((p) => (
                 <div
                   key={p.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/30 hover:border-[#2A2A2A] transition-colors"
+                  onClick={() => {
+                    setActiveReceipt({
+                      id: p.id,
+                      amount: p.val,
+                      fee: 0,
+                      net: p.val,
+                      destination: 'Chase Checking (••••5821)',
+                      methodType: 'bank',
+                      timestamp: '2026-10-02T17:00:00Z',
+                      status: 'completed',
+                      hash: `0x${Array.from({ length: 40 })
+                        .map(() => Math.floor(Math.random() * 16).toString(16))
+                        .join('')}`,
+                      creatorHandle: 'alex',
+                      settlementBatch: `${p.date} · 17:00 UTC`,
+                    });
+                    setIsReceiptModalOpen(true);
+                  }}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/30 hover:border-[#C7F26B]/50 transition-colors cursor-pointer"
+                  title="Click to view digital settlement receipt"
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -862,6 +923,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                     <span className="font-mono text-[15px] font-medium text-[#F5F3EC] min-w-[70px] text-right">
                       {money(p.val)}
                     </span>
+                    <i className="ti ti-receipt text-[14px] text-[#A8A69E] hover:text-[#C7F26B]" />
                   </div>
                 </div>
               ))}
@@ -869,6 +931,14 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
           </div>
         </>
       )}
+
+      {/* Digital Paper Receipt Modal */}
+      <ReceiptModal
+        receipt={activeReceipt}
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        type="withdrawal"
+      />
     </div>
   );
 };

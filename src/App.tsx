@@ -12,6 +12,8 @@ import { CreateCampaignView } from './components/CreateCampaignView';
 import { PayoutMethodsView } from './components/PayoutMethodsView';
 import { BillingView } from './components/BillingView';
 import { NotificationSettingsView } from './components/NotificationSettingsView';
+import { SettingsView } from './components/SettingsView';
+import { DocumentationView } from './components/DocumentationView';
 import { QrCodeModal } from './components/QrCodeModal';
 import { JoinedSuccessModal } from './components/JoinedSuccessModal';
 import { Toast } from './components/Toast';
@@ -32,13 +34,29 @@ export default function App() {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed.campaigns) && parsed.campaigns.length > 0) {
-          return parsed.campaigns;
+          const seen = new Set<string>();
+          const deduped: Campaign[] = [];
+          for (const c of parsed.campaigns) {
+            if (c && c.id && !seen.has(c.id)) {
+              seen.add(c.id);
+              deduped.push(c);
+            }
+          }
+          if (deduped.length > 0) return deduped;
         }
       }
     } catch (e) {
       console.warn('Failed to load campaigns from storage', e);
     }
-    return INITIAL_CAMPAIGNS;
+    const seen = new Set<string>();
+    const deduped: Campaign[] = [];
+    for (const c of INITIAL_CAMPAIGNS) {
+      if (c && c.id && !seen.has(c.id)) {
+        seen.add(c.id);
+        deduped.push(c);
+      }
+    }
+    return deduped;
   });
 
   // Account balances
@@ -83,7 +101,7 @@ export default function App() {
 
   // Navigation tab states
   const [currentTab, setCurrentTab] = useState<
-    'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings'
+    'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
   >('campaigns');
   const [filterTab, setFilterTab] = useState<'open' | 'joined'>('open');
   const [activeDetailId, setActiveDetailId] = useState<string | null>(null);
@@ -160,6 +178,10 @@ export default function App() {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
       setCurrentTab('discover');
+    } else if (hash.startsWith('#/docs')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('docs');
     } else if (hash.startsWith('#/earnings')) {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
@@ -176,6 +198,10 @@ export default function App() {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
       setCurrentTab('notification-settings');
+    } else if (hash.startsWith('#/settings')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('settings');
     } else if (hash.startsWith('#/profile')) {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
@@ -194,13 +220,15 @@ export default function App() {
   }, [parseHash]);
 
   const handleNavigateTab = (
-    tab: 'campaigns' | 'discover' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings'
+    tab: 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
   ) => {
     setActiveDetailId(null);
     setActiveAnalyticsId(null);
     setCurrentTab(tab);
     if (tab === 'discover') {
       window.location.hash = '#/discover';
+    } else if (tab === 'docs') {
+      window.location.hash = '#/docs';
     } else if (tab === 'earnings') {
       window.location.hash = '#/earnings';
     } else if (tab === 'analytics') {
@@ -211,6 +239,8 @@ export default function App() {
       window.location.hash = '#/billing';
     } else if (tab === 'notification-settings') {
       window.location.hash = '#/notification-settings';
+    } else if (tab === 'settings') {
+      window.location.hash = '#/settings';
     } else if (tab === 'profile') {
       window.location.hash = '#/profile';
     } else if (tab === 'create') {
@@ -403,6 +433,12 @@ export default function App() {
           <NotificationSettingsView
             onBack={() => handleNavigateTab('profile')}
           />
+        ) : currentTab === 'settings' ? (
+          /* Dedicated Full Settings Page */
+          <SettingsView
+            onBack={() => handleNavigateTab('campaigns')}
+            onNavigatePayoutMethods={() => handleNavigateTab('payout-methods')}
+          />
         ) : currentTab === 'analytics' ? (
           /* DEDICATED Campaign Analytics for specific app */
           <CampaignAnalyticsView
@@ -427,6 +463,7 @@ export default function App() {
           <CreateCampaignView
             onBack={() => handleNavigateTab('campaigns')}
             onCreate={handleCreateCampaign}
+            onNavigateDocs={() => handleNavigateTab('docs')}
           />
         ) : currentTab === 'discover' ? (
           /* Discover View */
@@ -434,6 +471,12 @@ export default function App() {
             campaigns={campaigns}
             onJoin={handleJoin}
             onNavigateDetail={handleNavigateDetail}
+          />
+        ) : currentTab === 'docs' ? (
+          /* Developer & Creator Documentation */
+          <DocumentationView
+            onBack={() => handleNavigateTab('campaigns')}
+            onNavigateCreateCampaign={() => handleNavigateTab('create')}
           />
         ) : currentTab === 'profile' ? (
           /* Profile & App Analytics Launcher */
@@ -445,6 +488,12 @@ export default function App() {
             onNavigatePayoutMethods={() => handleNavigateTab('payout-methods')}
             onNavigateBilling={() => handleNavigateTab('billing')}
             onNavigateNotificationSettings={() => handleNavigateTab('notification-settings')}
+            onNavigateSettings={() => handleNavigateTab('settings')}
+            onNavigateEarnings={() => handleNavigateTab('earnings')}
+            onOpenQr={(c) => {
+              setIsFreshJoin(false);
+              setQrCampaign(c);
+            }}
             onCreateCampaign={() => handleNavigateTab('create')}
             avatarPalette={avatarPalette}
             avatarMood={avatarMood}

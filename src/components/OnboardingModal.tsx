@@ -1,233 +1,305 @@
 import React, { useState } from 'react';
-import { UserRole } from '../types/campaign';
-import { SmileyAvatar, AVATAR_PERSONAS, AVATAR_COLORS } from './SmileyAvatar';
+import { UserRole, UserSocialLinks } from '../types/campaign';
 
 interface OnboardingModalProps {
   isOpen: boolean;
-  onComplete: (data: { name: string; role: UserRole; avatarPalette: string; avatarMood: string }) => void;
+  onClose: () => void;
+  onComplete: (profile: {
+    username: string;
+    displayName: string;
+    role: UserRole;
+    socials: UserSocialLinks;
+  }) => void;
+  initialRole?: UserRole;
 }
 
-export const OnboardingModal: React.FC<OnboardingModalProps> = ({ isOpen, onComplete }) => {
+export const OnboardingModal: React.FC<OnboardingModalProps> = ({
+  isOpen,
+  onClose,
+  onComplete,
+  initialRole = 'creator',
+}) => {
   const [step, setStep] = useState(0);
-  const [name, setName] = useState('Alex Rivera');
-  const [role, setRole] = useState<UserRole>('creator');
-  const [link, setLink] = useState('');
-  const [isExtracting, setIsExtracting] = useState(false);
-  const [extractedData, setExtractedData] = useState<string | null>(null);
-
-  // Auto-assigned avatar
-  const [autoAvatar] = useState(() => {
-    const p = AVATAR_PERSONAS[Math.floor(Math.random() * AVATAR_PERSONAS.length)];
-    const c = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
-    return { personaId: p.id, paletteId: c, name: p.name };
+  const [role, setRole] = useState<UserRole>(initialRole);
+  const [username, setUsername] = useState('creator');
+  const [displayName, setDisplayName] = useState('Alex Rivera');
+  const [socials, setSocials] = useState<UserSocialLinks>({
+    twitter: '@alex_builds',
+    tiktok: '@alex_clips',
+    youtube: 'AlexTech',
+    instagram: '',
   });
 
   if (!isOpen) return null;
 
-  const handleNextStep = () => {
-    if (step === 0) {
-      if (!name.trim()) return;
-      setStep(1);
-    } else if (step === 1) {
-      setStep(2);
-    } else if (step === 2) {
-      if (link.trim()) {
-        setIsExtracting(true);
-        setTimeout(() => {
-          setIsExtracting(false);
-          setExtractedData(
-            role === 'founder'
-              ? 'Mobile app verified from App Store catalog'
-              : 'Creator social profile verified'
-          );
-          setStep(3);
-        }, 900);
-      } else {
-        setStep(3);
-      }
-    } else if (step === 3) {
-      onComplete({
-        name: name.trim() || 'Alex Rivera',
-        role,
-        avatarPalette: autoAvatar.paletteId,
-        avatarMood: autoAvatar.personaId,
-      });
-    }
+  const handleFinish = () => {
+    onComplete({
+      username: username.toLowerCase().replace(/[^a-z0-9_-]/g, '').trim() || 'user',
+      displayName: displayName.trim() || 'Creator',
+      role,
+      socials,
+    });
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[fade-in_0.2s_ease-out]">
-      <div className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.2s_ease-out] select-none text-left space-y-5">
-        {/* Step indicator */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-[#1C1C1C] text-[#C7F26B] font-mono text-[12px] flex items-center justify-center font-medium">
-              {step + 1}
-            </span>
-            <span className="sub text-[12px]">Step {step + 1} of 4</span>
-          </div>
-          <span className="text-[12px] text-[#9A9892]">kred onboarding</span>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[fade-in_0.2s_ease-out]"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[500px] bg-[#121215] border border-[#27272A] rounded-[24px] p-6 sm:p-7 shadow-2xl relative select-none text-left animate-[pop_0.25s_cubic-bezier(0.16,1,0.3,1)]"
+      >
+        {/* Close Button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 w-7 h-7 rounded-full bg-[#1C1C1F] hover:bg-[#27272A] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer transition-colors"
+          aria-label="Skip onboarding"
+        >
+          <i className="ti ti-x text-[13px]"></i>
+        </button>
+
+        {/* Progress Dots */}
+        <div className="flex items-center gap-1.5 mb-5">
+          {[0, 1, 2].map((idx) => (
+            <div
+              key={idx}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                idx === step
+                  ? 'w-7 bg-[#C7F26B]'
+                  : idx < step
+                  ? 'w-3 bg-[#388BFD]'
+                  : 'w-3 bg-[#27272A]'
+              }`}
+            />
+          ))}
         </div>
 
-        {step === 0 ? (
-          /* Step 1: Enter your name */
-          <div className="space-y-4">
+        {/* Step 0: Welcome & Role Selection */}
+        {step === 0 && (
+          <div className="space-y-5 animate-[fade-in_0.15s_ease-out]">
             <div>
-              <h2 className="text-[22px] font-medium text-[#F5F3EC]">Welcome to kred</h2>
-              <p className="sub mt-1">
-                The verified install marketplace. What should creators and founders call you?
-              </p>
-            </div>
-
-            <div>
-              <label className="fl" htmlFor="onboard-name">Your name</label>
-              <input
-                id="onboard-name"
-                className="in min-h-[46px]"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Rivera"
-                autoFocus
-              />
-            </div>
-          </div>
-        ) : step === 1 ? (
-          /* Step 2: Choose Founder or Creator */
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-[22px] font-medium text-[#F5F3EC]">Choose your role</h2>
-              <p className="sub mt-1">
-                One account can do both, and you can switch roles anytime from your profile menu.
+              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C7F26B]">
+                WELCOME TO KRED
+              </div>
+              <h2 className="text-[24px] sm:text-[28px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+                How will you use KRED?
+              </h2>
+              <p className="text-[13.5px] text-[#A1A1AA] mt-1 leading-relaxed">
+                Connect your accounts to generate personalized referral links, track installs, and receive weekly Friday payouts.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <button
-                type="button"
+              {/* Creator Card */}
+              <div
                 onClick={() => setRole('creator')}
-                className={`card p-4 text-left border-2 transition-all cursor-pointer min-h-[120px] flex flex-col justify-between ${
-                  role === 'creator' ? 'border-[#C7F26B] bg-[#1A1A1A]' : 'border-transparent'
+                className={`p-4 rounded-[18px] border transition-all cursor-pointer ${
+                  role === 'creator'
+                    ? 'bg-[#1C1C22] border-[#C7F26B] shadow-md ring-1 ring-[#C7F26B]/50'
+                    : 'bg-[#16161A] border-[#27272A] hover:border-[#3F3F46]'
                 }`}
               >
-                <div className="w-9 h-9 rounded-full bg-[#C0DD97] text-[#173404] flex items-center justify-center text-[18px]">
-                  <i className="ti ti-user" aria-hidden="true"></i>
+                <div className="w-9 h-9 rounded-[10px] bg-[#CECBF6] text-[#26215C] flex items-center justify-center text-[18px] mb-3">
+                  <i className="ti ti-speakerphone"></i>
                 </div>
-                <div>
-                  <div className="text-[15px] font-medium text-[#F5F3EC]">Creator</div>
-                  <div className="sub text-[11px] mt-0.5">Earn bounties for verified mobile app installs.</div>
+                <div className="font-semibold text-[15px] text-[#F5F3EC]">Creator / Partner</div>
+                <div className="text-[12px] text-[#A1A1AA] mt-1 leading-normal">
+                  Promote mobile apps, claim custom short links & QR codes, and earn bounties on verified installs.
                 </div>
-              </button>
+              </div>
 
+              {/* Founder Card */}
+              <div
+                onClick={() => setRole('founder')}
+                className={`p-4 rounded-[18px] border transition-all cursor-pointer ${
+                  role === 'founder'
+                    ? 'bg-[#1C1C22] border-[#388BFD] shadow-md ring-1 ring-[#388BFD]/50'
+                    : 'bg-[#16161A] border-[#27272A] hover:border-[#3F3F46]'
+                }`}
+              >
+                <div className="w-9 h-9 rounded-[10px] bg-[#388BFD] text-white flex items-center justify-center text-[18px] mb-3">
+                  <i className="ti ti-device-mobile"></i>
+                </div>
+                <div className="font-semibold text-[15px] text-[#F5F3EC]">App Founder / Studio</div>
+                <div className="text-[12px] text-[#A1A1AA] mt-1 leading-normal">
+                  Launch campaigns, connect the RavenCore SDK, and acquire verified users with zero fraud risk.
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3">
               <button
                 type="button"
-                onClick={() => setRole('founder')}
-                className={`card p-4 text-left border-2 transition-all cursor-pointer min-h-[120px] flex flex-col justify-between ${
-                  role === 'founder' ? 'border-[#C7F26B] bg-[#1A1A1A]' : 'border-transparent'
-                }`}
+                onClick={() => setStep(1)}
+                className="w-full pill on py-2.5 justify-center text-[13.5px] font-medium cursor-pointer"
               >
-                <div className="w-9 h-9 rounded-full bg-[#B5D4F4] text-[#042C53] flex items-center justify-center text-[18px]">
-                  <i className="ti ti-building" aria-hidden="true"></i>
-                </div>
-                <div>
-                  <div className="text-[15px] font-medium text-[#F5F3EC]">Founder</div>
-                  <div className="sub text-[11px] mt-0.5">Fund campaigns and verify real installs.</div>
-                </div>
+                <span>Continue</span>
+                <i className="ti ti-arrow-right text-[13px]"></i>
               </button>
             </div>
-          </div>
-        ) : step === 2 ? (
-          /* Step 3: Paste link to pull data */
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-[22px] font-medium text-[#F5F3EC]">
-                {role === 'founder' ? 'Add your mobile app' : 'Add your primary channel'}
-              </h2>
-              <p className="sub mt-1">
-                {role === 'founder'
-                  ? 'Paste an App Store or Google Play link. We pull the rest automatically.'
-                  : 'Paste your YouTube, TikTok, or social channel link for quick creator attribution.'}
-              </p>
-            </div>
-
-            <div>
-              <label className="fl" htmlFor="onboard-link">
-                {role === 'founder' ? 'Store link' : 'Channel link'}
-              </label>
-              <input
-                id="onboard-link"
-                className="in min-h-[46px]"
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-                placeholder={
-                  role === 'founder'
-                    ? 'https://apps.apple.com/app/pixel-pop/id123'
-                    : 'https://youtube.com/@alex'
-                }
-              />
-            </div>
-
-            {isExtracting && (
-              <div className="ex">
-                <i className="ti ti-loader-2 spin text-[18px]"></i>
-                <span>Pulling catalog telemetry...</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          /* Step 4: Auto-assigned avatar */
-          <div className="space-y-4 text-center py-2">
-            <div>
-              <h2 className="text-[22px] font-medium text-[#F5F3EC]">Your profile is ready</h2>
-              <p className="sub mt-1">
-                An avatar persona has been automatically assigned to your account.
-              </p>
-            </div>
-
-            <div className="py-3 flex flex-col items-center justify-center">
-              <SmileyAvatar
-                paletteId={autoAvatar.paletteId}
-                personaId={autoAvatar.personaId}
-                size={84}
-              />
-              <div className="text-[16px] font-medium text-[#F5F3EC] mt-3">
-                {name} · {autoAvatar.name}
-              </div>
-              <div className="sub text-[12px] capitalize">
-                {role} workspace
-              </div>
-            </div>
-
-            {extractedData && (
-              <div className="ex justify-center text-[12px] text-[#C7F26B]">
-                <i className="ti ti-check" aria-hidden="true"></i>
-                <span>{extractedData}</span>
-              </div>
-            )}
           </div>
         )}
 
-        {/* Primary Action Button */}
-        <div className="flex justify-between items-center pt-2">
-          {step > 0 && step < 3 ? (
-            <button
-              type="button"
-              onClick={() => setStep(step - 1)}
-              className="pill min-h-[44px] px-4 cursor-pointer"
-            >
-              Back
-            </button>
-          ) : (
-            <span />
-          )}
+        {/* Step 1: Username & Social Channels */}
+        {step === 1 && (
+          <div className="space-y-4 animate-[fade-in_0.15s_ease-out]">
+            <div>
+              <div className="text-[11px] font-mono tracking-wider uppercase text-[#388BFD]">
+                IDENTITY & SHORT LINKS
+              </div>
+              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+                Claim your personal handle
+              </h2>
+              <p className="text-[13px] text-[#A1A1AA] mt-0.5 leading-relaxed">
+                Your username defines your vanity referral URLs e.g. <span className="text-[#C7F26B] font-mono">kred.link/app/{username || 'you'}</span>
+              </p>
+            </div>
 
-          <button
-            type="button"
-            onClick={handleNextStep}
-            className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
-          >
-            {step === 3 ? 'Land on Campaigns' : 'Continue'}
-          </button>
-        </div>
+            <div className="space-y-3 pt-1">
+              <div>
+                <label className="block text-[12px] font-medium text-[#D4D4D8] mb-1">
+                  Unique Username
+                </label>
+                <div className="flex items-center gap-2 bg-[#18181C] border border-[#27272A] rounded-[12px] px-3 py-2">
+                  <span className="text-[13px] font-mono text-[#71717A]">kred.link/app/</span>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
+                    placeholder="yourhandle"
+                    className="flex-1 bg-transparent text-[#F5F3EC] font-mono text-[13px] focus:outline-none"
+                  />
+                  <i className="ti ti-circle-check text-[#C7F26B]"></i>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-medium text-[#D4D4D8] mb-1">
+                  Primary Social Accounts
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 bg-[#18181C] border border-[#27272A] rounded-[10px] px-2.5 py-1.5 text-[12px]">
+                    <i className="ti ti-brand-tiktok text-[#EE1D52] text-[15px]"></i>
+                    <input
+                      type="text"
+                      value={socials.tiktok}
+                      onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
+                      placeholder="@tiktok"
+                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-[#18181C] border border-[#27272A] rounded-[10px] px-2.5 py-1.5 text-[12px]">
+                    <i className="ti ti-brand-youtube text-[#FF0000] text-[15px]"></i>
+                    <input
+                      type="text"
+                      value={socials.youtube}
+                      onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
+                      placeholder="YouTube channel"
+                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-[#18181C] border border-[#27272A] rounded-[10px] px-2.5 py-1.5 text-[12px]">
+                    <i className="ti ti-brand-x text-white text-[15px]"></i>
+                    <input
+                      type="text"
+                      value={socials.twitter}
+                      onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
+                      placeholder="@twitter"
+                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-[#18181C] border border-[#27272A] rounded-[10px] px-2.5 py-1.5 text-[12px]">
+                    <i className="ti ti-brand-instagram text-[#E4405F] text-[15px]"></i>
+                    <input
+                      type="text"
+                      value={socials.instagram}
+                      onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
+                      placeholder="@instagram"
+                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-3">
+              <button
+                type="button"
+                onClick={() => setStep(0)}
+                className="pill out py-2.5 px-4 text-[13px] cursor-pointer"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="flex-1 pill on py-2.5 justify-center text-[13px] font-medium cursor-pointer"
+              >
+                <span>Next</span>
+                <i className="ti ti-arrow-right text-[13px]"></i>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: RavenCore & Whoop Escrow Settlement Overview */}
+        {step === 2 && (
+          <div className="space-y-4 animate-[fade-in_0.15s_ease-out]">
+            <div>
+              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C7F26B]">
+                TRANSPARENCY & SETTLEMENT
+              </div>
+              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+                How attribution & payouts work
+              </h2>
+              <p className="text-[13px] text-[#A1A1AA] mt-0.5 leading-relaxed">
+                Powered by open-source RavenCore hardware attestation and Whoop escrow settlement rails.
+              </p>
+            </div>
+
+            <div className="space-y-2.5 pt-1">
+              <div className="p-3 bg-[#18181C] border border-[#27272A] rounded-[14px] flex items-start gap-3">
+                <i className="ti ti-shield-lock text-[#C7F26B] text-[18px] shrink-0 mt-0.5"></i>
+                <div className="text-[12px] leading-relaxed">
+                  <span className="font-semibold text-[#F5F3EC] block">RavenCore Cryptographic Attestation</span>
+                  Rejects emulators and farm clicks with hardware cryptographic tokens. Every install is guaranteed authentic.
+                </div>
+              </div>
+
+              <div className="p-3 bg-[#18181C] border border-[#27272A] rounded-[14px] flex items-start gap-3">
+                <i className="ti ti-calendar-event text-[#388BFD] text-[18px] shrink-0 mt-0.5"></i>
+                <div className="text-[12px] leading-relaxed">
+                  <span className="font-semibold text-[#F5F3EC] block">Friday Settlement & Digital Receipts</span>
+                  Earnings settle weekly every Friday at 17:00 UTC. Payouts arrive directly via Bank, Debit Card, PayPal, or USDC.
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-3">
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="pill out py-2.5 px-4 text-[13px] cursor-pointer"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={handleFinish}
+                className="flex-1 pill on py-2.5 justify-center text-[13.5px] font-medium cursor-pointer"
+              >
+                <span>Get Started</span>
+                <i className="ti ti-check text-[14px]"></i>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

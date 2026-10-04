@@ -7,6 +7,64 @@ export interface CampaignRate {
   avg?: number;
 }
 
+export interface CampaignApplication {
+  id: string;
+  campaignId: string;
+  creatorHandle: string;
+  creatorName: string;
+  primaryChannel: 'tiktok' | 'youtube' | 'instagram' | 'x' | 'twitch';
+  followerCount: string;
+  pitchNote: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submittedAt: string;
+}
+
+export interface UserSocialLinks {
+  twitter?: string;
+  tiktok?: string;
+  instagram?: string;
+  youtube?: string;
+  twitch?: string;
+}
+
+export interface UserProfile {
+  username: string;
+  displayName: string;
+  bio: string;
+  role: UserRole;
+  avatarPalette: string;
+  avatarMood: string;
+  socials: UserSocialLinks;
+  onboardingCompleted: boolean;
+}
+
+export interface WithdrawalReceipt {
+  id: string;
+  amount: number;
+  fee: number;
+  net: number;
+  destination: string;
+  methodType: 'bank' | 'card' | 'paypal' | 'usdc';
+  timestamp: string;
+  status: 'completed' | 'processing';
+  hash: string;
+  creatorHandle: string;
+  settlementBatch: string;
+}
+
+export interface SettlementReceipt {
+  id: string;
+  campaignId: string;
+  campaignName: string;
+  amount: number;
+  timestamp: string;
+  type: 'deposit' | 'weekly_disbursement';
+  status: 'confirmed';
+  settlementHash: string;
+  recipientCount?: number;
+  escrowRemaining: number;
+}
+
 export interface Campaign {
   id: string;
   name: string;
@@ -35,6 +93,13 @@ export interface Campaign {
   posted?: string;
   budget?: number;
   sdkConnected?: boolean;
+  requiresApproval?: boolean;
+  applicationStatus?: 'none' | 'pending' | 'approved' | 'rejected';
+  isCreatedByMe?: boolean;
+  logoUrl?: string; // uploaded square logo image data URL
+  sdkKey?: string;
+  escrowSettled?: number;
+  escrowBalance?: number;
 }
 
 export interface CampaignStats {

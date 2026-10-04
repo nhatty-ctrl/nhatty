@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ProfileDropdown } from './ProfileDropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
+import { SmileyAvatar } from './SmileyAvatar';
+import { UserRole } from '../types/campaign';
 
 interface HeaderProps {
   currentTab: string;
@@ -11,6 +13,10 @@ interface HeaderProps {
   onMarkRead: (id: number) => void;
   onMarkAllRead: () => void;
   balance?: number;
+  avatarPalette?: string;
+  avatarMood?: string;
+  userRole?: UserRole;
+  onRoleChange?: (role: UserRole) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -21,6 +27,10 @@ export const Header: React.FC<HeaderProps> = ({
   onMarkRead,
   onMarkAllRead,
   balance = 248.6,
+  avatarPalette,
+  avatarMood,
+  userRole,
+  onRoleChange,
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -110,15 +120,16 @@ export const Header: React.FC<HeaderProps> = ({
                 readMap={readMap}
                 onMarkRead={onMarkRead}
                 onMarkAllRead={onMarkAllRead}
+                userRole={userRole}
                 onNavigateSettings={() => {
                   setIsNotifOpen(false);
-                  onNavigate('settings');
+                  onNavigate('notification-settings');
                 }}
               />
             )}
           </div>
 
-          {/* Profile Avatar Button (Blue circle matching screenshot avatar) */}
+          {/* Profile Avatar Button */}
           <div className="relative">
             <button
               type="button"
@@ -126,10 +137,10 @@ export const Header: React.FC<HeaderProps> = ({
                 setIsProfileOpen(!isProfileOpen);
                 setIsNotifOpen(false);
               }}
-              className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full bg-[#388BFD] text-white flex items-center justify-center text-[17px] border-0 cursor-pointer hover:brightness-110 transition-all shadow-sm"
+              className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full border-0 cursor-pointer hover:brightness-110 transition-all shadow-sm p-0 overflow-hidden flex items-center justify-center bg-transparent"
               aria-label="Account and workspace menu"
             >
-              <i className="ti ti-user" aria-hidden="true"></i>
+              <SmileyAvatar paletteId={avatarPalette} mood={avatarMood} size={38} />
             </button>
 
             {isProfileOpen && (
@@ -142,6 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onNavigatePayoutMethods={() => onNavigate('payout-methods')}
                 onNavigateBilling={() => onNavigate('billing')}
                 onNavigateSettings={() => onNavigate('settings')}
+                onNavigateDocs={() => onNavigate('docs')}
               />
             )}
           </div>

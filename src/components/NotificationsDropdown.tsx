@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 export interface NotificationItem {
   id: number;
@@ -8,6 +8,7 @@ export interface NotificationItem {
   t: string;
   d: string;
   tm: string;
+  r?: 'creator' | 'founder' | string;
 }
 
 export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
@@ -19,6 +20,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: 'Payout sent',
     d: '$124.60 for the Oct 2 settlement is on its way.',
     tm: '2h',
+    r: 'creator',
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: '12 installs verified',
     d: 'Pixel Pop confirmed new installs from your link.',
     tm: '5h',
+    r: 'creator',
   },
   {
     id: 3,
@@ -37,6 +40,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: 'Focusly ends in 3 days',
     d: 'Share your link soon to catch the last installs.',
     tm: 'Yesterday',
+    r: 'creator',
   },
   {
     id: 4,
@@ -46,6 +50,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: 'New in Health',
     d: 'Stride pays $2.90 per verified install.',
     tm: '2d',
+    r: 'creator',
   },
   {
     id: 5,
@@ -55,6 +60,7 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: 'SDK connected',
     d: 'Attribution verified for incoming events.',
     tm: '3d',
+    r: 'founder',
   },
   {
     id: 6,
@@ -64,6 +70,27 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
     t: 'Install milestone reached',
     d: 'Over 600 verified installs recorded this week.',
     tm: '4d',
+    r: 'founder',
+  },
+  {
+    id: 7,
+    ic: 'ti-shield-check',
+    bg: '#C0DD97',
+    fg: '#173404',
+    t: 'Escrow funded',
+    d: '$5,000 deposited for Pixel Pop campaign budget.',
+    tm: '5d',
+    r: 'founder',
+  },
+  {
+    id: 8,
+    ic: 'ti-receipt-refund',
+    bg: '#F5C4B3',
+    fg: '#4A1B0C',
+    t: 'Dispute resolved',
+    d: 'Attribution event #88192 verified by audit telemetry.',
+    tm: '1w',
+    r: 'founder',
   },
 ];
 
@@ -74,6 +101,7 @@ interface NotificationsDropdownProps {
   onMarkRead: (id: number) => void;
   onMarkAllRead: () => void;
   onNavigateSettings?: () => void;
+  userRole?: 'creator' | 'founder';
 }
 
 export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({

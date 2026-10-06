@@ -21,6 +21,8 @@ interface ProfileViewProps {
   onNavigateNotificationSettings?: () => void;
   onNavigateSettings?: () => void;
   onNavigateEarnings?: () => void;
+  onNavigateSdk?: () => void;
+  onNavigateDocs?: () => void;
   onOpenQr?: (campaign: Campaign) => void;
   onCreateCampaign?: () => void;
   onOpenOnboarding?: () => void;
@@ -42,6 +44,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onNavigateNotificationSettings,
   onNavigateSettings,
   onNavigateEarnings,
+  onNavigateSdk,
+  onNavigateDocs,
   onOpenQr,
   onCreateCampaign,
   onOpenOnboarding,
@@ -203,6 +207,30 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <i className="ti ti-receipt"></i>
                 <span>Billing</span>
               </button>
+
+              {onNavigateSdk && (
+                <button
+                  type="button"
+                  onClick={onNavigateSdk}
+                  className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                  title="App SDK settings & API keys"
+                >
+                  <i className="ti ti-key text-[#FAC775]"></i>
+                  <span>SDK & Keys</span>
+                </button>
+              )}
+
+              {onNavigateDocs && (
+                <button
+                  type="button"
+                  onClick={onNavigateDocs}
+                  className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                  title="Developer documentation"
+                >
+                  <i className="ti ti-book text-[#C7F26B]"></i>
+                  <span>Docs</span>
+                </button>
+              )}
 
               {onOpenOnboarding && (
                 <button

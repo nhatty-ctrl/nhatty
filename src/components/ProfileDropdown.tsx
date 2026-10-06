@@ -10,6 +10,7 @@ interface ProfileDropdownProps {
   onNavigateBilling: () => void;
   onNavigateSettings: () => void;
   onNavigateDocs?: () => void;
+  onNavigateSdk?: () => void;
 }
 
 export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
@@ -22,6 +23,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   onNavigateBilling,
   onNavigateSettings,
   onNavigateDocs,
+  onNavigateSdk,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -154,13 +156,26 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         <button
           type="button"
           onClick={() => {
+            if (onNavigateSdk) onNavigateSdk();
+            onClose();
+          }}
+          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+        >
+          <i className="ti ti-key text-[17px] text-[#FAC775]" aria-hidden="true"></i>
+          <span className="flex-1 font-medium">SDK & API Keys</span>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
             if (onNavigateDocs) onNavigateDocs();
             onClose();
           }}
           className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
         >
           <i className="ti ti-book text-[17px] text-[#C7F26B]" aria-hidden="true"></i>
-          <span className="flex-1">Documentation & SDK</span>
+          <span className="flex-1">Documentation</span>
           <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
         </button>
 

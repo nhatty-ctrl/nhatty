@@ -14,6 +14,8 @@ import { BillingView } from './components/BillingView';
 import { NotificationSettingsView } from './components/NotificationSettingsView';
 import { SettingsView } from './components/SettingsView';
 import { DocumentationView } from './components/DocumentationView';
+import { AppSettingsSdkView } from './components/sdk/AppSettingsSdkView';
+import { UmiDocsView } from './components/docs/UmiDocsView';
 import { QrCodeModal } from './components/QrCodeModal';
 import { JoinedSuccessModal } from './components/JoinedSuccessModal';
 import { Toast } from './components/Toast';
@@ -101,8 +103,16 @@ export default function App() {
 
   // Navigation tab states
   const [currentTab, setCurrentTab] = useState<
-    'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
-  >('campaigns');
+    'sdk' | 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
+  >(() => {
+    const hash = window.location.hash || '';
+    if (hash.startsWith('#/sdk') || hash.startsWith('#/keys') || hash.startsWith('#/settings/sdk') || hash.startsWith('#/settings/api-keys')) return 'sdk';
+    if (hash.startsWith('#/docs')) return 'docs';
+    if (hash.startsWith('#/discover')) return 'discover';
+    if (hash.startsWith('#/earnings')) return 'earnings';
+    if (hash.startsWith('#/create')) return 'create';
+    return 'campaigns';
+  });
   const [filterTab, setFilterTab] = useState<'open' | 'joined'>('open');
   const [activeDetailId, setActiveDetailId] = useState<string | null>(null);
   const [activeAnalyticsId, setActiveAnalyticsId] = useState<string | null>(null);
@@ -157,7 +167,11 @@ export default function App() {
   // Handle URL Hash Routing (Direct to page, no overlay display!)
   const parseHash = useCallback(() => {
     const hash = window.location.hash || '#/';
-    if (hash.startsWith('#/analytics/')) {
+    if (hash.startsWith('#/sdk') || hash.startsWith('#/keys') || hash.startsWith('#/settings/sdk') || hash.startsWith('#/settings/api-keys')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('sdk');
+    } else if (hash.startsWith('#/analytics/')) {
       const id = hash.replace('#/analytics/', '');
       setActiveAnalyticsId(id);
       setActiveDetailId(null);
@@ -206,6 +220,10 @@ export default function App() {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
       setCurrentTab('profile');
+    } else if (hash.startsWith('#/campaigns')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('campaigns');
     } else {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
@@ -220,12 +238,14 @@ export default function App() {
   }, [parseHash]);
 
   const handleNavigateTab = (
-    tab: 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
+    tab: 'sdk' | 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
   ) => {
     setActiveDetailId(null);
     setActiveAnalyticsId(null);
     setCurrentTab(tab);
-    if (tab === 'discover') {
+    if (tab === 'sdk') {
+      window.location.hash = '#/sdk';
+    } else if (tab === 'discover') {
       window.location.hash = '#/discover';
     } else if (tab === 'docs') {
       window.location.hash = '#/docs';
@@ -245,6 +265,8 @@ export default function App() {
       window.location.hash = '#/profile';
     } else if (tab === 'create') {
       window.location.hash = '#/create';
+    } else if (tab === 'campaigns') {
+      window.location.hash = '#/campaigns';
     } else {
       window.location.hash = '#/';
     }
@@ -472,11 +494,18 @@ export default function App() {
             onJoin={handleJoin}
             onNavigateDetail={handleNavigateDetail}
           />
-        ) : currentTab === 'docs' ? (
-          /* Developer & Creator Documentation */
-          <DocumentationView
+        ) : currentTab === 'sdk' ? (
+          /* App Settings & SDK Keys View */
+          <AppSettingsSdkView
             onBack={() => handleNavigateTab('campaigns')}
-            onNavigateCreateCampaign={() => handleNavigateTab('create')}
+            onNavigateDocs={() => handleNavigateTab('docs')}
+            onNavigateBilling={() => handleNavigateTab('billing')}
+          />
+        ) : currentTab === 'docs' ? (
+          /* Developer & Creator Documentation (Full Umi Documentation) */
+          <UmiDocsView
+            onBack={() => handleNavigateTab('campaigns')}
+            onNavigateKeys={() => handleNavigateTab('sdk')}
           />
         ) : currentTab === 'profile' ? (
           /* Profile & App Analytics Launcher */
@@ -490,6 +519,8 @@ export default function App() {
             onNavigateNotificationSettings={() => handleNavigateTab('notification-settings')}
             onNavigateSettings={() => handleNavigateTab('settings')}
             onNavigateEarnings={() => handleNavigateTab('earnings')}
+            onNavigateSdk={() => handleNavigateTab('sdk')}
+            onNavigateDocs={() => handleNavigateTab('docs')}
             onOpenQr={(c) => {
               setIsFreshJoin(false);
               setQrCampaign(c);
@@ -515,6 +546,8 @@ export default function App() {
             onShare={() => {}}
             onNavigateDetail={handleNavigateDetail}
             onNavigateAnalytics={handleNavigateAnalytics}
+            onNavigateSdk={() => handleNavigateTab('sdk')}
+            onNavigateDocs={() => handleNavigateTab('docs')}
           />
         )}
       </main>

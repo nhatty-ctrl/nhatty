@@ -15,6 +15,8 @@ interface CampaignsListProps {
   onNavigateAnalytics: (id: string) => void;
   onManage?: (campaign: Campaign) => void;
   isFounder?: boolean;
+  onNavigateSdk?: () => void;
+  onNavigateDocs?: () => void;
 }
 
 export const CampaignsList: React.FC<CampaignsListProps> = ({
@@ -29,6 +31,8 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onNavigateAnalytics,
   onManage,
   isFounder = false,
+  onNavigateSdk,
+  onNavigateDocs,
 }) => {
   const [isLoading] = useState(false);
 

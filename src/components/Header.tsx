@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => onNavigate('campaigns')}
             className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-[12px] bg-[#1C1C1C] hover:bg-[#242424] text-[#F5F3EC] flex items-center justify-center text-[18px] border-0 cursor-pointer transition-colors shrink-0"
-            aria-label="KRED home"
+            aria-label="Umi home"
           >
             <i className="ti ti-asterisk" aria-hidden="true"></i>
           </button>
@@ -55,11 +55,11 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onNavigate('campaigns')}
               className="text-[17px] font-semibold tracking-tight text-[#F5F3EC] cursor-pointer hover:text-white transition-colors"
             >
-              kred
+              umi
             </span>
           </div>
 
-          {/* Desktop Navigation: ONLY Campaigns & Discover (Per explicit requirement) */}
+          {/* Desktop Navigation: Campaigns & Discover */}
           <nav className="flex items-center gap-1 sm:gap-1.5 ml-2" aria-label="Main navigation">
             <button
               onClick={() => onNavigate('campaigns')}
@@ -154,6 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onNavigateBilling={() => onNavigate('billing')}
                 onNavigateSettings={() => onNavigate('settings')}
                 onNavigateDocs={() => onNavigate('docs')}
+                onNavigateSdk={() => onNavigate('sdk')}
               />
             )}
           </div>

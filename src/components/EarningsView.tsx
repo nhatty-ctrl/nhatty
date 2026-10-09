@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Campaign, WithdrawalReceipt, SettlementReceipt } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
 import { ReceiptModal } from './ReceiptModal';
-import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface EarningsViewProps {
   campaigns?: Campaign[];
@@ -242,7 +241,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6">
+    <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 space-y-6">
       {/* Breadcrumb with icons */}
       <Breadcrumbs
         items={[
@@ -376,17 +375,6 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Image 1 Graph: Telemetry & Verified Install Runs */}
-          <KredTelemetryBarChart
-            title="Let’s look at your latest runs and verified earnings across campaigns."
-            pillLabel="Read attribution telemetry · Verified runs"
-            icon="ti-heart-filled"
-            barColor="#F4C0D1"
-            badgeBg="#F4C0D1"
-            badgeFg="#4B1528"
-            bountyPrice={2.5}
-          />
 
           {/* IN-PAGE EMBEDDED WITHDRAWAL FLOW MODAL / BANNER */}
           {isWithdrawOpen && (

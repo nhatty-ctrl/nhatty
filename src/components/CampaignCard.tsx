@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
-import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -331,17 +330,6 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                     </button>
                   </div>
                 </div>
-
-                {/* Image 1 Graph inside Expanded Joined Card with kred color system */}
-                <KredTelemetryBarChart
-                  title={`Let’s look at your latest runs and verified installs for ${campaign.name}.`}
-                  pillLabel={`Read attribution telemetry · $${campaign.price || '2.50'} bounty`}
-                  icon={campaign.icon || 'ti-heart-filled'}
-                  bountyPrice={parseFloat(campaign.price || '2.5')}
-                  barColor={campaign.bg || '#F4C0D1'}
-                  badgeBg={campaign.bg}
-                  badgeFg={campaign.fg}
-                />
               </div>
             )}
 

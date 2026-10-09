@@ -234,7 +234,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
   ];
 
   return (
-    <div className="k border border-[#1F1F1F] shadow-2xl p-4 sm:p-6 text-left select-none space-y-4">
+    <div className="w-full bg-transparent text-left select-none space-y-6 pt-2">
       {/* Top Header: Title & Role Switcher */}
       <div className="flex justify-between items-center gap-3 flex-wrap">
         <div>
@@ -247,7 +247,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
         </div>
 
         {/* Role Switcher Pill */}
-        <div className="edge inline-flex rounded-full p-1 bg-[#111113]">
+        <div className="inline-flex rounded-full p-1 bg-[#161616] border border-white/5">
           {(['creator', 'founder'] as const).map((r) => (
             <button
               key={r}
@@ -322,9 +322,9 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
       </div>
 
       {/* Main Metric Card */}
-      <div className="edge rounded-[24px] p-4 sm:p-5 bg-[#0C0C0E] space-y-4">
+      <div className="rounded-[24px] p-5 sm:p-7 bg-[#141414] border border-white/5 space-y-5">
         {/* Carousel Pill Header */}
-        <div className="edge rounded-full flex items-center gap-3 p-1.5 pl-2.5 pr-2 bg-[#16161A]">
+        <div className="rounded-full flex items-center gap-3 p-1.5 pl-3 pr-2 bg-[#1C1C1C] border border-white/5">
           <span
             className="w-8 h-8 rounded-[10px] flex items-center justify-center text-[16px] shrink-0 font-bold shadow-xs"
             style={{ backgroundColor: activeMetric.bg, color: activeMetric.fg }}
@@ -539,7 +539,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
       </div>
 
       {/* ================= LOWER ROLE SPECIFIC SECTION ================= */}
-      <div className="edge rounded-[24px] p-5 sm:p-6 bg-[#0C0C0E] space-y-4">
+      <div className="rounded-[24px] p-5 sm:p-7 bg-[#141414] border border-white/5 space-y-5">
         {role === 'creator' ? (
           /* Creator: Earnings Status & By Campaign */
           <div className="space-y-4">

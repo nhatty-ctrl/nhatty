@@ -45,7 +45,7 @@ export const CampaignAnalyticsView: React.FC<CampaignAnalyticsViewProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 space-y-8 text-left select-none animate-[fade-in_0.2s_ease-out]">
       {/* Top Breadcrumb & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Breadcrumbs

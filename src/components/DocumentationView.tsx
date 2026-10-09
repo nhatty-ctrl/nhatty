@@ -135,8 +135,8 @@ export const DocumentationView: React.FC<DocumentationViewProps> = ({
         </div>
       </div>
 
-      {/* Main Container: Luma Sidebar + Reading Pane */}
-      <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-8 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8 items-start">
+      {/* Main Container: Corner-to-corner fluid layout */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 py-8 grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] gap-8 items-start">
         {/* Left Sticky Navigation Column */}
         <aside className="sticky top-20 space-y-4">
           {/* Quick Search Input */}

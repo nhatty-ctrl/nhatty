@@ -41,7 +41,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[1040px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+    <div className="w-full max-w-[836px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
       {/* Breadcrumb with icons */}
       <Breadcrumbs
         items={[

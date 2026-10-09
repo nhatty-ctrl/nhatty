@@ -86,15 +86,15 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
 
   return (
     <div
-      className={`bg-[#161616] border border-[#2A2A2A] rounded-[20px] p-5 sm:p-6 text-left select-none relative shadow-xl ${className}`}
+      className={`bg-transparent border-0 text-left select-none relative w-full py-2 ${className}`}
     >
       {/* Serif Typography Headline matching Image 1 & Design System */}
-      <h3 className="font-serif text-[18px] sm:text-[21px] text-[#F5F3EC] leading-[1.35] tracking-[-0.2px] font-normal pr-2">
+      <h3 className="font-serif text-[20px] sm:text-[24px] text-[#F5F3EC] leading-[1.3] tracking-[-0.2px] font-normal pr-2">
         {title}
       </h3>
 
       {/* Action Capsule Pill matching Image 1 & Design System */}
-      <div className="flex items-center justify-between mt-3.5 mb-5 p-1.5 pl-3 pr-2 bg-[#1C1C1C] rounded-full border border-[#2A2A2A] transition-colors">
+      <div className="flex items-center justify-between mt-3.5 mb-6 p-1.5 pl-3 pr-2 bg-[#141414] rounded-full border border-white/10 transition-colors">
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className="w-7 h-7 rounded-[8px] flex items-center justify-center text-[13px] shrink-0 shadow-xs font-semibold"

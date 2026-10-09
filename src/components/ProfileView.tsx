@@ -9,7 +9,6 @@ import {
   DEFAULT_AVATAR_MOOD,
 } from './SmileyAvatar';
 import { KredAnalyticsEngine } from './KredAnalyticsEngine';
-import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface ProfileViewProps {
   onBack: () => void;
@@ -371,13 +370,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           {/* Expandable Founder Analytics */}
           {showFounderAnalytics && (
             <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
-              <KredTelemetryBarChart
-                title="Let’s look at your latest install runs and verify incoming creator traffic."
-                pillLabel="Founder telemetry overview · Escrow backed"
-                icon="ti-speakerphone"
-                barColor="#C7F26B"
-                bountyPrice={2.0}
-              />
               <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
                 <KredAnalyticsEngine
                   campaigns={campaigns}
@@ -477,21 +469,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     )}
                   </div>
                 </div>
-
-                {/* Expandable Image 1 Telemetry Bar Chart for Created Campaign */}
-                {expandedCreatedId === camp.id && (
-                  <div className="pt-2 animate-[fade-in_0.15s_ease-out]">
-                    <KredTelemetryBarChart
-                      title={`Let’s look at your verified install runs for ${camp.name}.`}
-                      pillLabel={`Founder attribution telemetry · Escrow backed`}
-                      icon={camp.icon || 'ti-cube'}
-                      bountyPrice={parseFloat(camp.price || '2.0')}
-                      barColor={camp.bg || '#C7F26B'}
-                      badgeBg={camp.bg}
-                      badgeFg={camp.fg}
-                    />
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -620,13 +597,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           {/* Expandable Creator Performance Analytics */}
           {showCreatorAnalytics && (
             <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
-              <KredTelemetryBarChart
-                title="Let’s look at your latest runs and verified installs across all joined campaigns."
-                pillLabel="Creator attribution telemetry · Verified runs"
-                icon="ti-heart-filled"
-                barColor="#F4C0D1"
-                bountyPrice={2.5}
-              />
               <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
                 <KredAnalyticsEngine
                   campaigns={campaigns}
@@ -719,21 +689,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                         {copiedSlug === slug ? 'Copied!' : 'Copy Link'}
                       </button>
                     </div>
-
-                    {/* Expandable Image 1 Telemetry Bar Chart for Joined Campaign */}
-                    {isCardExpanded && (
-                      <div className="pt-2 animate-[fade-in_0.15s_ease-out]">
-                        <KredTelemetryBarChart
-                          title={`Let’s look at your latest runs and verified installs for ${camp.name}.`}
-                          pillLabel={`Read attribution telemetry · $${camp.price} bounty`}
-                          icon={camp.icon || 'ti-heart-filled'}
-                          bountyPrice={parseFloat(camp.price || '2.5')}
-                          barColor={camp.bg || '#F4C0D1'}
-                          badgeBg={camp.bg}
-                          badgeFg={camp.fg}
-                        />
-                      </div>
-                    )}
                   </div>
                 );
               })

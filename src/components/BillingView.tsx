@@ -275,7 +275,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
   });
 
   return (
-    <div className="w-full max-w-[1320px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6">
+    <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 space-y-6">
       {/* Breadcrumb with icons */}
       <Breadcrumbs
         items={[

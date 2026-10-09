@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
 import { TrackingQrCode } from './TrackingQrCode';
-import { KredTelemetryBarChart } from './KredTelemetryBarChart';
 
 interface CampaignDetailProps {
   campaign: Campaign;
@@ -560,19 +559,6 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <span className="text-[#9A9892]">Minimum payout</span>
                 <span className="text-[#F5F3EC]">$20.00</span>
               </div>
-            </div>
-
-            {/* Real-time Telemetry Bar Chart (Image 1 Style) */}
-            <div className="pt-6 border-t border-[#2A2A2A]">
-              <KredTelemetryBarChart
-                title={`Let’s look at your latest runs and verified installs for ${campaign.name}.`}
-                pillLabel={`Read attribution telemetry · $${price} bounty`}
-                icon={icon || 'ti-heart-filled'}
-                bountyPrice={parseFloat(price) || 2.5}
-                barColor={bg || '#F4C0D1'}
-                badgeBg={bg}
-                badgeFg={fg}
-              />
             </div>
           </div>
         </div>

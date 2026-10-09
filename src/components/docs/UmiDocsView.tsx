@@ -153,18 +153,18 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
   const renderCodeBlock = (key: 'install' | 'init' | 'source' | 'track') => {
     const item = CODE_SNIPPETS[key][platform];
     return (
-      <div className="rounded-xl my-3 overflow-hidden bg-[#0A0A0A] border border-[#1F1F1F]">
-        <div className="flex items-center justify-between px-3.5 py-2 border-b border-[#1F1F1F] text-[11px] font-mono text-[#6F6E69]">
+      <div className="rounded-xl my-3.5 overflow-hidden bg-[#161616] border border-[#262626]">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#242424] text-[11px] font-mono text-[#71717A] bg-[#141414]">
           <span>{item[0]}</span>
           <button
             type="button"
             onClick={() => copySnippet(item[1])}
-            className="h-6 px-2.5 rounded-full border border-white/10 hover:border-white/30 text-[#B9B7AF] hover:text-[#F5F3EC] text-[11px] bg-transparent cursor-pointer transition-colors"
+            className="h-6 px-3 rounded-full border border-white/10 hover:border-white/30 text-[#A8A69E] hover:text-[#F5F3EC] text-[11px] bg-transparent cursor-pointer transition-colors"
           >
             Copy
           </button>
         </div>
-        <pre className="p-3.5 m-0 font-mono text-[12px] leading-relaxed text-[#D8D7D2] overflow-x-auto whitespace-pre-wrap">
+        <pre className="p-4 m-0 font-mono text-[12.5px] leading-relaxed text-[#D8D7D2] overflow-x-auto whitespace-pre-wrap">
           {item[1]}
         </pre>
       </div>
@@ -173,14 +173,14 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
 
   // Platform Capsule selector
   const renderPlatformCapsule = () => (
-    <div className="inline-flex rounded-full p-0.5 border border-white/15 bg-[#0B0B0B] my-3">
+    <div className="inline-flex rounded-full p-0.5 border border-white/15 bg-[#181818] my-3">
       {PLATFORMS.map(([pId, pLabel]) => (
         <button
           key={pId}
           type="button"
           onClick={() => setPlatform(pId)}
-          className={`rounded-full h-7 px-3 text-[12px] font-medium border-0 cursor-pointer transition-all ${
-            platform === pId ? 'bg-[#F5F3EC] text-[#000000]' : 'bg-transparent text-[#B9B7AF] hover:text-[#F5F3EC]'
+          className={`rounded-full h-7 px-3.5 text-[12px] font-medium border-0 cursor-pointer transition-all ${
+            platform === pId ? 'bg-[#F5F3EC] text-[#0B0B0B]' : 'bg-transparent text-[#A8A69E] hover:text-[#F5F3EC]'
           }`}
         >
           {pLabel}
@@ -191,16 +191,16 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
 
   // App Key callout card
   const renderKeyCallout = () => (
-    <div className="p-4 rounded-2xl bg-[#0B0B0B] border border-[#1F1F1F] my-3 space-y-2">
-      <div className="text-[14.5px] font-medium text-[#F5F3EC]">Get your app key</div>
-      <p className="text-[12.5px] text-[#9A9892] leading-relaxed">
+    <div className="p-5 rounded-2xl bg-[#181818] border border-[#262626] my-4 space-y-2.5">
+      <div className="text-[15px] font-medium text-[#F5F3EC]">Get your app key</div>
+      <p className="text-[13px] text-[#A8A69E] leading-relaxed">
         Keys live in your app settings. Copy the publishable key for the app, and keep secret keys on your server.
       </p>
       <div className="pt-1">
         <button
           type="button"
           onClick={onNavigateKeys}
-          className="h-8 px-4 rounded-full bg-[#F5F3EC] hover:bg-white text-[#000000] text-[12.5px] font-medium cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-sm"
+          className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] hover:bg-white text-[#0B0B0B] text-[12.5px] font-medium cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-sm"
         >
           <span>Open API keys</span>
           <i className="ti ti-arrow-up-right text-[12px]"></i>
@@ -211,67 +211,67 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
 
   // Fee Calculator Card
   const renderFeeCalculator = () => (
-    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B0B0B] border border-[#1F1F1F] my-4 space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+    <div className="p-5 sm:p-6 rounded-2xl bg-[#181818] border border-[#262626] my-5 space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="text-[11.5px] text-[#9A9892] block mb-1">Campaign budget</label>
+          <label className="text-[12px] text-[#A8A69E] block mb-1">Campaign budget</label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5 text-[#9A9892] text-[13px]">$</span>
+            <span className="absolute left-3.5 top-2.5 text-[#9A9892] text-[13px]">$</span>
             <input
               type="number"
               min={50}
               step={50}
               value={campaignBudget}
               onChange={(e) => setCampaignBudget(Math.max(50, parseFloat(e.target.value) || 0))}
-              className="w-full h-10 pl-7 pr-3 rounded-xl bg-[#000000] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] font-mono outline-none"
+              className="w-full h-10.5 pl-8 pr-3 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] font-mono outline-none"
             />
           </div>
         </div>
         <div>
-          <label className="text-[11.5px] text-[#9A9892] block mb-1">Reward per install</label>
+          <label className="text-[12px] text-[#A8A69E] block mb-1">Reward per install</label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5 text-[#9A9892] text-[13px]">$</span>
+            <span className="absolute left-3.5 top-2.5 text-[#9A9892] text-[13px]">$</span>
             <input
               type="number"
               min={0.1}
               step={0.05}
               value={rewardPerInstall}
               onChange={(e) => setRewardPerInstall(Math.max(0.1, parseFloat(e.target.value) || 0))}
-              className="w-full h-10 pl-7 pr-3 rounded-xl bg-[#000000] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] font-mono outline-none"
+              className="w-full h-10.5 pl-8 pr-3 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] font-mono outline-none"
             />
           </div>
         </div>
       </div>
 
-      <table className="w-full border-collapse text-[13px] mt-2">
+      <table className="w-full border-collapse text-[13.5px] mt-2">
         <tbody>
-          <tr className="border-t border-[#1F1F1F]">
-            <td className="py-2.5 text-[#B9B7AF]">Founder pays today</td>
-            <td className="py-2.5 text-right font-mono font-medium text-[#F5F3EC]">
+          <tr className="border-t border-[#242424]">
+            <td className="py-3 text-[#A8A69E]">Founder pays today</td>
+            <td className="py-3 text-right font-mono font-medium text-[#F5F3EC]">
               {formatMoney(founderTotal)}
             </td>
           </tr>
-          <tr className="border-t border-[#1F1F1F]">
-            <td className="py-2.5 text-[#B9B7AF]">of which platform fee (7%)</td>
-            <td className="py-2.5 text-right font-mono text-[#9A9892]">
+          <tr className="border-t border-[#242424]">
+            <td className="py-3 text-[#A8A69E]">of which platform fee (7%)</td>
+            <td className="py-3 text-right font-mono text-[#9A9892]">
               {formatMoney(platformFee)}
             </td>
           </tr>
-          <tr className="border-t border-[#1F1F1F]">
-            <td className="py-2.5 text-[#B9B7AF]">Held in escrow for creators</td>
-            <td className="py-2.5 text-right font-mono text-[#F5F3EC]">
+          <tr className="border-t border-[#242424]">
+            <td className="py-3 text-[#A8A69E]">Held in escrow for creators</td>
+            <td className="py-3 text-right font-mono text-[#F5F3EC]">
               {formatMoney(campaignBudget)}
             </td>
           </tr>
-          <tr className="border-t border-[#1F1F1F]">
-            <td className="py-2.5 text-[#B9B7AF]">Creator receives per install (net 3% fee)</td>
-            <td className="py-2.5 text-right font-mono text-[#C7F26B] font-medium">
+          <tr className="border-t border-[#242424]">
+            <td className="py-3 text-[#A8A69E]">Creator receives per install (net 3% fee)</td>
+            <td className="py-3 text-right font-mono text-[#C7F26B] font-medium">
               {formatMoney(creatorPerInstall)}
             </td>
           </tr>
-          <tr className="border-t border-[#1F1F1F]">
-            <td className="py-2.5 text-[#B9B7AF]">Installs the budget covers</td>
-            <td className="py-2.5 text-right font-mono text-[#F5F3EC]">
+          <tr className="border-t border-[#242424]">
+            <td className="py-3 text-[#A8A69E]">Installs the budget covers</td>
+            <td className="py-3 text-right font-mono text-[#F5F3EC]">
               {coveredInstalls.toLocaleString('en-US')}
             </td>
           </tr>
@@ -299,7 +299,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'pre',
             title: 'Prerequisites',
             content: (
-              <div className="text-[13.5px] text-[#B9B7AF] space-y-2 leading-relaxed">
+              <div className="text-[13.5px] text-[#A8A69E] space-y-2 leading-relaxed">
                 <p>You need three things before you start:</p>
                 <ul className="list-disc pl-5 space-y-1 text-[#F5F3EC]">
                   <li>A umi account</li>
@@ -329,7 +329,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             title: '3. Initialize at launch',
             content: (
               <div>
-                <p className="text-[13.5px] text-[#B9B7AF]">
+                <p className="text-[13.5px] text-[#A8A69E]">
                   Call <code className="font-mono text-[#F5F3EC]">configure</code> once, as early as you can. Use the{' '}
                   <strong className="text-[#F5F3EC]">publishable</strong> key.
                 </p>
@@ -342,7 +342,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             title: '4. Confirm the source',
             content: (
               <div>
-                <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+                <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                   On Android the SDK reads Google's Play Install Referrer by itself. On iOS there is no equivalent, so the
                   SDK shows a short sheet where the user enters the one-time code from the creator's link page.
                 </p>
@@ -355,7 +355,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             title: '5. Send a qualifying event',
             content: (
               <div>
-                <p className="text-[13.5px] text-[#B9B7AF]">
+                <p className="text-[13.5px] text-[#A8A69E]">
                   A verified install is a new user who finishes the step you chose when you created the campaign. Send that
                   event by name.
                 </p>
@@ -367,7 +367,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 's6',
             title: '6. Test in sandbox',
             content: (
-              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                 Use a <code className="font-mono text-[#FAC775]">umi_pk_test_</code> key, run the app, then check your
                 app overview. Sandbox events never create payable installs.
               </p>
@@ -377,7 +377,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 's7',
             title: '7. Go live',
             content: (
-              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                 Swap in the <code className="font-mono text-[#C7F26B]">umi_pk_live_</code> key and publish the new app
                 version. Your campaign goes live when its first live event arrives.
               </p>
@@ -387,7 +387,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'tr',
             title: 'Troubleshooting',
             content: (
-              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                 No events after 5 minutes? Check that the key matches the environment, that{' '}
                 <code className="font-mono text-[#F5F3EC]">configure</code> runs before any{' '}
                 <code className="font-mono text-[#F5F3EC]">track</code> call, and that the device is online.
@@ -398,7 +398,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'nx',
             title: 'Next steps',
             content: (
-              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                 Read <strong className="text-[#F5F3EC]">Source confirmation</strong>, then{' '}
                 <strong className="text-[#F5F3EC]">Holds and settlement</strong> to see when creators are paid.
               </p>
@@ -417,33 +417,33 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'kinds',
             title: 'Key types',
             content: (
-              <table className="w-full border-collapse text-[13px] my-3">
+              <table className="w-full border-collapse text-[13.5px] my-3.5">
                 <thead>
-                  <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-[#6F6E69]">
+                  <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#242424] pb-2">
                     <th className="pb-2">Key</th>
                     <th className="pb-2">Starts with</th>
                     <th className="pb-2">Use</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1F1F1F]">
+                <tbody className="divide-y divide-[#242424]">
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Publishable</td>
-                    <td className="py-2.5 font-mono text-[#F5F3EC] pr-4">umi_pk_</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Publishable</td>
+                    <td className="py-3 font-mono text-[#F5F3EC] pr-4">umi_pk_</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Ships inside your app. Safe to share. Can only send install and event data.
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Secret</td>
-                    <td className="py-2.5 font-mono text-[#F5F3EC] pr-4">umi_sk_</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Secret</td>
+                    <td className="py-3 font-mono text-[#F5F3EC] pr-4">umi_sk_</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Server only. Sends events from your backend. Shown once when created.
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Access token</td>
-                    <td className="py-2.5 font-mono text-[#F5F3EC] pr-4">umi_at_</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Access token</td>
+                    <td className="py-3 font-mono text-[#F5F3EC] pr-4">umi_at_</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Reads campaigns and analytics through the REST API. Scoped and expiring.
                     </td>
                   </tr>
@@ -456,14 +456,14 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             title: 'Find your keys',
             content: (
               <div className="space-y-3">
-                <p className="text-[13.5px] text-[#B9B7AF]">
+                <p className="text-[13.5px] text-[#A8A69E]">
                   Open <strong className="text-[#F5F3EC]">Settings, API keys</strong> in your app. Switch between
                   Sandbox and Live at the top.
                 </p>
                 <button
                   type="button"
                   onClick={onNavigateKeys}
-                  className="h-8 px-4 rounded-full bg-[#F5F3EC] text-[#000000] text-[12.5px] font-medium cursor-pointer inline-flex items-center gap-1.5"
+                  className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] text-[12.5px] font-medium cursor-pointer inline-flex items-center gap-1.5"
                 >
                   <span>Open API keys</span>
                   <i className="ti ti-arrow-up-right text-[12px]"></i>
@@ -475,7 +475,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'rot',
             title: 'Rotate or revoke',
             content: (
-              <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
                 Create the new key first, deploy it, then revoke the old one. A revoked key stops working within a minute.
               </p>
             ),
@@ -493,33 +493,33 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'rates',
             title: 'Rates',
             content: (
-              <table className="w-full border-collapse text-[13px] my-3">
+              <table className="w-full border-collapse text-[13.5px] my-3.5">
                 <thead>
-                  <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-[#6F6E69]">
+                  <tr className="text-left font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#242424] pb-2">
                     <th className="pb-2">Who</th>
                     <th className="pb-2">Fee</th>
                     <th className="pb-2">When</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#1F1F1F]">
+                <tbody className="divide-y divide-[#242424]">
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Founders</td>
-                    <td className="py-2.5 text-[#F5F3EC] pr-4">7% of the budget</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Founders</td>
+                    <td className="py-3 text-[#F5F3EC] pr-4">7% of the budget</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Charged when you fund a campaign, on top of the budget.
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Creators</td>
-                    <td className="py-2.5 text-[#F5F3EC] pr-4">3% of each reward</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Creators</td>
+                    <td className="py-3 text-[#F5F3EC] pr-4">3% of each reward</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Taken when a reward moves to your available balance.
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 text-[#F5F3EC] font-medium pr-4">Payout provider</td>
-                    <td className="py-2.5 text-[#F5F3EC] pr-4">Varies</td>
-                    <td className="py-2.5 text-[#B9B7AF]">
+                    <td className="py-3 text-[#F5F3EC] font-medium pr-4">Payout provider</td>
+                    <td className="py-3 text-[#F5F3EC] pr-4">Varies</td>
+                    <td className="py-3 text-[#A8A69E]">
                       Shown before you confirm a withdrawal (e.g. Whop / Stripe).
                     </td>
                   </tr>
@@ -537,8 +537,8 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             title: 'Refunds',
             content: (
               <div className="space-y-2">
-                <p className="text-[13.5px] text-[#B9B7AF]">Unused budget is refunded when a campaign ends.</p>
-                <div className="p-3.5 rounded-xl bg-[#0B0B0B] border border-[#1F1F1F] text-[12px] text-[#9A9892]">
+                <p className="text-[13.5px] text-[#A8A69E]">Unused budget is refunded when a campaign ends.</p>
+                <div className="p-4 rounded-xl bg-[#161616] border border-[#262626] text-[12.5px] text-[#A8A69E]">
                   Draft note: whether the 7% fee on the unused portion is refunded is finalized upon campaign closure.
                 </div>
               </div>
@@ -557,7 +557,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
             id: 'mechanics',
             title: 'How Source Confirmation Works',
             content: (
-              <div className="space-y-3 text-[13.5px] text-[#B9B7AF] leading-relaxed">
+              <div className="space-y-3 text-[13.5px] text-[#A8A69E] leading-relaxed">
                 <p>
                   When a user clicks a creator's short link or scans their QR code, Umi generates an ephemeral single-use
                   install token.
@@ -583,7 +583,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
           id: 'overview',
           title: 'Overview',
           content: (
-            <p className="text-[13.5px] text-[#B9B7AF] leading-relaxed">
+            <p className="text-[13.5px] text-[#A8A69E] leading-relaxed">
               This specification outlines the telemetry, security boundaries, and protocol definitions for{' '}
               <strong className="text-[#F5F3EC]">{currentPage}</strong> within the Umi ecosystem.
             </p>
@@ -594,10 +594,9 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
   }, [currentPage, platform, campaignBudget, rewardPerInstall]);
 
   return (
-    <div className="w-full flex justify-center py-4 sm:py-6 px-2 sm:px-6">
-      <div className="w-full max-w-[1040px] bg-[#000000] text-[#F5F3EC] rounded-[20px] border border-[#1F1F1F] shadow-2xl overflow-hidden font-sans select-none text-left">
-        {/* Top Header */}
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-3.5 border-b border-[#1F1F1F] bg-[#000000] flex-wrap">
+    <div className="w-full min-h-[calc(100vh-64px)] bg-[#0B0B0B] text-[#F5F3EC] font-sans select-none text-left">
+      {/* Top Header */}
+      <div className="flex items-center gap-3 px-4 sm:px-8 py-3.5 border-b border-[#1E1E1E] bg-[#0E0E0E] flex-wrap">
           <div className="text-[18px] font-semibold tracking-tight text-[#F5F3EC] flex items-center gap-1.5">
             <span>umi</span>
             <span className="text-[#9A9892] font-normal">docs</span>
@@ -606,7 +605,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
           <div className="flex-1"></div>
 
           {/* Search Docs Input */}
-          <div className="h-9 px-3 rounded-full bg-[#0B0B0B] border border-[#1F1F1F] flex items-center gap-2 w-48 sm:w-60">
+          <div className="h-9.5 px-3.5 rounded-full bg-[#181818] border border-[#262626] flex items-center gap-2.5 w-52 sm:w-64">
             <i className="ti ti-search text-[#9A9892] text-[13px]"></i>
             <input
               type="text"
@@ -621,16 +620,16 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
           <button
             type="button"
             onClick={onBack}
-            className="h-8 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12px] font-medium cursor-pointer transition-colors"
+            className="h-8.5 px-4.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12px] font-medium cursor-pointer transition-colors"
           >
             Dashboard
           </button>
         </div>
 
-        {/* 3-Column Shell (Sidebar, Main Content, TOC) */}
-        <div className="grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[210px_minmax(0,1fr)_170px] min-h-[620px]">
+        {/* 3-Column Shell (Sidebar, Main Content, TOC) - Corner to corner fluid */}
+        <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)_200px] min-h-[700px]">
           {/* Left Sidebar */}
-          <div className="p-3 md:p-4 border-b md:border-b-0 md:border-r border-[#1F1F1F] bg-[#000000]/60 text-left overflow-y-auto max-h-[800px]">
+          <div className="p-4 sm:p-6 border-b md:border-b-0 md:border-r border-[#1E1E1E] bg-[#0E0E0E]/50 text-left overflow-y-auto max-h-[850px]">
             {NAV_GROUPS.map(([groupName, items]) => {
               const filtered = items.filter(
                 ([id, label]) =>
@@ -642,7 +641,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
               if (filtered.length === 0) return null;
 
               return (
-                <div key={groupName} className="mb-4">
+                <div key={groupName} className="mb-4.5">
                   <div className="text-[13px] font-medium text-[#F5F3EC] px-2.5 mb-1.5">{groupName}</div>
                   <div className="space-y-0.5">
                     {filtered.map(([id, label]) => (
@@ -653,10 +652,10 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
                           setCurrentPage(id);
                           setActiveSecId(null);
                         }}
-                        className={`w-full text-left px-2.5 py-1.5 text-[12.5px] rounded-lg border transition-all cursor-pointer ${
+                        className={`w-full text-left px-3 py-1.5 text-[12.5px] rounded-lg border transition-all cursor-pointer ${
                           currentPage === id
-                            ? 'border-white/30 bg-[#161616] text-[#F5F3EC] font-medium shadow-sm'
-                            : 'border-transparent bg-transparent text-[#B9B7AF] hover:text-[#F5F3EC] hover:bg-[#141414]'
+                            ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
+                            : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
                         }`}
                       >
                         {label}
@@ -669,30 +668,30 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
           </div>
 
           {/* Center Main Content */}
-          <div className="p-5 sm:p-7 min-w-0 bg-[#000000] overflow-y-auto max-h-[800px]">
+          <div className="p-6 sm:p-10 lg:p-12 min-w-0 bg-[#0B0B0B] overflow-y-auto max-h-[850px]">
             {currentPage === 'start' ? (
               /* Start Here Landing */
-              <div className="py-6 sm:py-8 space-y-7 animate-[fadeIn_0.12s_ease-out]">
+              <div className="py-6 sm:py-8 space-y-8 animate-[fadeIn_0.12s_ease-out]">
                 <div>
                   <div className="text-[13px] font-medium text-[#C7F26B]">umi</div>
-                  <h1 className="text-[38px] sm:text-[44px] font-medium tracking-tight text-[#F5F3EC] mt-1">
+                  <h1 className="text-[40px] sm:text-[46px] font-semibold tracking-tight text-[#F5F3EC] mt-1">
                     Documentation
                   </h1>
-                  <p className="text-[16px] text-[#9A9892] mt-3 max-w-lg leading-relaxed">
+                  <p className="text-[16px] text-[#A8A69E] mt-3 max-w-xl leading-relaxed">
                     Everything you need to track installs, share creator links, and settle payouts with umi.
                   </p>
-                  <div className="flex gap-2.5 mt-6">
+                  <div className="flex gap-3 mt-7">
                     <button
                       type="button"
                       onClick={() => setCurrentPage('quick')}
-                      className="h-10 px-5 rounded-full bg-[#F5F3EC] hover:bg-white text-[#000000] text-[13px] font-medium cursor-pointer transition-all"
+                      className="h-10.5 px-6 rounded-full bg-[#F5F3EC] hover:bg-white text-[#0B0B0B] text-[13px] font-medium cursor-pointer transition-all"
                     >
                       Get started
                     </button>
                     <button
                       type="button"
                       onClick={() => setCurrentPage('install')}
-                      className="h-10 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[13px] font-medium cursor-pointer transition-colors"
+                      className="h-10.5 px-5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[13px] font-medium cursor-pointer transition-colors"
                     >
                       Install the SDK
                     </button>
@@ -700,7 +699,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
                 </div>
 
                 {/* 3-Column Link Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-[#1F1F1F]">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-7 border-t border-[#242424]">
                   {[
                     {
                       category: 'Quick links',
@@ -727,15 +726,15 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
                       ],
                     },
                   ].map((col, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="text-[14px] font-medium text-[#F5F3EC]">{col.category}</div>
-                      <div className="space-y-1">
+                    <div key={idx} className="space-y-2.5">
+                      <div className="text-[14.5px] font-medium text-[#F5F3EC]">{col.category}</div>
+                      <div className="space-y-1.5">
                         {col.links.map((link, lIdx) => (
                           <button
                             key={lIdx}
                             type="button"
                             onClick={() => setCurrentPage(link.page)}
-                            className="block text-left text-[13px] text-[#B9B7AF] hover:text-[#F5F3EC] py-1 bg-transparent border-0 cursor-pointer transition-colors"
+                            className="block text-left text-[13px] text-[#A8A69E] hover:text-[#F5F3EC] py-1 bg-transparent border-0 cursor-pointer transition-colors"
                           >
                             {link.label}
                           </button>
@@ -747,15 +746,15 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
               </div>
             ) : (
               /* Documentation Page Content */
-              <div className="space-y-6 animate-[fadeIn_0.12s_ease-out]">
+              <div className="space-y-7 animate-[fadeIn_0.12s_ease-out]">
                 <div>
-                  <h1 className="text-[30px] font-medium tracking-tight text-[#F5F3EC]">{pageData.title}</h1>
-                  <p className="text-[14px] text-[#9A9892] mt-1.5">{pageData.subtitle}</p>
+                  <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-tight text-[#F5F3EC]">{pageData.title}</h1>
+                  <p className="text-[14.5px] text-[#A8A69E] mt-1.5">{pageData.subtitle}</p>
                 </div>
 
                 {/* Mobile TOC Pills */}
                 {pageData.sections.length > 0 && (
-                  <div className="lg:hidden flex gap-2 overflow-x-auto pb-2 border-b border-[#1F1F1F]">
+                  <div className="lg:hidden flex gap-2 overflow-x-auto pb-2 border-b border-[#242424]">
                     {pageData.sections.map((sec) => (
                       <button
                         key={sec.id}
@@ -763,7 +762,7 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
                         onClick={() => scrollToSection(sec.id)}
                         className={`h-7 px-3 rounded-full text-[12px] border whitespace-nowrap cursor-pointer transition-colors ${
                           activeSecId === sec.id
-                            ? 'bg-[#F5F3EC] text-[#000000] border-transparent font-medium'
+                            ? 'bg-[#F5F3EC] text-[#0B0B0B] border-transparent font-medium'
                             : 'bg-transparent text-[#9A9892] border-white/10 hover:text-white'
                         }`}
                       >
@@ -774,14 +773,14 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
                 )}
 
                 {/* Content Sections */}
-                <div className="space-y-8 pt-2">
+                <div className="space-y-9 pt-2">
                   {pageData.sections.map((sec, i) => (
                     <div
                       key={sec.id}
                       id={sec.id}
-                      className={`scroll-mt-4 ${i > 0 ? 'pt-6 border-t border-[#1F1F1F]' : ''}`}
+                      className={`scroll-mt-4 ${i > 0 ? 'pt-7 border-t border-[#242424]' : ''}`}
                     >
-                      <h2 className="text-[18px] font-medium text-[#F5F3EC] mb-2.5">{sec.title}</h2>
+                      <h2 className="text-[19px] font-medium text-[#F5F3EC] mb-3">{sec.title}</h2>
                       {sec.content}
                     </div>
                   ))}
@@ -799,11 +798,11 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
 
           {/* Right Sidebar: "On this page" TOC */}
           {currentPage !== 'start' && pageData.sections.length > 0 && (
-            <div className="hidden lg:block p-4 border-l border-[#1F1F1F] text-left text-[12px]">
-              <div className="font-mono text-[11px] uppercase tracking-wider text-[#6F6E69] mb-3">
+            <div className="hidden lg:block p-6 border-l border-[#1E1E1E] text-left text-[12px] bg-[#0E0E0E]/40">
+              <div className="font-mono text-[11px] uppercase tracking-wider text-[#71717A] mb-3.5">
                 On this page
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {pageData.sections.map((sec) => (
                   <button
                     key={sec.id}
@@ -823,6 +822,5 @@ export const UmiDocsView: React.FC<UmiDocsViewProps> = ({ onBack, onNavigateKeys
           )}
         </div>
       </div>
-    </div>
   );
 };

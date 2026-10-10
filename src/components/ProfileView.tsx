@@ -173,10 +173,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <h1 className="text-[26px] font-semibold tracking-tight text-[#F5F3EC]">
+                <h1 className="text-[26px] font-semibold tracking-tight text-[#F4F2EC]">
                   {displayName}
                 </h1>
-                <span className="chip py-0.5 px-2 bg-[#C7F26B]/15 text-[#C7F26B] font-mono text-[11px] font-medium">
+                <span className="chip py-0.5 px-2 bg-[#C9B8FF]/15 text-[#C9B8FF] font-mono text-[11px] font-medium">
                   @{currentUsername}
                 </span>
               </div>
@@ -226,7 +226,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
                   title="Developer documentation"
                 >
-                  <i className="ti ti-book text-[#C7F26B]"></i>
+                  <i className="ti ti-book text-[#C9B8FF]"></i>
                   <span>Docs</span>
                 </button>
               )}
@@ -280,7 +280,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         >
           <i className="ti ti-device-mobile"></i>
           <span>Created (Founder Analytics)</span>
-          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#161616]">
+          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#0E0E0E]">
             {createdCampaigns.length}
           </span>
         </button>
@@ -294,7 +294,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         >
           <i className="ti ti-link"></i>
           <span>Joined (Creator Performance)</span>
-          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#161616]">
+          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#0E0E0E]">
             {joinedCampaigns.length}
           </span>
         </button>
@@ -316,7 +316,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="text-[16px] font-medium text-[#F5F3EC]">Your Founded Campaigns</div>
+              <div className="text-[16px] font-medium text-[#F4F2EC]">Your Founded Campaigns</div>
               <div className="text-[12px] text-[#A1A1AA]">
                 Monitor real-time install attribution, escrow balances, and RavenCore SDK connectivity.
               </div>
@@ -327,7 +327,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 onClick={() => setShowFounderAnalytics(!showFounderAnalytics)}
                 className="pill out text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
               >
-                <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                <i className="ti ti-chart-bar text-[#C9B8FF]"></i>
                 <span>{showFounderAnalytics ? 'Hide Telemetry Charts' : 'View Founder Attribution Charts'}</span>
               </button>
               {onCreateCampaign && (
@@ -344,33 +344,33 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
 
           {/* Founder Escrow & Telemetry KPI strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#161616] p-4 rounded-[20px] border border-[#2A2A2A] text-left">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#0E0E0E] p-4 rounded-[20px] border border-[#222222] text-left">
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Total Escrow Deposited</span>
-              <span className="text-[20px] font-semibold font-mono text-[#F5F3EC] mt-0.5 block">$20,000.00</span>
-              <span className="text-[10.5px] text-[#C7F26B] font-mono">100% Guaranteed</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Total Escrow Deposited</span>
+              <span className="text-[20px] font-semibold font-mono text-[#F4F2EC] mt-0.5 block">$20,000.00</span>
+              <span className="text-[10.5px] text-[#C9B8FF] font-mono">100% Guaranteed</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Settled to Creators</span>
-              <span className="text-[20px] font-semibold font-mono text-[#C7F26B] mt-0.5 block">$14,580.00</span>
-              <span className="text-[10.5px] text-[#A8A69E]">Via RavenCore attestation</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Settled to Creators</span>
+              <span className="text-[20px] font-semibold font-mono text-[#C9B8FF] mt-0.5 block">$14,580.00</span>
+              <span className="text-[10.5px] text-[#9C9A92]">Via RavenCore attestation</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Verified Mobile Installs</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Verified Mobile Installs</span>
               <span className="text-[20px] font-semibold font-mono text-[#B5D4F4] mt-0.5 block">5,240</span>
-              <span className="text-[10.5px] text-[#A8A69E]">Hardware fingerprint checked</span>
+              <span className="text-[10.5px] text-[#9C9A92]">Hardware fingerprint checked</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Active Creators</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Active Creators</span>
               <span className="text-[20px] font-semibold font-mono text-[#FAC775] mt-0.5 block">68</span>
-              <span className="text-[10.5px] text-[#A8A69E]">Promoting across TikTok & X</span>
+              <span className="text-[10.5px] text-[#9C9A92]">Promoting across TikTok & X</span>
             </div>
           </div>
 
           {/* Expandable Founder Analytics */}
           {showFounderAnalytics && (
             <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
-              <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
+              <div className="p-1 sm:p-2 bg-[#0E0E0E] rounded-[24px] border border-[#222222]">
                 <KredAnalyticsEngine
                   campaigns={campaigns}
                   onNavigateEarnings={onNavigateEarnings}
@@ -384,7 +384,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             {createdCampaigns.map((camp) => (
               <div
                 key={camp.id}
-                className="card p-4 sm:p-5 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-3.5 text-left"
+                className="card p-4 sm:p-5 bg-[#0E0E0E] border border-[#222222] rounded-[20px] space-y-3.5 text-left"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -395,45 +395,45 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       <i className={`ti ${camp.icon}`}></i>
                     </div>
                     <div>
-                      <div className="text-[16px] font-semibold text-[#F5F3EC]">{camp.name}</div>
-                      <div className="text-[12px] text-[#A8A69E] flex items-center gap-2 mt-0.5">
+                      <div className="text-[16px] font-semibold text-[#F4F2EC]">{camp.name}</div>
+                      <div className="text-[12px] text-[#9C9A92] flex items-center gap-2 mt-0.5">
                         <span>{camp.cat}</span>
                         <span>·</span>
-                        <span className="font-mono text-[#C7F26B]">${camp.price} / verified install</span>
+                        <span className="font-mono text-[#C9B8FF]">${camp.price} / verified install</span>
                       </div>
                     </div>
                   </div>
 
                   {/* RavenCore SDK status */}
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1C1C1C] text-[11px] font-mono border border-[#2A2A2A]">
-                    <span className="w-2 h-2 rounded-full bg-[#C7F26B]" />
-                    <span className="text-[#C7F26B]">RavenCore Active</span>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141414] text-[11px] font-mono border border-[#222222]">
+                    <span className="w-2 h-2 rounded-full bg-[#C9B8FF]" />
+                    <span className="text-[#C9B8FF]">RavenCore Active</span>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#1C1C1C] p-3 rounded-[14px] border border-[#2A2A2A]/40 text-[12px] font-mono">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#141414] p-3 rounded-[14px] border border-[#222222]/40 text-[12px] font-mono">
                   <div>
-                    <span className="text-[#A8A69E] block text-[11px]">Active Escrow</span>
-                    <span className="text-[#F5F3EC] font-semibold">${camp.budget?.toLocaleString() || '5,000'}</span>
+                    <span className="text-[#9C9A92] block text-[11px]">Active Escrow</span>
+                    <span className="text-[#F4F2EC] font-semibold">${camp.budget?.toLocaleString() || '5,000'}</span>
                   </div>
                   <div>
-                    <span className="text-[#A8A69E] block text-[11px]">Verified Installs</span>
-                    <span className="text-[#C7F26B] font-semibold">{camp.installsVerified || '0'}</span>
+                    <span className="text-[#9C9A92] block text-[11px]">Verified Installs</span>
+                    <span className="text-[#C9B8FF] font-semibold">{camp.installsVerified || '0'}</span>
                   </div>
                   <div>
-                    <span className="text-[#A8A69E] block text-[11px]">Active Creators</span>
-                    <span className="text-[#F5F3EC] font-semibold">{camp.creators}</span>
+                    <span className="text-[#9C9A92] block text-[11px]">Active Creators</span>
+                    <span className="text-[#F4F2EC] font-semibold">{camp.creators}</span>
                   </div>
                   <div>
-                    <span className="text-[#A8A69E] block text-[11px]">Next Settlement</span>
+                    <span className="text-[#9C9A92] block text-[11px]">Next Settlement</span>
                     <span className="text-[#B5D4F4] font-semibold">Friday 17:00 UTC</span>
                   </div>
                 </div>
 
                 {/* Founder Actions */}
                 <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
-                  <span className="text-[11.5px] text-[#A8A69E] font-mono">
+                  <span className="text-[11.5px] text-[#9C9A92] font-mono">
                     Key: {camp.sdkKey || 'kred_live_pixelpop7k2'}
                   </span>
 
@@ -445,7 +445,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                         expandedCreatedId === camp.id ? 'on' : 'out'
                       }`}
                     >
-                      <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                      <i className="ti ti-chart-bar text-[#C9B8FF]"></i>
                       <span>{expandedCreatedId === camp.id ? 'Hide Graph' : 'Telemetry Graph'}</span>
                     </button>
                     {onNavigateAnalytics && (
@@ -477,7 +477,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <div className="card p-5 bg-[#141417] border border-[#27272A] rounded-[20px] space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-[15px] font-medium text-[#F5F3EC]">Creator Applications Queue</div>
+                <div className="text-[15px] font-medium text-[#F4F2EC]">Creator Applications Queue</div>
                 <div className="text-[12px] text-[#A1A1AA]">
                   Creators requesting access to your approval-required campaigns.
                 </div>
@@ -495,8 +495,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[13.5px] text-[#F5F3EC]">{app.creatorName}</span>
-                      <span className="chip text-[10.5px] py-0.2 px-2 bg-[#2A2A2A] text-[#A1A1AA] uppercase font-mono">
+                      <span className="font-semibold text-[13.5px] text-[#F4F2EC]">{app.creatorName}</span>
+                      <span className="chip text-[10.5px] py-0.2 px-2 bg-[#222222] text-[#A1A1AA] uppercase font-mono">
                         {app.primaryChannel} · {app.followerCount}
                       </span>
                     </div>
@@ -525,7 +525,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       </>
                     ) : (
                       <span className={`chip text-[11px] py-0.5 px-2.5 font-mono ${
-                        app.status === 'approved' ? 'bg-[#C7F26B]/20 text-[#C7F26B]' : 'bg-[#FF8A80]/20 text-[#FF8A80]'
+                        app.status === 'approved' ? 'bg-[#C9B8FF]/20 text-[#C9B8FF]' : 'bg-[#FF8A80]/20 text-[#FF8A80]'
                       }`}>
                         {app.status === 'approved' ? 'Approved' : 'Declined'}
                       </span>
@@ -543,7 +543,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="text-[16px] font-medium text-[#F5F3EC]">Creator Performance & Payments Analytics</div>
+              <div className="text-[16px] font-medium text-[#F4F2EC]">Creator Performance & Payments Analytics</div>
               <div className="text-[12px] text-[#A1A1AA]">
                 Track personal shortened link clicks, verified install attestation, and Friday payment settlements.
               </div>
@@ -554,7 +554,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 onClick={() => setShowCreatorAnalytics(!showCreatorAnalytics)}
                 className="pill out text-[12px] py-1.5 px-3.5 flex items-center gap-1.5 cursor-pointer font-medium"
               >
-                <i className="ti ti-chart-line text-[#C7F26B]"></i>
+                <i className="ti ti-chart-line text-[#C9B8FF]"></i>
                 <span>{showCreatorAnalytics ? 'Hide Performance Chart' : 'View Performance Charts'}</span>
               </button>
               {onNavigateEarnings && (
@@ -571,33 +571,33 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
 
           {/* Creator Performance & Payments KPI Summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#161616] p-4 rounded-[20px] border border-[#2A2A2A] text-left">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#0E0E0E] p-4 rounded-[20px] border border-[#222222] text-left">
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Total Earnings</span>
-              <span className="text-[20px] font-semibold font-mono text-[#C7F26B] mt-0.5 block">$648.20</span>
-              <span className="text-[10.5px] text-[#A8A69E]">Across joined campaigns</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Total Earnings</span>
+              <span className="text-[20px] font-semibold font-mono text-[#C9B8FF] mt-0.5 block">$648.20</span>
+              <span className="text-[10.5px] text-[#9C9A92]">Across joined campaigns</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Verified Installs</span>
-              <span className="text-[20px] font-semibold font-mono text-[#F5F3EC] mt-0.5 block">248</span>
-              <span className="text-[10.5px] text-[#C7F26B] font-mono">100% verified</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Verified Installs</span>
+              <span className="text-[20px] font-semibold font-mono text-[#F4F2EC] mt-0.5 block">248</span>
+              <span className="text-[10.5px] text-[#C9B8FF] font-mono">100% verified</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Referral Link Clicks</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Referral Link Clicks</span>
               <span className="text-[20px] font-semibold font-mono text-[#B5D4F4] mt-0.5 block">1,420</span>
-              <span className="text-[10.5px] text-[#A8A69E]">17.5% conversion rate</span>
+              <span className="text-[10.5px] text-[#9C9A92]">17.5% conversion rate</span>
             </div>
             <div>
-              <span className="text-[11.5px] text-[#A8A69E] block">Next Settlement</span>
+              <span className="text-[11.5px] text-[#9C9A92] block">Next Settlement</span>
               <span className="text-[20px] font-semibold font-mono text-[#FAC775] mt-0.5 block">Friday</span>
-              <span className="text-[10.5px] text-[#A8A69E]">17:00 UTC · $184.50 pending</span>
+              <span className="text-[10.5px] text-[#9C9A92]">17:00 UTC · $184.50 pending</span>
             </div>
           </div>
 
           {/* Expandable Creator Performance Analytics */}
           {showCreatorAnalytics && (
             <div className="space-y-4 animate-[fade-in_0.2s_ease-out]">
-              <div className="p-1 sm:p-2 bg-[#161616] rounded-[24px] border border-[#2A2A2A]">
+              <div className="p-1 sm:p-2 bg-[#0E0E0E] rounded-[24px] border border-[#222222]">
                 <KredAnalyticsEngine
                   campaigns={campaigns}
                   onNavigateEarnings={onNavigateEarnings}
@@ -617,7 +617,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 return (
                   <div
                     key={camp.id}
-                    className="card p-4 sm:p-5 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-3.5 text-left"
+                    className="card p-4 sm:p-5 bg-[#0E0E0E] border border-[#222222] rounded-[20px] space-y-3.5 text-left"
                   >
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                       <div className="flex items-center gap-3">
@@ -628,8 +628,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                           <i className={`ti ${camp.icon}`}></i>
                         </div>
                         <div>
-                          <div className="text-[16px] font-semibold text-[#F5F3EC]">{camp.name}</div>
-                          <div className="text-[12px] text-[#A8A69E] mt-0.5">
+                          <div className="text-[16px] font-semibold text-[#F4F2EC]">{camp.name}</div>
+                          <div className="text-[12px] text-[#9C9A92] mt-0.5">
                             ${camp.price} per verified install · Guaranteed Escrow
                           </div>
                         </div>
@@ -643,7 +643,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                             isCardExpanded ? 'on font-medium' : 'out'
                           }`}
                         >
-                          <i className="ti ti-chart-bar text-[#C7F26B]"></i>
+                          <i className="ti ti-chart-bar text-[#C9B8FF]"></i>
                           <span>{isCardExpanded ? 'Hide Analytics' : 'Analytics Graph'}</span>
                         </button>
                         {onOpenQr && (
@@ -652,7 +652,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                             onClick={() => onOpenQr(camp)}
                             className="pill text-[12px] py-1 px-3 out cursor-pointer flex items-center gap-1.5"
                           >
-                            <i className="ti ti-qrcode text-[#C7F26B]"></i>
+                            <i className="ti ti-qrcode text-[#C9B8FF]"></i>
                             <span>QR Code</span>
                           </button>
                         )}
@@ -677,8 +677,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     </div>
 
                     {/* Personal Shortened Referral Link Box with 1-click copy */}
-                    <div className="p-2.5 pl-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/60 flex items-center justify-between gap-2">
-                      <span className="font-mono text-[13px] text-[#C7F26B] truncate">
+                    <div className="p-2.5 pl-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/60 flex items-center justify-between gap-2">
+                      <span className="font-mono text-[13px] text-[#C9B8FF] truncate">
                         {linkUrl}
                       </span>
                       <button
@@ -695,7 +695,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             ) : (
               <div className="p-8 text-center bg-[#141417] border border-[#27272A] rounded-[20px] text-[#A1A1AA]">
                 <i className="ti ti-speakerphone text-[24px] block mb-2 text-[#71717A]"></i>
-                <div className="text-[14px] font-medium text-[#F5F3EC]">No joined campaigns yet</div>
+                <div className="text-[14px] font-medium text-[#F4F2EC]">No joined campaigns yet</div>
                 <div className="text-[12px] mt-1">Join active campaigns from the directory to start earning bounties.</div>
               </div>
             )}
@@ -710,9 +710,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <form onSubmit={handleSaveProfile} className="card p-6 bg-[#141417] border border-[#27272A] rounded-[24px] space-y-4">
             <div className="flex items-center justify-between border-b border-[#27272A] pb-3">
               <div>
-                <div className="text-[16px] font-medium text-[#F5F3EC]">Profile & Short Link Handle</div>
+                <div className="text-[16px] font-medium text-[#F4F2EC]">Profile & Short Link Handle</div>
                 <div className="text-[12px] text-[#A1A1AA]">
-                  Your username determines vanity short URLs e.g. <span className="font-mono text-[#C7F26B]">kred.link/app/{currentUsername}</span>
+                  Your username determines vanity short URLs e.g. <span className="font-mono text-[#C9B8FF]">kred.link/app/{currentUsername}</span>
                 </div>
               </div>
               <button
@@ -732,7 +732,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] px-3.5 py-2 text-[13.5px] text-[#F5F3EC] focus:outline-none focus:border-[#388BFD]"
+                  className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] px-3.5 py-2 text-[13.5px] text-[#F4F2EC] focus:outline-none focus:border-[#388BFD]"
                 />
               </div>
 
@@ -746,7 +746,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     type="text"
                     value={currentUsername}
                     onChange={(e) => setCurrentUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
-                    className="w-full bg-transparent text-[#F5F3EC] focus:outline-none pl-1"
+                    className="w-full bg-transparent text-[#F4F2EC] focus:outline-none pl-1"
                   />
                 </div>
               </div>
@@ -760,13 +760,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={2}
-                className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] p-3 text-[13px] text-[#F5F3EC] focus:outline-none resize-none"
+                className="w-full bg-[#18181C] border border-[#27272A] rounded-[12px] p-3 text-[13px] text-[#F4F2EC] focus:outline-none resize-none"
               />
             </div>
 
             {/* Social Media Link Connections */}
             <div className="pt-2 border-t border-[#27272A] space-y-3">
-              <div className="text-[14px] font-medium text-[#F5F3EC]">
+              <div className="text-[14px] font-medium text-[#F4F2EC]">
                 Connected Social Channels
               </div>
               <p className="text-[12px] text-[#A1A1AA]">
@@ -781,7 +781,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     value={socials.tiktok || ''}
                     onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
                     placeholder="TikTok handle"
-                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F4F2EC] focus:outline-none"
                   />
                 </div>
 
@@ -792,7 +792,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     value={socials.youtube || ''}
                     onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
                     placeholder="YouTube channel"
-                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F4F2EC] focus:outline-none"
                   />
                 </div>
 
@@ -803,7 +803,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     value={socials.twitter || ''}
                     onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
                     placeholder="Twitter/X handle"
-                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F4F2EC] focus:outline-none"
                   />
                 </div>
 
@@ -814,7 +814,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     value={socials.instagram || ''}
                     onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
                     placeholder="Instagram handle"
-                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F5F3EC] focus:outline-none"
+                    className="flex-1 bg-transparent text-[12.5px] font-mono text-[#F4F2EC] focus:outline-none"
                   />
                 </div>
               </div>
@@ -823,7 +823,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
           {/* Avatar Persona & Mood Selector */}
           <div className="card p-6 bg-[#141417] border border-[#27272A] rounded-[24px] space-y-4">
-            <div className="text-[16px] font-medium text-[#F5F3EC]">Smiley Avatar Expression & Color</div>
+            <div className="text-[16px] font-medium text-[#F4F2EC]">Smiley Avatar Expression & Color</div>
             
             <div className="flex items-center gap-2.5 flex-wrap">
               {AVATAR_COLORS.map((c) => (
@@ -847,7 +847,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   onClick={() => onSelectMood && onSelectMood(p.id)}
                   className={`p-3 rounded-[14px] border text-left cursor-pointer transition-all flex items-center gap-2.5 ${
                     avatarMood === p.id
-                      ? 'bg-[#1C1C22] border-[#C7F26B] text-white'
+                      ? 'bg-[#1C1C22] border-[#C9B8FF] text-white'
                       : 'bg-[#18181C] border-[#27272A] text-[#A1A1AA] hover:text-white'
                   }`}
                 >

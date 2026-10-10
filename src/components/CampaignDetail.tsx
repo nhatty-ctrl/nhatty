@@ -21,14 +21,6 @@ interface CampaignDetailProps {
 
 type CampaignState = 'open' | 'approval' | 'applied' | 'joined' | 'closed';
 
-const STATES: [CampaignState, string][] = [
-  ['open', 'Open'],
-  ['approval', 'Approval'],
-  ['applied', 'Applied'],
-  ['joined', 'Joined'],
-  ['closed', 'Closed'],
-];
-
 export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   campaign,
   allCampaigns = [],
@@ -61,6 +53,8 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   const [err, setErr] = useState('');
   const [toast, setToast] = useState('');
   const [copied, setCopied] = useState(false);
+  const [ftcPledge, setFtcPledge] = useState(true);
+  const [eSignName, setESignName] = useState('');
 
   const slug = campaign.slug || campaign.id;
   const activeUser =
@@ -94,10 +88,19 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
       setErr('Write a short note for the founder.');
       return;
     }
+    if (!ftcPledge) {
+      setErr('You must accept the FTC disclosure compliance pledge (#ad).');
+      return;
+    }
+    if (!eSignName.trim()) {
+      setErr('Type your legal name to e-sign the creator agreement.');
+      return;
+    }
     setSt('applied');
     setForm(false);
     setMsg('');
     setErr('');
+    showToast('Application & signed agreement submitted to founder!');
     if (onApply) onApply(campaign);
   };
 
@@ -107,43 +110,28 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[1080px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left select-none animate-[fade-in_0.2s_ease-out]">
-      {/* Top Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
-          { label: campaign.cat, icon: 'ti-folder', onClick: onBack },
-          { label: campaign.name, icon: 'ti-cube', active: true },
-        ]}
-      />
+    <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6 text-left select-none animate-[fade-in_0.2s_ease-out]">
+      {/* Top Header & Breadcrumbs bar */}
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <Breadcrumbs
+          items={[
+            { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
+            { label: campaign.cat, icon: 'ti-folder', onClick: onBack },
+            { label: campaign.name, icon: 'ti-cube', active: true },
+          ]}
+        />
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-1.5 px-4 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors shadow-xs"
+        >
+          <i className="ti ti-arrow-left text-[13px]"></i>
+          <span>Back to campaigns</span>
+        </button>
+      </div>
 
-      {/* Main Container styled with .k */}
-      <div className="k border border-[#1F1F1F] shadow-2xl p-5 sm:p-8">
-        {/* Preview State Switcher from File 3 */}
-        <div className="flex items-center gap-3 mb-6 flex-wrap">
-          <span className="sub text-[13px] text-[#9A9892]">Preview state</span>
-          <div className="edge inline-flex rounded-full p-1 bg-[#111113]">
-            {STATES.map(([stateKey, label]) => (
-              <button
-                key={stateKey}
-                type="button"
-                onClick={() => {
-                  setSt(stateKey);
-                  setForm(false);
-                  setErr('');
-                }}
-                className={`pill text-[12px] py-1 px-3.5 border-0 font-medium cursor-pointer transition-colors ${
-                  st === stateKey ? 'on text-black bg-[#F5F3EC]' : 'text-[#B9B7AF] bg-transparent'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 2-Column Grid Layout matching File 3 */}
-        <div className="grid grid-cols-1 md:grid-cols-[250px_minmax(0,1fr)] gap-8 items-start">
+      {/* Main Campaign Presentation (Expanded naturally across canvas, no rigid border box) */}
+      <div className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)] gap-8 sm:gap-12 items-start pt-2">
           {/* ================= LEFT COLUMN ================= */}
           <div className="space-y-4">
             {/* Square Logo Card */}
@@ -158,7 +146,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             </div>
 
             {/* Tagline */}
-            <div className="sub text-[13px] text-[#9A9892] leading-relaxed">
+            <div className="sub text-[13px] text-[#9C9A92] leading-relaxed">
               {campaign.tag || 'Casual puzzle games for short breaks'}
             </div>
 
@@ -172,8 +160,8 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               </span>
 
               <div className="flex-1 min-w-0">
-                <div className="sub text-[11.5px] text-[#9A9892]">Created by</div>
-                <div className="text-[14.5px] font-medium text-[#F5F3EC] truncate">
+                <div className="sub text-[11.5px] text-[#9C9A92]">Created by</div>
+                <div className="text-[14.5px] font-medium text-[#F4F2EC] truncate">
                   {campaign.by || campaign.host || 'Nora Vale'}
                 </div>
               </div>
@@ -182,7 +170,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <button
                   type="button"
                   onClick={() => window.open('https://instagram.com', '_blank')}
-                  className="text-[#9A9892] hover:text-[#F5F3EC] text-[18px] cursor-pointer bg-transparent border-0 p-0"
+                  className="text-[#9C9A92] hover:text-[#F4F2EC] text-[18px] cursor-pointer bg-transparent border-0 p-0"
                   aria-label="Instagram"
                 >
                   <i className="ti ti-brand-instagram"></i>
@@ -190,7 +178,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <button
                   type="button"
                   onClick={() => window.open('https://x.com', '_blank')}
-                  className="text-[#9A9892] hover:text-[#F5F3EC] text-[18px] cursor-pointer bg-transparent border-0 p-0"
+                  className="text-[#9C9A92] hover:text-[#F4F2EC] text-[18px] cursor-pointer bg-transparent border-0 p-0"
                   aria-label="X"
                 >
                   <i className="ti ti-brand-x"></i>
@@ -203,7 +191,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
           <div className="space-y-5 min-w-0">
             {/* Category Tag Pill */}
             <div>
-              <span className="edge inline-flex items-center gap-2 rounded-full py-1.5 pl-2 pr-3.5 text-[13px] text-[#B9B7AF]">
+              <span className="edge inline-flex items-center gap-2 rounded-full py-1.5 pl-2 pr-3.5 text-[13px] text-[#B8B6AE]">
                 <span
                   className="w-5 h-5 rounded-[6px] flex items-center justify-center text-[12px] font-bold"
                   style={{ backgroundColor: bg, color: fg }}
@@ -211,12 +199,12 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                   <i className={`ti ${icon}`} aria-hidden="true"></i>
                 </span>
                 <span>
-                  Featured in <b className="font-medium text-[#F5F3EC]">{campaign.cat}</b>
+                  Featured in <b className="font-medium text-[#F4F2EC]">{campaign.cat}</b>
                 </span>
               </span>
 
               {/* Big Serif Headline */}
-              <h1 className="font-serif text-[38px] sm:text-[46px] font-normal tracking-[-1.2px] text-[#F5F3EC] leading-[1.08] mt-3">
+              <h1 className="font-serif text-[38px] sm:text-[46px] font-normal tracking-[-1.2px] text-[#F4F2EC] leading-[1.08] mt-3">
                 {campaign.name}
               </h1>
             </div>
@@ -224,7 +212,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             {/* Calendar Schedule Row */}
             <div className="row flex items-center gap-3.5">
               <div className="edge sq w-12 h-12 rounded-[14px] flex flex-col items-center justify-center shrink-0">
-                <span className="text-[10px] text-[#9A9892] font-mono leading-none">
+                <span className="text-[10px] text-[#9C9A92] font-mono leading-none">
                   OCT
                 </span>
                 <span className="text-[16px] font-medium leading-none mt-0.5">
@@ -232,10 +220,10 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 </span>
               </div>
               <div>
-                <div className="text-[15px] font-medium text-[#F5F3EC]">
+                <div className="text-[15px] font-medium text-[#F4F2EC]">
                   Runs until Thursday, October 29
                 </div>
-                <div className="sub text-[12.5px] text-[#9A9892] mt-0.5">
+                <div className="sub text-[12.5px] text-[#9C9A92] mt-0.5">
                   {campaign.days} days left · started October 2
                 </div>
               </div>
@@ -247,10 +235,10 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <i className="ti ti-map-pin"></i>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[15px] font-medium text-[#F5F3EC]">
+                <div className="text-[15px] font-medium text-[#F4F2EC]">
                   Get the app
                 </div>
-                <div className="sub text-[12.5px] text-[#9A9892] mt-0.5">
+                <div className="sub text-[12.5px] text-[#9C9A92] mt-0.5">
                   Opens the store listing
                 </div>
               </div>
@@ -259,7 +247,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <button
                   type="button"
                   onClick={() => showToast(`Opens the App Store listing for ${campaign.name}`)}
-                  className="edge ic cursor-pointer hover:bg-[#1C1C20] transition-colors"
+                  className="edge ic cursor-pointer hover:bg-[#141414] transition-colors"
                   aria-label="Open the App Store listing"
                   title="App Store"
                 >
@@ -268,7 +256,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <button
                   type="button"
                   onClick={() => showToast(`Opens the Google Play listing for ${campaign.name}`)}
-                  className="edge ic cursor-pointer hover:bg-[#1C1C20] transition-colors"
+                  className="edge ic cursor-pointer hover:bg-[#141414] transition-colors"
                   aria-label="Open the Google Play listing"
                   title="Google Play"
                 >
@@ -279,14 +267,14 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
 
             {/* Toast notice */}
             {toast && (
-              <div className="sub text-[12px] text-[#C7F26B] font-medium min-h-[20px] animate-[fade-in_0.15s_ease-out]">
+              <div className="sub text-[12px] text-[#C9B8FF] font-medium min-h-[20px] animate-[fade-in_0.15s_ease-out]">
                 {toast}
               </div>
             )}
 
             {/* ================= JOIN CARD (ALL 5 STATES) ================= */}
-            <div className="edge rounded-[20px] overflow-hidden bg-[#0A0A0C]">
-              <div className="hd text-[14px] font-medium py-3 px-5 border-b border-[#1F1F1F] text-[#F5F3EC]">
+            <div className="edge rounded-[20px] overflow-hidden bg-[#0E0E0E]">
+              <div className="hd text-[14px] font-medium py-3 px-5 border-b border-[#222222] text-[#F4F2EC]">
                 {
                   {
                     open: 'Join campaign',
@@ -302,26 +290,43 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 {/* State: Open */}
                 {st === 'open' && (
                   <>
-                    <div>
-                      <div className="text-[22px] font-medium tracking-tight text-[#F5F3EC]">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-0.5 rounded-full border border-[#C9B8FF]/20">
+                          <i className="ti ti-shield-check"></i>
+                          <span>Prefunded Escrow Backed</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#F4F2EC] bg-[#141414] px-2.5 py-0.5 rounded-full border border-[#222222]">
+                          <span>0% Creator Fee</span>
+                        </span>
+                      </div>
+
+                      <div className="text-[22px] font-medium tracking-tight text-[#F4F2EC]">
                         Earn ${price} per verified install
                       </div>
-                      <div className="text-[15px] text-[#C7F26B] font-medium mt-1">
+                      <div className="text-[14.5px] text-[#C9B8FF] font-medium">
                         Plus {pct}% of subscription revenue for {months} months
                       </div>
+                      {campaign.bonusTier && (
+                        <div className="inline-flex items-center gap-1.5 text-[12px] text-[#FAC775] font-medium bg-[#FAC775]/10 px-2.5 py-1 rounded-full border border-[#FAC775]/20">
+                          <i className="ti ti-trophy"></i>
+                          <span>{campaign.bonusTier.label}</span>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="sub text-[13px] text-[#9A9892] leading-relaxed">
-                      Installs are paid weekly after a 14 day check. Open to every creator who
-                      meets the requirements.
+                    <div className="sub text-[13px] text-[#9C9A92] leading-relaxed">
+                      100% of payout funds are prefunded in Stripe escrow before you post. Payouts verify via in-app SDK attestation (not unverified video views).
+                      {campaign.maxVideosPerCreator ? ` Max ${campaign.maxVideosPerCreator} videos per creator.` : ''}
                     </div>
 
                     <button
                       type="button"
                       onClick={handleJoinClick}
-                      className="btn main w-full h-[48px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[14px] cursor-pointer transition-all shadow-md mt-2"
+                      className="w-full h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
                     >
-                      Join campaign
+                      <i className="ti ti-plus text-[14px] stroke-[2.5]" aria-hidden="true"></i>
+                      <span>Join campaign</span>
                     </button>
                   </>
                 )}
@@ -331,31 +336,48 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                   <>
                     {!form ? (
                       <>
-                        <div>
-                          <div className="text-[22px] font-medium tracking-tight text-[#F5F3EC]">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-0.5 rounded-full border border-[#C9B8FF]/20">
+                              <i className="ti ti-shield-check"></i>
+                              <span>Prefunded Escrow Backed</span>
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#F4F2EC] bg-[#141414] px-2.5 py-0.5 rounded-full border border-[#222222]">
+                              <span>0% Creator Fee</span>
+                            </span>
+                          </div>
+
+                          <div className="text-[22px] font-medium tracking-tight text-[#F4F2EC]">
                             Earn ${price} per verified install
                           </div>
-                          <div className="text-[15px] text-[#C7F26B] font-medium mt-1">
+                          <div className="text-[14.5px] text-[#C9B8FF] font-medium">
                             Plus {pct}% of subscription revenue for {months} months
                           </div>
+                          {campaign.bonusTier && (
+                            <div className="inline-flex items-center gap-1.5 text-[12px] text-[#FAC775] font-medium bg-[#FAC775]/10 px-2.5 py-1 rounded-full border border-[#FAC775]/20">
+                              <i className="ti ti-trophy"></i>
+                              <span>{campaign.bonusTier.label}</span>
+                            </div>
+                          )}
                         </div>
 
-                        <div className="sub text-[13px] text-[#9A9892] leading-relaxed">
-                          The founder reviews each creator. Your profile goes with your application.
+                        <div className="sub text-[13px] text-[#9C9A92] leading-relaxed">
+                          Founder reviews and approves each creator. To comply with FTC endorsement guidelines, creators e-sign a disclosure agreement before tracking links are issued.
                         </div>
 
                         <button
                           type="button"
                           onClick={() => setForm(true)}
-                          className="btn main w-full h-[48px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[14px] cursor-pointer transition-all shadow-md mt-2"
+                          className="w-full h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
                         >
-                          Apply
+                          <i className="ti ti-send text-[14px]"></i>
+                          <span>Apply & e-sign agreement</span>
                         </button>
                       </>
                     ) : (
-                      /* Inline Creator Application Form */
+                      /* Inline Creator Application Form with FTC Pledge & E-Sign */
                       <div className="space-y-3.5">
-                        <div className="row flex items-center gap-3 pb-2 border-b border-[#1F1F1F]">
+                        <div className="row flex items-center gap-3 pb-2 border-b border-[#222222]">
                           <span
                             className="av w-10 h-10 rounded-full flex items-center justify-center text-[14px] font-semibold"
                             style={{ backgroundColor: '#F5C4B3', color: '#4A1B0C' }}
@@ -363,11 +385,11 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                             M
                           </span>
                           <div>
-                            <div className="text-[14px] font-medium text-[#F5F3EC]">
+                            <div className="text-[14px] font-medium text-[#F4F2EC]">
                               {activeUser}.makes
                             </div>
-                            <div className="sub text-[12px] text-[#9A9892]">
-                              TikTok · 24k followers
+                            <div className="sub text-[12px] text-[#9C9A92]">
+                              TikTok · 24k followers · Verified Creator
                             </div>
                           </div>
                         </div>
@@ -378,9 +400,39 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                             setMsg(e.target.value);
                             if (err) setErr('');
                           }}
-                          placeholder="Tell the founder what you would make for this campaign"
-                          className="ta w-full min-h-[90px] bg-black border border-[#2A2A2A] rounded-[14px] text-[#F5F3EC] p-3 text-[14px] outline-none focus:border-[#F5F3EC] resize-vertical leading-relaxed"
+                          placeholder="Tell the founder what kind of video or review you would make for this app"
+                          className="ta w-full min-h-[75px] bg-[#000000] border border-[#222222] rounded-[14px] text-[#F4F2EC] p-3 text-[13.5px] outline-none focus:border-[#C9B8FF] resize-vertical leading-relaxed"
                         />
+
+                        {/* FTC Disclosure Compliance Pledge */}
+                        <label className="flex items-start gap-2.5 p-3 rounded-[12px] bg-[#141414] border border-[#222222] cursor-pointer text-left select-none">
+                          <input
+                            type="checkbox"
+                            checked={ftcPledge}
+                            onChange={(e) => setFtcPledge(e.target.checked)}
+                            className="mt-0.5 accent-[#C9B8FF] shrink-0"
+                          />
+                          <div className="text-[12px] leading-snug text-[#F4F2EC]">
+                            <span className="font-semibold text-[#C9B8FF]">FTC Disclosure Pledge (#ad)</span>: I pledge to clearly and conspicuously disclose sponsored content using <b>#ad</b> or platform-approved sponsored tags on TikTok, YouTube, Instagram, or X, adhering to FTC Endorsement Guides.
+                          </div>
+                        </label>
+
+                        {/* Creator Agreement E-Signature */}
+                        <div className="space-y-1 text-left">
+                          <div className="text-[11.5px] text-[#9C9A92]">
+                            Type your full legal name to e-sign the <b>Umi Creator Performance Agreement</b>:
+                          </div>
+                          <input
+                            type="text"
+                            value={eSignName}
+                            onChange={(e) => {
+                              setESignName(e.target.value);
+                              if (err) setErr('');
+                            }}
+                            placeholder="e.g. Maya Lin"
+                            className="w-full h-10 px-3 bg-[#000000] border border-[#222222] rounded-[12px] text-[13px] text-[#F4F2EC] outline-none focus:border-[#C9B8FF]"
+                          />
+                        </div>
 
                         {err && (
                           <div className="text-[#FF8A80] text-[13px] min-h-[18px]">
@@ -392,14 +444,15 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                           <button
                             type="button"
                             onClick={handleSendApplication}
-                            className="btn main flex-1 h-[48px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[14px]"
+                            className="flex-1 h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2"
                           >
-                            Send application
+                            <i className="ti ti-signature text-[16px]"></i>
+                            <span>Sign & submit application</span>
                           </button>
                           <button
                             type="button"
                             onClick={() => setForm(false)}
-                            className="edge btn h-[48px] px-5"
+                            className="h-[46px] px-5 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#B8B6AE] hover:text-[#F4F2EC] border border-[#222222] font-medium text-[13.5px] cursor-pointer transition-colors"
                           >
                             Cancel
                           </button>
@@ -416,7 +469,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                       Pending review
                     </span>
 
-                    <div className="sub text-[13px] text-[#9A9892] leading-relaxed">
+                    <div className="sub text-[13px] text-[#9C9A92] leading-relaxed">
                       You will get a notification when the founder decides. Most decisions take a day or two.
                     </div>
 
@@ -433,21 +486,21 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 {/* State: Joined */}
                 {st === 'joined' && (
                   <div className="space-y-4">
-                    <div className="sub text-[13px] text-[#9A9892]">
+                    <div className="sub text-[13px] text-[#9C9A92]">
                       Your creator link. Every verified install through it earns you ${price}.
                     </div>
 
                     <div className="row flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
                       <div className="flex-1 min-w-0 space-y-3">
                         {/* Vanity link capsule with 1-click copy */}
-                        <div className="edge rounded-full flex items-center p-1.5 pl-4 gap-2 bg-[#121214]">
-                          <span className="flex-1 font-mono text-[12px] text-[#F5F3EC] truncate">
+                        <div className="edge rounded-full flex items-center p-1.5 pl-4 gap-2 bg-[#141414]">
+                          <span className="flex-1 font-mono text-[12px] text-[#F4F2EC] truncate">
                             {linkUrl}
                           </span>
                           <button
                             type="button"
                             onClick={handleCopyLink}
-                            className="btn sm bg-[#F5F3EC] text-black font-semibold hover:bg-white border-0 px-3.5"
+                            className="btn sm bg-[#F4F2EC] text-black font-semibold hover:bg-white border-0 px-3.5"
                           >
                             {copied ? 'Copied' : 'Copy'}
                           </button>
@@ -469,7 +522,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                         <TrackingQrCode
                           url={`https://${linkUrl}`}
                           size={100}
-                          className="p-1.5 bg-[#F5F3EC] rounded-[14px] shadow-sm"
+                          className="p-1.5 bg-[#F4F2EC] rounded-[14px] shadow-sm"
                         />
                       </div>
                     </div>
@@ -479,12 +532,12 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 {/* State: Closed */}
                 {st === 'closed' && (
                   <div className="row flex items-start gap-3">
-                    <i className="ti ti-circle-minus text-[24px] text-[#B9B7AF] mt-0.5" aria-hidden="true"></i>
+                    <i className="ti ti-circle-minus text-[24px] text-[#B8B6AE] mt-0.5" aria-hidden="true"></i>
                     <div>
-                      <div className="text-[16px] font-medium text-[#F5F3EC]">
+                      <div className="text-[16px] font-medium text-[#F4F2EC]">
                         Not taking creators
                       </div>
-                      <div className="sub text-[13px] text-[#9A9892] mt-0.5 leading-relaxed">
+                      <div className="sub text-[13px] text-[#9C9A92] mt-0.5 leading-relaxed">
                         This campaign is closed or out of budget. Check Discover for new ones.
                       </div>
                     </div>
@@ -493,7 +546,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
 
                 {/* Creators joined counter footer */}
                 {st !== 'closed' && st !== 'joined' && (
-                  <div className="sub text-[12px] text-[#9A9892] pt-2 border-t border-[#1F1F1F]">
+                  <div className="sub text-[12px] text-[#9C9A92] pt-2 border-t border-[#222222]">
                     {campaign.creators || 638} creators joined · {campaign.installsVerified || '12.4k'} verified installs
                   </div>
                 )}
@@ -501,68 +554,86 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
             </div>
 
             {/* "About campaign" Section */}
-            <div className="sec text-[15px] font-medium pb-2 border-b border-[#1F1F1F] pt-4">
+            <div className="sec text-[15px] font-medium pb-2 border-b border-[#222222] pt-4">
               About campaign
             </div>
-            <div className="text-[15px] text-[#B9B7AF] leading-relaxed whitespace-pre-line">
+            <div className="text-[15px] text-[#B8B6AE] leading-relaxed whitespace-pre-line">
               {campaign.desc}
             </div>
-            <div className="sub text-[12.5px] text-[#9A9892] mt-2 leading-relaxed">
+            <div className="sub text-[12.5px] text-[#9C9A92] mt-2 leading-relaxed">
               A verified install is a new user who opens the app and finishes onboarding. It counts after a 14 day check.
             </div>
 
             {/* "Requirements" Section */}
-            <div className="sec text-[15px] font-medium pb-2 border-b border-[#1F1F1F] pt-4">
+            <div className="sec text-[15px] font-medium pb-2 border-b border-[#222222] pt-4">
               Requirements
             </div>
             <div className="space-y-2.5">
-              <div className="li flex items-start gap-2.5 text-[14px] text-[#B9B7AF]">
-                <i className="ti ti-check text-[#C7F26B] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
+              <div className="li flex items-start gap-2.5 text-[14px] text-[#B8B6AE]">
+                <i className="ti ti-check text-[#C9B8FF] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
                 <span>At least 1,000 followers on one platform</span>
               </div>
-              <div className="li flex items-start gap-2.5 text-[14px] text-[#B9B7AF]">
-                <i className="ti ti-check text-[#C7F26B] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
+              <div className="li flex items-start gap-2.5 text-[14px] text-[#B8B6AE]">
+                <i className="ti ti-check text-[#C9B8FF] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
                 <span>Post on TikTok, Instagram, or YouTube</span>
               </div>
-              <div className="li flex items-start gap-2.5 text-[14px] text-[#B9B7AF]">
-                <i className="ti ti-check text-[#C7F26B] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
+              <div className="li flex items-start gap-2.5 text-[14px] text-[#B8B6AE]">
+                <i className="ti ti-check text-[#C9B8FF] text-[18px] shrink-0 mt-0.5" aria-hidden="true"></i>
                 <span>Label every post as sponsored. Age 18 or older</span>
               </div>
             </div>
 
             {/* "Terms" Section */}
-            <div className="sec text-[15px] font-medium pb-2 border-b border-[#1F1F1F] pt-4">
-              Terms
+            <div className="sec text-[15px] font-medium pb-2 border-b border-[#222222] pt-4">
+              Terms & Platform Guarantees
             </div>
-            <div className="divide-y divide-[#1F1F1F] text-[13px]">
+            <div className="divide-y divide-[#222222] text-[13px]">
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Reward per verified install</span>
-                <span className="font-mono text-[#F5F3EC]">${price}</span>
+                <span className="text-[#9C9A92]">Reward per verified install</span>
+                <span className="font-mono text-[#F4F2EC]">${price}</span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Subscription share</span>
-                <span className="text-[#C7F26B]">{pct}% of net revenue, first {months} months</span>
+                <span className="text-[#9C9A92]">Platform fee on creator pay</span>
+                <span className="font-medium text-[#C9B8FF]">0% (You keep 100% of bounty)</span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Net revenue means</span>
-                <span className="text-[#F5F3EC]">After store fees and refunds</span>
+                <span className="text-[#9C9A92]">Trust backing</span>
+                <span className="text-[#F4F2EC] flex items-center gap-1.5">
+                  <i className="ti ti-lock text-[#C9B8FF] text-[13px]"></i>
+                  <span>100% Prefunded in Stripe Escrow</span>
+                </span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Verification window</span>
-                <span className="text-[#F5F3EC]">14 days</span>
+                <span className="text-[#9C9A92]">Attribution standard</span>
+                <span className="text-[#F4F2EC]">SDK in-app verified install (not vanity views)</span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Settlement</span>
-                <span className="text-[#F5F3EC]">Weekly, on Fridays</span>
+                <span className="text-[#9C9A92]">Per-creator content cap</span>
+                <span className="text-[#F4F2EC]">Max {campaign.maxVideosPerCreator || 3} videos / creator</span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9A9892]">Minimum payout</span>
-                <span className="text-[#F5F3EC]">$20.00</span>
+                <span className="text-[#9C9A92]">Subscription share</span>
+                <span className="text-[#C9B8FF]">{pct}% of net revenue, first {months} months</span>
+              </div>
+              <div className="tr flex justify-between py-2.5">
+                <span className="text-[#9C9A92]">Verification window</span>
+                <span className="text-[#F4F2EC]">14 days</span>
+              </div>
+              <div className="tr flex justify-between py-2.5">
+                <span className="text-[#9C9A92]">Settlement batch</span>
+                <span className="text-[#F4F2EC]">Weekly, on Fridays</span>
+              </div>
+              <div className="tr flex justify-between py-2.5">
+                <span className="text-[#9C9A92]">FTC endorsement rule</span>
+                <span className="text-[#F4F2EC]">Mandatory #ad / sponsored tag compliance</span>
+              </div>
+              <div className="tr flex justify-between py-2.5">
+                <span className="text-[#9C9A92]">Minimum payout</span>
+                <span className="text-[#F4F2EC]">$20.00</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 };

@@ -50,6 +50,82 @@ interface IconProps {
   style?: React.CSSProperties;
 }
 
+// Sculpted organic petal: blooms gracefully from base near center to rounded crown
+const PETAL_PATH =
+  'M 50 46 C 40 42, 27 32, 30 18 C 33 6, 67 6, 70 18 C 73 32, 60 42, 50 46 Z';
+
+// Standalone single sculpted petal centered in viewport
+const SINGLE_PETAL_PATH =
+  'M 50 84 C 34 80, 16 58, 22 32 C 27 12, 73 12, 78 32 C 84 58, 66 80, 50 84 Z';
+
+export const UmiLogoMark: React.FC<{
+  size?: number | string;
+  variant?: 'lime' | 'dark' | 'ghost';
+  className?: string;
+  spinning?: boolean;
+}> = ({ size = 32, variant = 'lime', className = '', spinning = false }) => {
+  const color = variant === 'lime' ? '#C9B8FF' : variant === 'dark' ? '#0E0E0E' : '#F4F2EC';
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      className={`shrink-0 select-none ${spinning ? 'spin' : ''} ${className}`}
+      aria-label="Umi logo mark"
+    >
+      <path d={PETAL_PATH} fill={color} />
+      <path d={PETAL_PATH} fill={color} transform="rotate(90 50 50)" />
+      <path d={PETAL_PATH} fill={color} transform="rotate(180 50 50)" />
+      <path d={PETAL_PATH} fill={color} transform="rotate(270 50 50)" />
+    </svg>
+  );
+};
+
+export const UmiPetalMark: React.FC<{
+  size?: number | string;
+  color?: string;
+  className?: string;
+  spinning?: boolean;
+}> = ({ size = 24, color = '#C9B8FF', className = '', spinning = false }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      className={`shrink-0 select-none ${spinning ? 'spin' : ''} ${className}`}
+      aria-label="Umi petal mark"
+    >
+      <path d={SINGLE_PETAL_PATH} fill={color} />
+    </svg>
+  );
+};
+
+export const UmiLockup: React.FC<{
+  markSize?: number;
+  variant?: 'lime' | 'dark' | 'inverted';
+  className?: string;
+}> = ({ markSize = 28, variant = 'lime', className = '' }) => {
+  const isLightBanner = variant === 'inverted';
+  return (
+    <div
+      className={`inline-flex items-center gap-[10px] select-none ${
+        isLightBanner ? 'bg-[#C9B8FF] text-[#000000] px-3 py-1.5 rounded-[12px]' : ''
+      } ${className}`}
+    >
+      <UmiLogoMark size={markSize} variant={isLightBanner ? 'dark' : 'lime'} />
+      <span
+        className={`font-serif tracking-tight font-medium ${
+          isLightBanner ? 'text-[#000000]' : 'text-[#F4F2EC]'
+        }`}
+        style={{ fontSize: `${Math.max(20, Math.round(markSize * 0.78))}px`, lineHeight: 1 }}
+      >
+        umi
+      </span>
+    </div>
+  );
+};
+
 export const Icon: React.FC<IconProps> = ({ name, className = 'w-5 h-5', fill = false, style }) => {
   const svgContent = ICONS_SVG[name];
   if (!svgContent) {

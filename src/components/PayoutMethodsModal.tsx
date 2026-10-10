@@ -27,17 +27,17 @@ export const PayoutMethodsModal: React.FC<PayoutMethodsModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[440px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[440px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[18px] font-medium text-[#F5F3EC]">Payout methods</div>
+            <div className="text-[18px] font-medium text-[#F4F2EC]">Payout methods</div>
             <div className="sub mt-0.5">Choose how you receive your weekly creator settlements.</div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -75,32 +75,32 @@ export const PayoutMethodsModal: React.FC<PayoutMethodsModalProps> = ({
               onClick={() => setSelectedMethod(m.id as any)}
               className={`opt ${selectedMethod === m.id ? 'sel' : ''}`}
             >
-              <i className={`ti ${m.icon} text-[20px] text-[#F5F3EC]`}></i>
+              <i className={`ti ${m.icon} text-[20px] text-[#F4F2EC]`}></i>
               <span className="flex-1">
-                <span className="block text-[14px] font-medium text-[#F5F3EC]">{m.title}</span>
+                <span className="block text-[14px] font-medium text-[#F4F2EC]">{m.title}</span>
                 <span className="block text-[12px] text-[#9A9892]">{m.detail}</span>
-                <span className="block text-[11px] text-[#C7F26B] mt-0.5">{m.timing}</span>
+                <span className="block text-[11px] text-[#C9B8FF] mt-0.5">{m.timing}</span>
               </span>
               {selectedMethod === m.id && (
-                <i className="ti ti-check text-[#C7F26B] text-[18px]"></i>
+                <i className="ti ti-check text-[#C9B8FF] text-[18px]"></i>
               )}
             </button>
           ))}
         </div>
 
         {/* Rules Box from UX Spec */}
-        <div className="bg-[#1C1C1C] rounded-[16px] p-3.5 border border-[#2A2A2A]/50 space-y-1.5 text-[12px]">
+        <div className="bg-[#141414] rounded-[16px] p-3.5 border border-[#222222]/50 space-y-1.5 text-[12px]">
           <div className="flex justify-between">
             <span className="text-[#9A9892]">Settlement schedule</span>
-            <span className="text-[#F5F3EC] font-medium">Weekly, on Fridays</span>
+            <span className="text-[#F4F2EC] font-medium">Weekly, on Fridays</span>
           </div>
           <div className="flex justify-between">
             <span className="text-[#9A9892]">Verification window</span>
-            <span className="text-[#F5F3EC] font-medium">14 days per install</span>
+            <span className="text-[#F4F2EC] font-medium">14 days per install</span>
           </div>
           <div className="flex justify-between">
             <span className="text-[#9A9892]">Minimum payout</span>
-            <span className="text-[#F5F3EC] font-medium">$20.00</span>
+            <span className="text-[#F4F2EC] font-medium">$20.00</span>
           </div>
         </div>
 

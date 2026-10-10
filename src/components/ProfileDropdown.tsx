@@ -55,7 +55,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-12 z-50 w-[300px] rounded-[24px] bg-[#161616] border border-[#2A2A2A] shadow-2xl p-2 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
+      className="absolute right-0 top-12 z-50 w-[300px] rounded-[24px] bg-[#0E0E0E] border border-[#222222] shadow-2xl p-2 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
     >
       {/* Profile Header */}
       <div
@@ -63,27 +63,27 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
           onNavigateSettings();
           onClose();
         }}
-        className="flex items-center gap-3 p-2.5 rounded-[16px] hover:bg-[#1C1C1C] cursor-pointer transition-colors"
+        className="flex items-center gap-3 p-2.5 rounded-[16px] hover:bg-[#141414] cursor-pointer transition-colors"
       >
         <div className="w-[42px] h-[42px] rounded-full bg-[#388BFD] text-white flex items-center justify-center text-[18px] shrink-0">
           <i className="ti ti-user" aria-hidden="true"></i>
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[15px] font-medium text-[#F5F3EC]">
+          <div className="text-[15px] font-medium text-[#F4F2EC]">
             {firstName} {lastName}
           </div>
-          <div className="text-[12px] text-[#A8A69E] truncate">
+          <div className="text-[12px] text-[#9C9A92] truncate">
             {username} · Account settings
           </div>
         </div>
-        <i className="ti ti-chevron-right text-[14px] text-[#A8A69E]"></i>
+        <i className="ti ti-chevron-right text-[14px] text-[#9C9A92]"></i>
       </div>
 
       {/* Available Balance Card */}
-      <div className="mx-1 my-1.5 bg-[#1C1C1C] rounded-[18px] p-3 px-3.5 flex items-center justify-between border border-[#2A2A2A]/40">
+      <div className="mx-1 my-1.5 bg-[#141414] rounded-[18px] p-3 px-3.5 flex items-center justify-between border border-[#222222]/40">
         <div>
-          <div className="text-[11px] text-[#A8A69E]">Available balance</div>
-          <div className="text-[20px] font-medium tracking-[-0.4px] text-[#F5F3EC] mt-0.5 font-mono">
+          <div className="text-[11px] text-[#9C9A92]">Available balance</div>
+          <div className="text-[20px] font-medium tracking-[-0.4px] text-[#F4F2EC] mt-0.5 font-mono">
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
         </div>
@@ -107,11 +107,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigateEarnings();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-coin text-[17px] text-[#C0DD97]" aria-hidden="true"></i>
           <span className="flex-1">Earnings</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         <button
@@ -120,11 +120,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigateAnalytics();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-chart-bar text-[17px] text-[#B5D4F4]" aria-hidden="true"></i>
           <span className="flex-1">Campaign analytics</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         <button
@@ -133,11 +133,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigateBilling();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-receipt text-[17px] text-[#FAC775]" aria-hidden="true"></i>
           <span className="flex-1">Billing & invoices</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         <button
@@ -146,11 +146,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigatePayoutMethods();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-wallet text-[17px] text-[#CECBF6]" aria-hidden="true"></i>
           <span className="flex-1">Payout methods</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         <button
@@ -159,11 +159,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             if (onNavigateSdk) onNavigateSdk();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-key text-[17px] text-[#FAC775]" aria-hidden="true"></i>
           <span className="flex-1 font-medium">SDK & API Keys</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         <button
@@ -172,11 +172,11 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             if (onNavigateDocs) onNavigateDocs();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
-          <i className="ti ti-book text-[17px] text-[#C7F26B]" aria-hidden="true"></i>
+          <i className="ti ti-book text-[17px] text-[#C9B8FF]" aria-hidden="true"></i>
           <span className="flex-1">Documentation</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
 
         {/* Dedicated Settings with Gear icon (as specifically requested) */}
@@ -186,16 +186,16 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             onNavigateSettings();
             onClose();
           }}
-          className="w-full border-0 bg-transparent text-[#F5F3EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#1C1C1C] transition-colors cursor-pointer group"
+          className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
         >
           <i className="ti ti-settings text-[17px] text-[#388BFD]" aria-hidden="true"></i>
           <span className="flex-1 font-medium">Settings</span>
-          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B9B7AF]"></i>
+          <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
       </div>
 
       {/* Divider */}
-      <div className="h-[0.5px] bg-[#2A2A2A] mx-2 my-1.5" />
+      <div className="h-[0.5px] bg-[#222222] mx-2 my-1.5" />
 
       {/* Log out */}
       <div className="px-1 pb-1">

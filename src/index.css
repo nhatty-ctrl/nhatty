@@ -8,22 +8,22 @@
     --font-voice: var(--font-serif);
     --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-    /* kred official design system palette */
-    --bg: #0B0B0B;
-    --surface: #161616;
-    --surface-2: #1C1C1C;
-    --surface-3: #242424;
-    --line: #2A2A2A;
+    /* Umi official brand palette: GROUND #000 · SURFACE #0E0E0E · TEXT #F4F2EC · ACCENT #C9B8FF */
+    --bg: #000000;
+    --surface: #0E0E0E;
+    --surface-2: #141414;
+    --surface-3: #1B1B1B;
+    --line: #222222;
 
-    --text: #F5F3EC;
-    --text-2: #B9B7AF;
-    --text-3: #A8A69E; /* elevated from #9A9892 for WCAG AA (>= 4.5:1) compliance */
+    --text: #F4F2EC;
+    --text-2: #B8B6AE;
+    --text-3: #9C9A92; /* WCAG AA compliant on #000 and #0E0E0E */
 
-    --accent: #C7F26B; /* Lime accent for active/latest/on/success */
+    --accent: #C9B8FF; /* Umi brand lavender accent */
     --danger: #FF8A80;
-    --warn: #FFC857;
+    --warn: #FAC775;
 
-    /* Pastel pairs: fill + dark on-color */
+    /* Pastel pairs: fill + dark on-color (strictly preserved) */
     --purple: #CECBF6;
     --on-purple: #26215C;
     --coral: #F5C4B3;
@@ -70,7 +70,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* KRED Design System Utility Classes */
+/* Umi Design System Utility Classes */
 .pill {
   border: 0;
   border-radius: 999px;
@@ -78,7 +78,7 @@ body {
   font-size: 13px;
   font-weight: 500;
   background: transparent;
-  color: #B9B7AF;
+  color: #B8B6AE;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -91,34 +91,34 @@ body {
 }
 
 .pill.on {
-  background: #F5F3EC;
-  color: #0B0B0B;
+  background: #F4F2EC;
+  color: #000000;
 }
 
 .pill.on:hover {
-  background: #E4E1D6;
+  background: #E3E1DA;
 }
 
 .pill.out {
-  background: #1C1C1C;
-  color: #F5F3EC;
+  background: #141414;
+  color: #F4F2EC;
 }
 
 .pill.out:hover {
-  background: #242424;
+  background: #1B1B1B;
 }
 
 .pill.gh {
   background: transparent;
-  color: #B9B7AF;
+  color: #B8B6AE;
 }
 
 .pill.gh:hover {
-  color: #F5F3EC;
+  color: #F4F2EC;
 }
 
 .card {
-  background: #161616;
+  background: #0E0E0E;
   border-radius: 20px;
   padding: 18px;
 }
@@ -132,28 +132,28 @@ body {
   font-size: 12px;
   font-weight: 500;
   border: 0;
-  background: #1C1C1C;
-  color: #B9B7AF;
+  background: #141414;
+  color: #B8B6AE;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .chip:hover {
-  color: #F5F3EC;
+  color: #F4F2EC;
 }
 
 .chip.sel {
-  background: #F5F3EC;
-  color: #0B0B0B;
+  background: #F4F2EC;
+  color: #000000;
 }
 
 .in {
   width: 100%;
   height: 46px;
-  background: #1C1C1C;
-  border: 1px solid #1C1C1C;
+  background: #141414;
+  border: 1px solid #222222;
   border-radius: 14px;
-  color: #F5F3EC;
+  color: #F4F2EC;
   padding: 0 14px;
   font-size: 14px;
   font-family: inherit;
@@ -162,12 +162,12 @@ body {
 
 .in:focus {
   outline: none;
-  border-color: #F5F3EC;
+  border-color: #F4F2EC;
 }
 
 .fl {
   font-size: 12px;
-  color: #A8A69E;
+  color: #9C9A92;
   margin: 12px 0 6px;
   display: block;
 }
@@ -180,7 +180,7 @@ body {
 
 .sub {
   font-size: 12px;
-  color: #A8A69E;
+  color: #9C9A92;
 }
 
 .row2 {
@@ -188,15 +188,15 @@ body {
   justify-content: space-between;
   font-size: 13px;
   padding: 10px 0;
-  border-top: 0.5px solid #2A2A2A;
+  border-top: 0.5px solid #222222;
 }
 
 .row2 span:first-child {
-  color: #A8A69E;
+  color: #9C9A92;
 }
 
 .code {
-  background: #0F0F0F;
+  background: #070707;
   border-radius: 14px;
   padding: 12px 14px;
   font-family: var(--font-mono);
@@ -213,11 +213,11 @@ body {
 .opt {
   width: 100%;
   text-align: left;
-  background: #1C1C1C;
-  border: 1.5px solid #1C1C1C;
+  background: #141414;
+  border: 1.5px solid #222222;
   border-radius: 16px;
   padding: 12px 14px;
-  color: #F5F3EC;
+  color: #F4F2EC;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -227,11 +227,11 @@ body {
 }
 
 .opt.sel {
-  border-color: #F5F3EC;
+  border-color: #F4F2EC;
 }
 
 .ex {
-  background: #1C1C1C;
+  background: #141414;
   border-radius: 16px;
   padding: 14px;
   margin-top: 12px;
@@ -239,7 +239,7 @@ body {
   align-items: center;
   gap: 12px;
   font-size: 13px;
-  color: #9A9892;
+  color: #9C9A92;
 }
 
 /* Custom switch toggle */
@@ -248,7 +248,7 @@ body {
   height: 24px;
   border-radius: 12px;
   border: 0;
-  background: #2E2E2E;
+  background: #1B1B1B;
   position: relative;
   padding: 0;
   flex-shrink: 0;
@@ -257,7 +257,7 @@ body {
 }
 
 .sw.on {
-  background: #C7F26B;
+  background: #C9B8FF;
 }
 
 .sw i {
@@ -267,13 +267,13 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #F5F3EC;
+  background: #F4F2EC;
   transition: left 0.2s ease, background 0.2s ease;
 }
 
 .sw.on i {
   left: 21px;
-  background: #16140F;
+  background: #000000;
 }
 
 /* Segments progress bar */
@@ -281,20 +281,20 @@ body {
   flex: 1;
   height: 4px;
   border-radius: 2px;
-  background: #242424;
+  background: #1B1B1B;
   transition: background 0.25s ease;
 }
 
 .seg.on {
-  background: #F5F3EC;
+  background: #F4F2EC;
 }
 
 /* Phone mockup frames */
 .ph {
   width: 76px;
   border-radius: 18px;
-  border: 3px solid #2A2A2A;
-  background: #0F0F0F;
+  border: 3px solid #222222;
+  background: #070707;
   padding: 8px 6px;
   flex-shrink: 0;
   transition: transform 0.2s ease;
@@ -309,8 +309,8 @@ body {
   display: inline-flex;
   align-items: stretch;
   border-radius: 999px;
-  background: #F5F3EC;
-  color: #0B0B0B;
+  background: #F4F2EC;
+  color: #000000;
   overflow: hidden;
 }
 
@@ -327,7 +327,7 @@ body {
 }
 
 .split button:hover {
-  background: #E4E1D6;
+  background: #E3E1DA;
 }
 
 .split .m {
@@ -336,27 +336,27 @@ body {
 
 .split .c {
   padding: 0 13px;
-  border-left: 1px solid rgba(11, 11, 11, 0.18);
+  border-left: 1px solid rgba(0, 0, 0, 0.18);
 }
 
 .split.j {
-  background: #1C1C1C;
-  color: #F5F3EC;
+  background: #141414;
+  color: #F4F2EC;
 }
 
 .split.j button:hover {
-  background: #242424;
+  background: #1B1B1B;
 }
 
 .split.j .c {
-  border-left-color: #2E2E2E;
+  border-left-color: #222222;
 }
 
 /* Outline button */
 .ol {
   background: transparent;
-  border: 1px solid #2E2E2E;
-  color: #F5F3EC;
+  border: 1px solid #222222;
+  color: #F4F2EC;
   border-radius: 999px;
   padding: 5px 12px;
   font-size: 12px;
@@ -368,7 +368,7 @@ body {
 }
 
 button.ol:hover {
-  border-color: #F5F3EC;
+  border-color: #F4F2EC;
 }
 
 .ci {
@@ -393,11 +393,11 @@ button.ol:hover {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
+  background: #222222;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9A9892;
+  background: #333333;
 }
 
 @keyframes sp {
@@ -411,12 +411,12 @@ button.ol:hover {
 
 /* Edge gradient borders from design system */
 .edge {
-  --edge-bg: #000;
+  --edge-bg: #000000;
   --edge-top: rgba(255,255,255,.62);
   --edge-bottom: rgba(255,255,255,.07);
   --edge-ht: rgba(255,255,255,.62);
   --edge-hb: rgba(255,255,255,.32);
-  color: #F5F3EC;
+  color: #F4F2EC;
   border: 1px solid transparent;
   background: linear-gradient(var(--edge-bg),var(--edge-bg)) padding-box, linear-gradient(180deg,var(--edge-top),var(--edge-bottom)) border-box;
 }
@@ -435,7 +435,7 @@ button.ol:hover {
 .trk {
   height: 6px;
   border-radius: 3px;
-  background: #1A1A1A;
+  background: #141414;
   overflow: hidden;
 }
 
@@ -451,7 +451,7 @@ button.ol:hover {
   border: 0;
   border-radius: 12px;
   background: transparent;
-  color: #F5F3EC;
+  color: #F4F2EC;
   font-size: 13.5px;
   display: flex;
   align-items: center;
@@ -466,15 +466,15 @@ button.ol:hover {
 }
 
 .cd.st {
-  background: #F5F3EC;
-  color: #000;
+  background: #F4F2EC;
+  color: #000000;
   font-weight: 500;
 }
 
 .cd.rg {
-  box-shadow: inset 0 0 0 1px #2E2E2E;
+  box-shadow: inset 0 0 0 1px #222222;
 }
 
 .cd.td {
-  box-shadow: inset 0 0 0 1px #6F6E69;
+  box-shadow: inset 0 0 0 1px #6E6D66;
 }

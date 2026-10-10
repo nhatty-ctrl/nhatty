@@ -98,23 +98,23 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="text-[11px] font-mono tracking-wider uppercase text-[#388BFD]">
           WORKSPACE
         </div>
-        <h1 className="text-[34px] sm:text-[38px] font-serif tracking-tight text-[#F5F3EC]">
+        <h1 className="text-[34px] sm:text-[38px] font-serif tracking-tight text-[#F4F2EC]">
           Settings
         </h1>
-        <p className="text-[14px] text-[#A8A69E]">
+        <p className="text-[14px] text-[#9C9A92]">
           Manage your profile, preferences, and account access.
         </p>
       </div>
 
       {/* Segmented Underline Tabs: Account | Preferences | Payment (matching Screenshots) */}
-      <div className="border-b border-[#2A2A2A] flex items-center gap-6 text-[14px]">
+      <div className="border-b border-[#222222] flex items-center gap-6 text-[14px]">
         <button
           type="button"
           onClick={() => setActiveTab('account')}
           className={`pb-3 font-medium transition-colors cursor-pointer relative ${
             activeTab === 'account'
-              ? 'text-[#F5F3EC]'
-              : 'text-[#A8A69E] hover:text-[#F5F3EC]'
+              ? 'text-[#F4F2EC]'
+              : 'text-[#9C9A92] hover:text-[#F4F2EC]'
           }`}
         >
           <span>Account</span>
@@ -128,8 +128,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('preferences')}
           className={`pb-3 font-medium transition-colors cursor-pointer relative ${
             activeTab === 'preferences'
-              ? 'text-[#F5F3EC]'
-              : 'text-[#A8A69E] hover:text-[#F5F3EC]'
+              ? 'text-[#F4F2EC]'
+              : 'text-[#9C9A92] hover:text-[#F4F2EC]'
           }`}
         >
           <span>Preferences</span>
@@ -143,8 +143,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('payment')}
           className={`pb-3 font-medium transition-colors cursor-pointer relative ${
             activeTab === 'payment'
-              ? 'text-[#F5F3EC]'
-              : 'text-[#A8A69E] hover:text-[#F5F3EC]'
+              ? 'text-[#F4F2EC]'
+              : 'text-[#9C9A92] hover:text-[#F4F2EC]'
           }`}
         >
           <span>Payment</span>
@@ -156,7 +156,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
       {/* Save Notice Banner */}
       {isSavedNotice && (
-        <div className="p-3 bg-[#1C1C1C] border border-[#388BFD]/50 rounded-[14px] text-[13px] text-[#F5F3EC] flex items-center gap-2 animate-[fade-in_0.15s_ease-out]">
+        <div className="p-3 bg-[#141414] border border-[#388BFD]/50 rounded-[14px] text-[13px] text-[#F4F2EC] flex items-center gap-2 animate-[fade-in_0.15s_ease-out]">
           <i className="ti ti-check text-[#388BFD]"></i>
           <span>Settings saved successfully.</span>
         </div>
@@ -166,10 +166,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {activeTab === 'account' && (
         <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
           <div>
-            <h2 className="text-[20px] font-serif font-medium text-[#F5F3EC]">
+            <h2 className="text-[20px] font-serif font-medium text-[#F4F2EC]">
               Your Profile
             </h2>
-            <p className="text-[13px] text-[#A8A69E] mt-0.5">
+            <p className="text-[13px] text-[#9C9A92] mt-0.5">
               Keep the profile shown on campaign applications up to date.
             </p>
           </div>
@@ -181,7 +181,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 {/* First name & Last name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
-                    <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="first-name">
+                    <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="first-name">
                       First name
                     </label>
                     <input
@@ -189,12 +189,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors"
+                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors"
                       placeholder="Amara"
                     />
                   </div>
                   <div>
-                    <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="last-name">
+                    <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="last-name">
                       Last name
                     </label>
                     <input
@@ -202,7 +202,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors"
+                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors"
                       placeholder="Bekele"
                     />
                   </div>
@@ -210,7 +210,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
                 {/* Username */}
                 <div>
-                  <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="user-name">
+                  <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="user-name">
                     Username
                   </label>
                   <input
@@ -218,14 +218,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors"
+                    className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors"
                     placeholder="@amara"
                   />
                 </div>
 
                 {/* Bio */}
                 <div>
-                  <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="user-bio">
+                  <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="user-bio">
                     Bio
                   </label>
                   <textarea
@@ -233,7 +233,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     rows={4}
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    className="w-full bg-[#0E0E0E] border border-[#222] rounded-[12px] p-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors resize-y"
+                    className="w-full bg-[#0E0E0E] border border-[#222] rounded-[12px] p-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors resize-y"
                     placeholder="Share a little about your background and interests."
                   />
                 </div>
@@ -241,7 +241,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 {/* Social media links */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
-                    <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="user-ig">
+                    <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="user-ig">
                       Instagram
                     </label>
                     <input
@@ -249,12 +249,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       type="text"
                       value={instagram}
                       onChange={(e) => setInstagram(e.target.value)}
-                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors"
+                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors"
                       placeholder="instagram.com/"
                     />
                   </div>
                   <div>
-                    <label className="text-[12.5px] text-[#A8A69E] block mb-1.5" htmlFor="user-tiktok">
+                    <label className="text-[12.5px] text-[#9C9A92] block mb-1.5" htmlFor="user-tiktok">
                       TikTok
                     </label>
                     <input
@@ -262,7 +262,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       type="text"
                       value={tiktok}
                       onChange={(e) => setTiktok(e.target.value)}
-                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F5F3EC] focus:border-[#388BFD] outline-none transition-colors"
+                      className="w-full h-[44px] bg-[#0E0E0E] border border-[#222] rounded-[12px] px-3.5 text-[14px] text-[#F4F2EC] focus:border-[#388BFD] outline-none transition-colors"
                       placeholder="tiktok.com/@"
                     />
                   </div>
@@ -277,7 +277,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => alert('Photo upload dialog (PNG or JPG under 2MB supported)')}
-                  className="px-4 py-2 bg-[#222] hover:bg-[#2c2c2c] text-[#F5F3EC] text-[13px] font-medium rounded-full cursor-pointer transition-colors border border-[#333]"
+                  className="px-4 py-2 bg-[#222] hover:bg-[#2c2c2c] text-[#F4F2EC] text-[13px] font-medium rounded-full cursor-pointer transition-colors border border-[#333]"
                 >
                   Change picture
                 </button>
@@ -298,7 +298,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <button
                 type="button"
                 onClick={onBack}
-                className="px-5 py-2.5 bg-[#1C1C1C] hover:bg-[#252525] text-[#F5F3EC] text-[13.5px] rounded-full cursor-pointer transition-colors border border-[#2A2A2A]"
+                className="px-5 py-2.5 bg-[#141414] hover:bg-[#252525] text-[#F4F2EC] text-[13.5px] rounded-full cursor-pointer transition-colors border border-[#222222]"
               >
                 Back to campaigns
               </button>
@@ -313,16 +313,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* Card 1: Display */}
           <div className="bg-[#121212] border border-[#222] rounded-[20px] p-5 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-[17px] font-medium text-[#F5F3EC]">Display</h2>
-              <p className="text-[12.5px] text-[#A8A69E] mt-0.5">Choose how KRED should look and feel.</p>
+              <h2 className="text-[17px] font-medium text-[#F4F2EC]">Display</h2>
+              <p className="text-[12.5px] text-[#9C9A92] mt-0.5">Choose how KRED should look and feel.</p>
             </div>
 
             <div className="space-y-4 pt-1">
               {/* Compact campaign cards */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Compact campaign cards</div>
-                  <div className="text-[12px] text-[#A8A69E]">Keep more campaigns visible at once.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Compact campaign cards</div>
+                  <div className="text-[12px] text-[#9C9A92]">Keep more campaigns visible at once.</div>
                 </div>
                 <button
                   type="button"
@@ -330,7 +330,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={compactCards}
                   onClick={() => handleTogglePref('kred_pref_compact', setCompactCards, compactCards)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    compactCards ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    compactCards ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -344,8 +344,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Reduce motion */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Reduce motion</div>
-                  <div className="text-[12px] text-[#A8A69E]">Use calmer transitions across the app.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Reduce motion</div>
+                  <div className="text-[12px] text-[#9C9A92]">Use calmer transitions across the app.</div>
                 </div>
                 <button
                   type="button"
@@ -353,7 +353,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={reduceMotion}
                   onClick={() => handleTogglePref('kred_pref_motion', setReduceMotion, reduceMotion)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    reduceMotion ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    reduceMotion ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -369,8 +369,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* Card 2: Notifications */}
           <div className="bg-[#121212] border border-[#222] rounded-[20px] p-5 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-[17px] font-medium text-[#F5F3EC]">Notifications</h2>
-              <p className="text-[12.5px] text-[#A8A69E] mt-0.5">
+              <h2 className="text-[17px] font-medium text-[#F4F2EC]">Notifications</h2>
+              <p className="text-[12.5px] text-[#9C9A92] mt-0.5">
                 Choose how you would like to be notified about updates and campaign activity.
               </p>
             </div>
@@ -379,8 +379,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Campaign updates */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Campaign updates</div>
-                  <div className="text-[12px] text-[#A8A69E]">Changes to campaigns you joined.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Campaign updates</div>
+                  <div className="text-[12px] text-[#9C9A92]">Changes to campaigns you joined.</div>
                 </div>
                 <button
                   type="button"
@@ -388,7 +388,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={campaignUpdates}
                   onClick={() => handleTogglePref('kred_pref_updates', setCampaignUpdates, campaignUpdates)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    campaignUpdates ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    campaignUpdates ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -402,8 +402,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* New recommendations */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">New recommendations</div>
-                  <div className="text-[12px] text-[#A8A69E]">Campaigns matched to your audience.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">New recommendations</div>
+                  <div className="text-[12px] text-[#9C9A92]">Campaigns matched to your audience.</div>
                 </div>
                 <button
                   type="button"
@@ -411,7 +411,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={newRecs}
                   onClick={() => handleTogglePref('kred_pref_recs', setNewRecs, newRecs)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    newRecs ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    newRecs ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -425,8 +425,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Creator messages */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Creator messages</div>
-                  <div className="text-[12px] text-[#A8A69E]">Direct outreach from campaign managers.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Creator messages</div>
+                  <div className="text-[12px] text-[#9C9A92]">Direct outreach from campaign managers.</div>
                 </div>
                 <button
                   type="button"
@@ -434,7 +434,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={creatorMessages}
                   onClick={() => handleTogglePref('kred_pref_msgs', setCreatorMessages, creatorMessages)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    creatorMessages ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    creatorMessages ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -448,8 +448,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Payout alerts */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Payout alerts</div>
-                  <div className="text-[12px] text-[#A8A69E]">Weekly settlements and attribution milestones.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Payout alerts</div>
+                  <div className="text-[12px] text-[#9C9A92]">Weekly settlements and attribution milestones.</div>
                 </div>
                 <button
                   type="button"
@@ -457,7 +457,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   aria-checked={payoutAlerts}
                   onClick={() => handleTogglePref('kred_pref_payouts', setPayoutAlerts, payoutAlerts)}
                   className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-                    payoutAlerts ? 'bg-[#388BFD]' : 'bg-[#2A2A2A]'
+                    payoutAlerts ? 'bg-[#388BFD]' : 'bg-[#222222]'
                   }`}
                 >
                   <span
@@ -476,7 +476,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {activeTab === 'payment' && (
         <div className="space-y-6 animate-[fade-in_0.15s_ease-out]">
           {paymentNotice && (
-            <div className="p-3 bg-[#1C1C1C] border border-[#388BFD]/50 rounded-[14px] text-[13px] text-[#F5F3EC] flex items-center gap-2">
+            <div className="p-3 bg-[#141414] border border-[#388BFD]/50 rounded-[14px] text-[13px] text-[#F4F2EC] flex items-center gap-2">
               <i className="ti ti-check text-[#388BFD]"></i>
               <span>{paymentNotice}</span>
             </div>
@@ -485,8 +485,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* Card 1: Payment */}
           <div className="bg-[#121212] border border-[#222] rounded-[20px] p-5 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-[17px] font-medium text-[#F5F3EC]">Payment</h2>
-              <p className="text-[12.5px] text-[#A8A69E] mt-0.5">
+              <h2 className="text-[17px] font-medium text-[#F4F2EC]">Payment</h2>
+              <p className="text-[12.5px] text-[#9C9A92] mt-0.5">
                 Choose where your verified campaign rewards should go.
               </p>
             </div>
@@ -495,14 +495,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Default payout method */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Default payout method</div>
-                  <div className="text-[12px] text-[#A8A69E]">{defaultPayoutMethod}</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Default payout method</div>
+                  <div className="text-[12px] text-[#9C9A92]">{defaultPayoutMethod}</div>
                 </div>
                 {onNavigatePayoutMethods ? (
                   <button
                     type="button"
                     onClick={onNavigatePayoutMethods}
-                    className="px-4 py-1.5 bg-[#222] hover:bg-[#2a2a2a] text-[#F5F3EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
+                    className="px-4 py-1.5 bg-[#222] hover:bg-[#222222] text-[#F4F2EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
                   >
                     Manage
                   </button>
@@ -513,7 +513,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       setPaymentNotice('Redirecting to payout method configuration...');
                       setTimeout(() => setPaymentNotice(null), 2500);
                     }}
-                    className="px-4 py-1.5 bg-[#222] hover:bg-[#2a2a2a] text-[#F5F3EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
+                    className="px-4 py-1.5 bg-[#222] hover:bg-[#222222] text-[#F4F2EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
                   >
                     Manage
                   </button>
@@ -523,10 +523,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Minimum payout */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Minimum payout</div>
-                  <div className="text-[12px] text-[#A8A69E]">Payouts are released after you reach $50.00.</div>
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Minimum payout</div>
+                  <div className="text-[12px] text-[#9C9A92]">Payouts are released after you reach $50.00.</div>
                 </div>
-                <div className="text-[16px] font-semibold text-[#F5F3EC] font-mono">
+                <div className="text-[16px] font-semibold text-[#F4F2EC] font-mono">
                   $50.00
                 </div>
               </div>
@@ -536,8 +536,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* Card 2: Account access */}
           <div className="bg-[#121212] border border-[#222] rounded-[20px] p-5 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-[17px] font-medium text-[#F5F3EC]">Account access</h2>
-              <p className="text-[12.5px] text-[#A8A69E] mt-0.5">
+              <h2 className="text-[17px] font-medium text-[#F4F2EC]">Account access</h2>
+              <p className="text-[12.5px] text-[#9C9A92] mt-0.5">
                 Protect your KRED account and manage sign-in methods.
               </p>
             </div>
@@ -546,8 +546,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Two-factor authentication */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Two-factor authentication</div>
-                  <div className="text-[12px] text-[#A8A69E]">
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Two-factor authentication</div>
+                  <div className="text-[12px] text-[#9C9A92]">
                     {twoFactorEnabled ? '2FA is active via Authenticator app.' : 'Add an extra layer of security.'}
                   </div>
                 </div>
@@ -560,7 +560,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     setPaymentNotice(next ? 'Two-factor authentication enabled.' : 'Two-factor authentication disabled.');
                     setTimeout(() => setPaymentNotice(null), 3000);
                   }}
-                  className="px-4 py-1.5 bg-[#222] hover:bg-[#2a2a2a] text-[#F5F3EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
+                  className="px-4 py-1.5 bg-[#222] hover:bg-[#222222] text-[#F4F2EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
                 >
                   {twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
                 </button>
@@ -569,8 +569,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {/* Passkeys */}
               <div className="flex items-center justify-between gap-4 pt-3 border-t border-[#1F1F1F]">
                 <div>
-                  <div className="text-[13.5px] font-medium text-[#F5F3EC]">Passkeys</div>
-                  <div className="text-[12px] text-[#A8A69E]">
+                  <div className="text-[13.5px] font-medium text-[#F4F2EC]">Passkeys</div>
+                  <div className="text-[12px] text-[#9C9A92]">
                     {passkeysCount > 0
                       ? `${passkeysCount} passkey configured. Sign in securely without a password.`
                       : 'Sign in securely without a password.'}
@@ -585,7 +585,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     setPaymentNotice('New biometric passkey registered successfully.');
                     setTimeout(() => setPaymentNotice(null), 3000);
                   }}
-                  className="px-4 py-1.5 bg-[#222] hover:bg-[#2a2a2a] text-[#F5F3EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
+                  className="px-4 py-1.5 bg-[#222] hover:bg-[#222222] text-[#F4F2EC] text-[13px] rounded-full transition-colors border border-[#333] cursor-pointer"
                 >
                   Add passkey
                 </button>

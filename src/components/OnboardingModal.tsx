@@ -55,7 +55,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 w-7 h-7 rounded-full bg-[#1C1C1F] hover:bg-[#27272A] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer transition-colors"
+          className="absolute top-5 right-5 w-7 h-7 rounded-full bg-[#1C1C1F] hover:bg-[#27272A] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer transition-colors"
           aria-label="Skip onboarding"
         >
           <i className="ti ti-x text-[13px]"></i>
@@ -68,7 +68,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               key={idx}
               className={`h-1.5 rounded-full transition-all duration-300 ${
                 idx === step
-                  ? 'w-7 bg-[#C7F26B]'
+                  ? 'w-7 bg-[#C9B8FF]'
                   : idx < step
                   ? 'w-3 bg-[#388BFD]'
                   : 'w-3 bg-[#27272A]'
@@ -81,10 +81,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {step === 0 && (
           <div className="space-y-5 animate-[fade-in_0.15s_ease-out]">
             <div>
-              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C7F26B]">
+              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C9B8FF]">
                 WELCOME TO KRED
               </div>
-              <h2 className="text-[24px] sm:text-[28px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+              <h2 className="text-[24px] sm:text-[28px] font-semibold text-[#F4F2EC] mt-1 tracking-tight">
                 How will you use KRED?
               </h2>
               <p className="text-[13.5px] text-[#A1A1AA] mt-1 leading-relaxed">
@@ -98,14 +98,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 onClick={() => setRole('creator')}
                 className={`p-4 rounded-[18px] border transition-all cursor-pointer ${
                   role === 'creator'
-                    ? 'bg-[#1C1C22] border-[#C7F26B] shadow-md ring-1 ring-[#C7F26B]/50'
+                    ? 'bg-[#1C1C22] border-[#C9B8FF] shadow-md ring-1 ring-[#C9B8FF]/50'
                     : 'bg-[#16161A] border-[#27272A] hover:border-[#3F3F46]'
                 }`}
               >
                 <div className="w-9 h-9 rounded-[10px] bg-[#CECBF6] text-[#26215C] flex items-center justify-center text-[18px] mb-3">
                   <i className="ti ti-speakerphone"></i>
                 </div>
-                <div className="font-semibold text-[15px] text-[#F5F3EC]">Creator / Partner</div>
+                <div className="font-semibold text-[15px] text-[#F4F2EC]">Creator / Partner</div>
                 <div className="text-[12px] text-[#A1A1AA] mt-1 leading-normal">
                   Promote mobile apps, claim custom short links & QR codes, and earn bounties on verified installs.
                 </div>
@@ -123,7 +123,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 <div className="w-9 h-9 rounded-[10px] bg-[#388BFD] text-white flex items-center justify-center text-[18px] mb-3">
                   <i className="ti ti-device-mobile"></i>
                 </div>
-                <div className="font-semibold text-[15px] text-[#F5F3EC]">App Founder / Studio</div>
+                <div className="font-semibold text-[15px] text-[#F4F2EC]">App Founder / Studio</div>
                 <div className="text-[12px] text-[#A1A1AA] mt-1 leading-normal">
                   Launch campaigns, connect the RavenCore SDK, and acquire verified users with zero fraud risk.
                 </div>
@@ -150,11 +150,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <div className="text-[11px] font-mono tracking-wider uppercase text-[#388BFD]">
                 IDENTITY & SHORT LINKS
               </div>
-              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F4F2EC] mt-1 tracking-tight">
                 Claim your personal handle
               </h2>
               <p className="text-[13px] text-[#A1A1AA] mt-0.5 leading-relaxed">
-                Your username defines your vanity referral URLs e.g. <span className="text-[#C7F26B] font-mono">kred.link/app/{username || 'you'}</span>
+                Your username defines your vanity referral URLs e.g. <span className="text-[#C9B8FF] font-mono">kred.link/app/{username || 'you'}</span>
               </p>
             </div>
 
@@ -170,9 +170,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     value={username}
                     onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
                     placeholder="yourhandle"
-                    className="flex-1 bg-transparent text-[#F5F3EC] font-mono text-[13px] focus:outline-none"
+                    className="flex-1 bg-transparent text-[#F4F2EC] font-mono text-[13px] focus:outline-none"
                   />
-                  <i className="ti ti-circle-check text-[#C7F26B]"></i>
+                  <i className="ti ti-circle-check text-[#C9B8FF]"></i>
                 </div>
               </div>
 
@@ -188,7 +188,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       value={socials.tiktok}
                       onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
                       placeholder="@tiktok"
-                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                      className="w-full bg-transparent text-[#F4F2EC] focus:outline-none font-mono text-[11.5px]"
                     />
                   </div>
 
@@ -199,7 +199,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       value={socials.youtube}
                       onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
                       placeholder="YouTube channel"
-                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                      className="w-full bg-transparent text-[#F4F2EC] focus:outline-none font-mono text-[11.5px]"
                     />
                   </div>
 
@@ -210,7 +210,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       value={socials.twitter}
                       onChange={(e) => setSocials({ ...socials, twitter: e.target.value })}
                       placeholder="@twitter"
-                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                      className="w-full bg-transparent text-[#F4F2EC] focus:outline-none font-mono text-[11.5px]"
                     />
                   </div>
 
@@ -221,7 +221,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       value={socials.instagram}
                       onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
                       placeholder="@instagram"
-                      className="w-full bg-transparent text-[#F5F3EC] focus:outline-none font-mono text-[11.5px]"
+                      className="w-full bg-transparent text-[#F4F2EC] focus:outline-none font-mono text-[11.5px]"
                     />
                   </div>
                 </div>
@@ -252,10 +252,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {step === 2 && (
           <div className="space-y-4 animate-[fade-in_0.15s_ease-out]">
             <div>
-              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C7F26B]">
+              <div className="text-[11px] font-mono tracking-wider uppercase text-[#C9B8FF]">
                 TRANSPARENCY & SETTLEMENT
               </div>
-              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F5F3EC] mt-1 tracking-tight">
+              <h2 className="text-[22px] sm:text-[26px] font-semibold text-[#F4F2EC] mt-1 tracking-tight">
                 How attribution & payouts work
               </h2>
               <p className="text-[13px] text-[#A1A1AA] mt-0.5 leading-relaxed">
@@ -265,9 +265,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             <div className="space-y-2.5 pt-1">
               <div className="p-3 bg-[#18181C] border border-[#27272A] rounded-[14px] flex items-start gap-3">
-                <i className="ti ti-shield-lock text-[#C7F26B] text-[18px] shrink-0 mt-0.5"></i>
+                <i className="ti ti-shield-lock text-[#C9B8FF] text-[18px] shrink-0 mt-0.5"></i>
                 <div className="text-[12px] leading-relaxed">
-                  <span className="font-semibold text-[#F5F3EC] block">RavenCore Cryptographic Attestation</span>
+                  <span className="font-semibold text-[#F4F2EC] block">RavenCore Cryptographic Attestation</span>
                   Rejects emulators and farm clicks with hardware cryptographic tokens. Every install is guaranteed authentic.
                 </div>
               </div>
@@ -275,7 +275,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <div className="p-3 bg-[#18181C] border border-[#27272A] rounded-[14px] flex items-start gap-3">
                 <i className="ti ti-calendar-event text-[#388BFD] text-[18px] shrink-0 mt-0.5"></i>
                 <div className="text-[12px] leading-relaxed">
-                  <span className="font-semibold text-[#F5F3EC] block">Friday Settlement & Digital Receipts</span>
+                  <span className="font-semibold text-[#F4F2EC] block">Friday Settlement & Digital Receipts</span>
                   Earnings settle weekly every Friday at 17:00 UTC. Payouts arrive directly via Bank, Debit Card, PayPal, or USDC.
                 </div>
               </div>

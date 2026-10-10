@@ -30,8 +30,8 @@ export const TrackingQrCode: React.FC<TrackingQrCodeProps> = ({
         width: size,
         margin: 2, // Standard quiet zone for reliable mobile scanner recognition
         color: {
-          dark: '#0B0B0B',
-          light: '#F5F3EC',
+          dark: '#000000',
+          light: '#F4F2EC',
         },
         errorCorrectionLevel: 'M',
       },
@@ -66,7 +66,7 @@ export const TrackingQrCode: React.FC<TrackingQrCodeProps> = ({
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-4 bg-[#1C1C1C] rounded-[14px] text-center text-[12px] text-[#FF8A80]">
+      <div className="flex flex-col items-center justify-center p-4 bg-[#141414] rounded-[14px] text-center text-[12px] text-[#FF8A80]">
         <i className="ti ti-alert-circle text-[22px] mb-1"></i>
         <span>{error}</span>
       </div>
@@ -75,7 +75,7 @@ export const TrackingQrCode: React.FC<TrackingQrCodeProps> = ({
 
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className="p-2 bg-[#F5F3EC] rounded-[14px] shadow-sm shrink-0">
+      <div className="p-2 bg-[#F4F2EC] rounded-[14px] shadow-sm shrink-0">
         <canvas
           ref={canvasRef}
           width={size}
@@ -89,7 +89,7 @@ export const TrackingQrCode: React.FC<TrackingQrCodeProps> = ({
         <button
           type="button"
           onClick={handleDownload}
-          className="pill text-[12px] py-1.5 px-3 mt-2.5 text-[#B9B7AF] hover:text-[#F5F3EC] hover:bg-[#1C1C1C] transition-colors cursor-pointer"
+          className="pill text-[12px] py-1.5 px-3 mt-2.5 text-[#B8B6AE] hover:text-[#F4F2EC] hover:bg-[#141414] transition-colors cursor-pointer"
         >
           <i className="ti ti-download text-[14px]"></i>
           <span>{downloading ? 'Downloading…' : 'Download PNG'}</span>

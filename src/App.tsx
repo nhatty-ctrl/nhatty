@@ -308,10 +308,10 @@ export default function App() {
 
     if (isNowJoined) {
       setConfettiColors([
-        campaign.bg || '#C7F26B',
+        campaign.bg || '#C9B8FF',
         '#ffffff',
-        campaign.fg || '#16140F',
-        '#C7F26B',
+        campaign.fg || '#000000',
+        '#C9B8FF',
       ]);
 
       if (targetEl) {
@@ -399,7 +399,7 @@ export default function App() {
     : null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0B0B] text-[#F5F3EC] relative overflow-x-hidden selection:bg-[#C7F26B]/30 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#000000] text-[#F4F2EC] relative overflow-x-hidden selection:bg-[#C9B8FF]/30 selection:text-white">
       {/* Edge-to-Edge Topbar: spans corner-to-corner */}
       <Header
         currentTab={currentTab}
@@ -466,6 +466,7 @@ export default function App() {
           <CampaignAnalyticsView
             campaigns={campaigns}
             initialCampaignId={activeAnalyticsId}
+            initialRole={userRole === 'founder' ? 'founder' : 'creator'}
             onNavigateCampaign={handleNavigateDetail}
             onBack={() => handleNavigateTab('profile')}
             onCreateCampaign={() => handleNavigateTab('create')}
@@ -554,59 +555,59 @@ export default function App() {
 
       {/* Mobile Bottom Tab Bar with Role-Aware Destinations (Finding 10 & 18) */}
       <nav
-        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0E0E0E]/95 backdrop-blur-md border-t border-[#2A2A2A] px-2 py-1.5 flex items-center justify-around select-none"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0E0E0E]/95 backdrop-blur-md border-t border-[#222222] px-3 py-1.5 flex items-center justify-around select-none"
         aria-label="Mobile Navigation"
       >
         <button
           onClick={() => handleNavigateTab('campaigns')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-            currentTab === 'campaigns' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          className={`flex flex-col items-center gap-1 py-1 px-3.5 rounded-full border-0 cursor-pointer min-h-[44px] justify-center transition-all ${
+            currentTab === 'campaigns' ? 'bg-[#141414] text-[#F4F2EC] font-semibold' : 'bg-transparent text-[#9C9A92]'
           }`}
         >
           <i className="ti ti-speakerphone text-[18px]"></i>
-          <span className="text-[10px] font-medium">Campaigns</span>
+          <span className="text-[10px]">Campaigns</span>
         </button>
 
         <button
           onClick={() => handleNavigateTab('discover')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-            currentTab === 'discover' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          className={`flex flex-col items-center gap-1 py-1 px-3.5 rounded-full border-0 cursor-pointer min-h-[44px] justify-center transition-all ${
+            currentTab === 'discover' ? 'bg-[#141414] text-[#F4F2EC] font-semibold' : 'bg-transparent text-[#9C9A92]'
           }`}
         >
           <i className="ti ti-compass text-[18px]"></i>
-          <span className="text-[10px] font-medium">Discover</span>
+          <span className="text-[10px]">Discover</span>
         </button>
 
         {userRole === 'creator' ? (
           <button
             onClick={() => handleNavigateTab('earnings')}
-            className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-              currentTab === 'earnings' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+            className={`flex flex-col items-center gap-1 py-1 px-3.5 rounded-full border-0 cursor-pointer min-h-[44px] justify-center transition-all ${
+              currentTab === 'earnings' ? 'bg-[#141414] text-[#F4F2EC] font-semibold' : 'bg-transparent text-[#9C9A92]'
             }`}
           >
             <i className="ti ti-coin text-[18px]"></i>
-            <span className="text-[10px] font-medium">Earnings</span>
+            <span className="text-[10px]">Earnings</span>
           </button>
         ) : (
           <button
             onClick={() => handleNavigateTab('create')}
-            className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-              currentTab === 'create' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+            className={`flex flex-col items-center gap-1 py-1 px-3.5 rounded-full border-0 cursor-pointer min-h-[44px] justify-center transition-all ${
+              currentTab === 'create' ? 'bg-[#C9B8FF] text-[#000000] font-semibold shadow-xs' : 'bg-transparent text-[#9C9A92]'
             }`}
           >
             <i className="ti ti-plus text-[18px]"></i>
-            <span className="text-[10px] font-medium">Create</span>
+            <span className="text-[10px]">Create</span>
           </button>
         )}
 
         <button
           onClick={() => handleNavigateTab('profile')}
-          className={`flex flex-col items-center gap-1 py-1 px-3 border-0 bg-transparent cursor-pointer min-h-[44px] justify-center ${
-            currentTab === 'profile' ? 'text-[#F5F3EC]' : 'text-[#9A9892]'
+          className={`flex flex-col items-center gap-1 py-1 px-3.5 rounded-full border-0 cursor-pointer min-h-[44px] justify-center transition-all ${
+            currentTab === 'profile' ? 'bg-[#141414] text-[#F4F2EC] font-semibold' : 'bg-transparent text-[#9C9A92]'
           }`}
         >
           <i className="ti ti-user text-[18px]"></i>
-          <span className="text-[10px] font-medium">Profile</span>
+          <span className="text-[10px]">Profile</span>
         </button>
       </nav>
 

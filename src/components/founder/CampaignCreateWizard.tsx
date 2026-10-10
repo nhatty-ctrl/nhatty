@@ -62,15 +62,15 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#262626]">
           <div>
-            <h2 className="text-[17px] font-semibold text-[#F5F3EC]">Create Performance Campaign</h2>
-            <p className="text-[12.5px] text-[#A8A69E] mt-0.5">
+            <h2 className="text-[17px] font-semibold text-[#F4F2EC]">Create Performance Campaign</h2>
+            <p className="text-[12.5px] text-[#9C9A92] mt-0.5">
               Convex-managed campaign with automated iOS source confirmation & escrow
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-[#1F1F1F] hover:bg-[#2A2A2A] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center transition-colors border-0 cursor-pointer"
+            className="w-8 h-8 rounded-lg bg-[#1F1F1F] hover:bg-[#222222] text-[#9C9A92] hover:text-[#F4F2EC] flex items-center justify-center transition-colors border-0 cursor-pointer"
           >
             <i className="ti ti-x text-[16px]"></i>
           </button>
@@ -80,7 +80,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-1">
           {/* Step 1: Select App */}
           <div>
-            <label className="block text-[12px] font-medium text-[#A8A69E] mb-2 uppercase tracking-wider">
+            <label className="block text-[12px] font-medium text-[#9C9A92] mb-2 uppercase tracking-wider">
               1. Choose Registered iOS App
             </label>
             <div className="grid grid-cols-2 gap-2.5">
@@ -94,16 +94,16 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
                   }}
                   className={`p-3 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
                     selectedAppId === app.id
-                      ? 'bg-[#1C1C1C] border-[#C7F26B] ring-1 ring-[#C7F26B]/30'
-                      : 'bg-[#181818] border-[#2A2A2A] hover:border-[#383838]'
+                      ? 'bg-[#141414] border-[#C9B8FF] ring-1 ring-[#C9B8FF]/30'
+                      : 'bg-[#181818] border-[#222222] hover:border-[#383838]'
                   }`}
                 >
-                  <div className="w-9 h-9 rounded-lg bg-[#2A2A2A] flex items-center justify-center text-[18px] text-[#C7F26B] shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-[#222222] flex items-center justify-center text-[18px] text-[#C9B8FF] shrink-0">
                     <i className={`ti ${app.icon}`}></i>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[13.5px] font-medium text-[#F5F3EC] truncate">{app.name}</div>
-                    <div className="text-[11px] text-[#A8A69E] truncate font-mono">{app.bundleId}</div>
+                    <div className="text-[13.5px] font-medium text-[#F4F2EC] truncate">{app.name}</div>
+                    <div className="text-[11px] text-[#9C9A92] truncate font-mono">{app.bundleId}</div>
                   </div>
                 </button>
               ))}
@@ -112,7 +112,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
 
           {/* Campaign Title */}
           <div>
-            <label className="block text-[12px] font-medium text-[#A8A69E] mb-1.5 uppercase tracking-wider">
+            <label className="block text-[12px] font-medium text-[#9C9A92] mb-1.5 uppercase tracking-wider">
               2. Campaign Name
             </label>
             <input
@@ -121,13 +121,13 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Pixel Pop Level 3 Acquisition"
               required
-              className="w-full h-11 px-3.5 bg-[#1C1C1C] border border-[#2A2A2A] focus:border-[#C7F26B] rounded-xl text-[14px] text-[#F5F3EC] placeholder-[#555] outline-none transition-colors"
+              className="w-full h-11 px-3.5 bg-[#141414] border border-[#222222] focus:border-[#C9B8FF] rounded-xl text-[14px] text-[#F4F2EC] placeholder-[#555] outline-none transition-colors"
             />
           </div>
 
           {/* Qualifying Event */}
           <div>
-            <label className="block text-[12px] font-medium text-[#A8A69E] mb-1.5 uppercase tracking-wider">
+            <label className="block text-[12px] font-medium text-[#9C9A92] mb-1.5 uppercase tracking-wider">
               3. Required Qualifying Event (SDK Milestone)
             </label>
             <div className="space-y-2">
@@ -145,7 +145,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
                     setQualifyingEventLabel('Start Monthly Subscription (RevenueCat)');
                   }
                 }}
-                className="w-full h-11 px-3.5 bg-[#1C1C1C] border border-[#2A2A2A] focus:border-[#C7F26B] rounded-xl text-[13.5px] text-[#F5F3EC] outline-none transition-colors cursor-pointer"
+                className="w-full h-11 px-3.5 bg-[#141414] border border-[#222222] focus:border-[#C9B8FF] rounded-xl text-[13.5px] text-[#F4F2EC] outline-none transition-colors cursor-pointer"
               >
                 <option value="level_3_completed">level_3_completed (Games: Anti-Bot Level Progress)</option>
                 <option value="first_1000_steps_logged">first_1000_steps_logged (Health: HealthKit Sync)</option>
@@ -159,7 +159,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
                 value={qualifyingEventLabel}
                 onChange={(e) => setQualifyingEventLabel(e.target.value)}
                 placeholder="Human-readable instructions for creators"
-                className="w-full h-10 px-3.5 bg-[#181818] border border-[#2A2A2A] rounded-lg text-[13px] text-[#B9B7AF] outline-none focus:border-[#555]"
+                className="w-full h-10 px-3.5 bg-[#181818] border border-[#222222] rounded-lg text-[13px] text-[#B8B6AE] outline-none focus:border-[#555]"
               />
             </div>
             <p className="text-[11.5px] text-[#777] mt-1.5">
@@ -170,7 +170,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
           {/* Reward & Hold Period */}
           <div className="grid grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-[12px] font-medium text-[#A8A69E] mb-1.5 uppercase tracking-wider">
+              <label className="block text-[12px] font-medium text-[#9C9A92] mb-1.5 uppercase tracking-wider">
                 Reward per Install (USD)
               </label>
               <div className="relative">
@@ -181,19 +181,19 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
                   min="0.50"
                   value={rewardDollars}
                   onChange={(e) => setRewardDollars(e.target.value)}
-                  className="w-full h-11 pl-8 pr-3.5 bg-[#1C1C1C] border border-[#2A2A2A] focus:border-[#C7F26B] rounded-xl text-[14px] font-mono text-[#F5F3EC] outline-none"
+                  className="w-full h-11 pl-8 pr-3.5 bg-[#141414] border border-[#222222] focus:border-[#C9B8FF] rounded-xl text-[14px] font-mono text-[#F4F2EC] outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[12px] font-medium text-[#A8A69E] mb-1.5 uppercase tracking-wider">
+              <label className="block text-[12px] font-medium text-[#9C9A92] mb-1.5 uppercase tracking-wider">
                 Safety Hold Period
               </label>
               <select
                 value={holdDays}
                 onChange={(e) => setHoldDays(parseInt(e.target.value, 10))}
-                className="w-full h-11 px-3 bg-[#1C1C1C] border border-[#2A2A2A] focus:border-[#C7F26B] rounded-xl text-[13.5px] text-[#F5F3EC] outline-none cursor-pointer"
+                className="w-full h-11 px-3 bg-[#141414] border border-[#222222] focus:border-[#C9B8FF] rounded-xl text-[13.5px] text-[#F4F2EC] outline-none cursor-pointer"
               >
                 <option value={7}>7 Days (Standard hold)</option>
                 <option value={14}>14 Days (Recommended for trials)</option>
@@ -204,7 +204,7 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
 
           {/* Budget & Escrow Funding */}
           <div>
-            <label className="block text-[12px] font-medium text-[#A8A69E] mb-1.5 uppercase tracking-wider">
+            <label className="block text-[12px] font-medium text-[#9C9A92] mb-1.5 uppercase tracking-wider">
               Total Campaign Escrow Budget (USD)
             </label>
             <div className="relative">
@@ -215,20 +215,20 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
                 min="500"
                 value={budgetDollars}
                 onChange={(e) => setBudgetDollars(e.target.value)}
-                className="w-full h-11 pl-8 pr-3.5 bg-[#1C1C1C] border border-[#2A2A2A] focus:border-[#C7F26B] rounded-xl text-[14px] font-mono text-[#F5F3EC] outline-none"
+                className="w-full h-11 pl-8 pr-3.5 bg-[#141414] border border-[#222222] focus:border-[#C9B8FF] rounded-xl text-[14px] font-mono text-[#F4F2EC] outline-none"
               />
             </div>
-            <div className="flex items-center justify-between text-[12px] text-[#A8A69E] mt-2 px-1">
+            <div className="flex items-center justify-between text-[12px] text-[#9C9A92] mt-2 px-1">
               <span>Estimated target verified installs:</span>
-              <span className="font-mono text-[#C7F26B] font-medium">~{estimatedInstalls.toLocaleString()} installs</span>
+              <span className="font-mono text-[#C9B8FF] font-medium">~{estimatedInstalls.toLocaleString()} installs</span>
             </div>
           </div>
 
           {/* Whop Escrow Booking Notice */}
-          <div className="p-3.5 rounded-xl bg-[#1A1A1A] border border-[#2A2A2A] flex items-start gap-3">
-            <i className="ti ti-shield-check text-[18px] text-[#C7F26B] shrink-0 mt-0.5"></i>
-            <div className="text-[12px] text-[#B9B7AF] leading-relaxed">
-              <span className="text-[#F5F3EC] font-medium">Umi Double-Entry Escrow:</span> Upon publishing, funds are reserved in your dedicated campaign account (<span className="font-mono text-[11px] text-[#C7F26B]">founder_escrow</span>). Rewards are atomically committed as creators verify genuine users.
+          <div className="p-3.5 rounded-xl bg-[#1A1A1A] border border-[#222222] flex items-start gap-3">
+            <i className="ti ti-shield-check text-[18px] text-[#C9B8FF] shrink-0 mt-0.5"></i>
+            <div className="text-[12px] text-[#B8B6AE] leading-relaxed">
+              <span className="text-[#F4F2EC] font-medium">Umi Double-Entry Escrow:</span> Upon publishing, funds are reserved in your dedicated campaign account (<span className="font-mono text-[11px] text-[#C9B8FF]">founder_escrow</span>). Rewards are atomically committed as creators verify genuine users.
             </div>
           </div>
 
@@ -237,14 +237,14 @@ export const CampaignCreateWizard: React.FC<CampaignCreateWizardProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-transparent hover:bg-[#222] text-[#A8A69E] hover:text-[#F5F3EC] text-[13px] font-medium transition-colors border-0 cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-transparent hover:bg-[#222] text-[#9C9A92] hover:text-[#F4F2EC] text-[13px] font-medium transition-colors border-0 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="px-6 py-2.5 rounded-xl bg-[#C7F26B] hover:bg-[#bbf055] text-[#0B0B0B] text-[13px] font-semibold transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-[#C9B8FF] hover:bg-[#bbf055] text-[#000000] text-[13px] font-semibold transition-all shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? (
                 <span>Publishing...</span>

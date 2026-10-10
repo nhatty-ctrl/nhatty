@@ -156,7 +156,7 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
       <div>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-1">
           <div>
-            <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC]">
+            <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
               Payout methods
             </h1>
             <p className="text-[13px] text-[#9A9892] mt-1">
@@ -176,13 +176,13 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
       </div>
 
       {/* Available Balance & Settlement Schedule Banner */}
-      <div className="bg-[#161616] rounded-[20px] p-5 border border-[#2A2A2A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[#0E0E0E] rounded-[20px] p-5 border border-[#222222] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="sub text-[12px]">Available balance</div>
-          <div className="text-[32px] font-medium tracking-[-0.6px] text-[#F5F3EC] mt-0.5">
+          <div className="text-[32px] font-medium tracking-[-0.6px] text-[#F4F2EC] mt-0.5">
             ${availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
-          <div className="text-[12px] text-[#C7F26B] flex items-center gap-1.5 mt-1 font-medium">
+          <div className="text-[12px] text-[#C9B8FF] flex items-center gap-1.5 mt-1 font-medium">
             <i className="ti ti-calendar" aria-hidden="true"></i>
             <span>Settles every Friday at 17:00 UTC</span>
           </div>
@@ -208,9 +208,9 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
       {isAddingNew && (
         <form
           onSubmit={handleAddNewMethod}
-          className="card border border-[#F5F3EC]/20 space-y-4 animate-[fade-in_0.2s_ease-out]"
+          className="card border border-[#F4F2EC]/20 space-y-4 animate-[fade-in_0.2s_ease-out]"
         >
-          <div className="text-[16px] font-medium text-[#F5F3EC]">Add new payout method</div>
+          <div className="text-[16px] font-medium text-[#F4F2EC]">Add new payout method</div>
 
           {/* Type Selector */}
           <div className="flex gap-2">
@@ -227,7 +227,7 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
                   setFormError('');
                 }}
                 className={`pill flex-1 justify-center min-h-[44px] ${
-                  addType === t.id ? 'on' : 'bg-[#1C1C1C] text-[#B9B7AF]'
+                  addType === t.id ? 'on' : 'bg-[#141414] text-[#B8B6AE]'
                 }`}
               >
                 <i className={`ti ${t.icon}`} aria-hidden="true"></i>
@@ -350,13 +350,13 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
 
       {/* Methods List */}
       <div className="space-y-3">
-        <div className="text-[15px] font-medium text-[#F5F3EC]">Saved payout methods</div>
+        <div className="text-[15px] font-medium text-[#F4F2EC]">Saved payout methods</div>
 
         {methods.map((method) => (
           <div
             key={method.id}
             className={`card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border transition-all ${
-              method.isDefault ? 'border-[#C7F26B]/50 bg-[#181818]' : 'border-transparent'
+              method.isDefault ? 'border-[#C9B8FF]/50 bg-[#181818]' : 'border-transparent'
             }`}
           >
             {/* Left Info */}
@@ -382,24 +382,24 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[15px] font-medium text-[#F5F3EC]">
+                  <span className="text-[15px] font-medium text-[#F4F2EC]">
                     {method.title}
                   </span>
                   {method.isDefault && (
-                    <span className="chip text-[11px] py-0.5 px-2 bg-[#C7F26B] text-[#16140F] font-semibold flex items-center gap-1">
+                    <span className="chip text-[11px] py-0.5 px-2 bg-[#C9B8FF] text-[#000000] font-semibold flex items-center gap-1">
                       <i className="ti ti-check" aria-hidden="true"></i>
                       <span>Default</span>
                     </span>
                   )}
                   {method.verified && (
-                    <span className="chip text-[11px] py-0.5 px-2 bg-[#1C1C1C] text-[#C7F26B] flex items-center gap-1">
+                    <span className="chip text-[11px] py-0.5 px-2 bg-[#141414] text-[#C9B8FF] flex items-center gap-1">
                       <i className="ti ti-circle-check" aria-hidden="true"></i>
                       <span>Verified</span>
                     </span>
                   )}
                 </div>
 
-                <div className="text-[13px] text-[#B9B7AF] mt-0.5">{method.subtitle}</div>
+                <div className="text-[13px] text-[#B8B6AE] mt-0.5">{method.subtitle}</div>
                 <div className="text-[12px] text-[#9A9892] mt-0.5">{method.details}</div>
               </div>
             </div>
@@ -433,18 +433,18 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
 
       {/* Rules Notice */}
       <div className="card space-y-2 text-[13px] text-[#9A9892]">
-        <div className="text-[14px] font-medium text-[#F5F3EC]">Settlement terms and rules</div>
+        <div className="text-[14px] font-medium text-[#F4F2EC]">Settlement terms and rules</div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          <div className="p-3 bg-[#1C1C1C] rounded-[14px]">
-            <div className="font-medium text-[#F5F3EC]">Minimum payout</div>
+          <div className="p-3 bg-[#141414] rounded-[14px]">
+            <div className="font-medium text-[#F4F2EC]">Minimum payout</div>
             <div className="mt-1">$20.00 required before automatic weekly release.</div>
           </div>
-          <div className="p-3 bg-[#1C1C1C] rounded-[14px]">
-            <div className="font-medium text-[#F5F3EC]">Verification window</div>
+          <div className="p-3 bg-[#141414] rounded-[14px]">
+            <div className="font-medium text-[#F4F2EC]">Verification window</div>
             <div className="mt-1">14 days per install before transitioning to awaiting payout.</div>
           </div>
-          <div className="p-3 bg-[#1C1C1C] rounded-[14px]">
-            <div className="font-medium text-[#F5F3EC]">Schedule</div>
+          <div className="p-3 bg-[#141414] rounded-[14px]">
+            <div className="font-medium text-[#F4F2EC]">Schedule</div>
             <div className="mt-1">Every Friday at 17:00 UTC directly to your default method.</div>
           </div>
         </div>
@@ -453,8 +453,8 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
       {/* Delete Confirmation Modal */}
       {confirmDeleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
-          <div className="card w-full max-w-[380px] bg-[#161616] border border-[#2A2A2A] rounded-[20px] p-5 space-y-3">
-            <div className="text-[16px] font-medium text-[#F5F3EC]">Remove payout method?</div>
+          <div className="card w-full max-w-[380px] bg-[#0E0E0E] border border-[#222222] rounded-[20px] p-5 space-y-3">
+            <div className="text-[16px] font-medium text-[#F4F2EC]">Remove payout method?</div>
             <div className="text-[13px] text-[#9A9892]">
               Weekly settlements will route to your remaining default method.
             </div>
@@ -469,7 +469,7 @@ export const PayoutMethodsView: React.FC<PayoutMethodsViewProps> = ({
               <button
                 type="button"
                 onClick={() => handleDeleteMethod(confirmDeleteId)}
-                className="pill on min-h-[44px] px-4 cursor-pointer bg-[#FF8A80]! text-[#16140F]!"
+                className="pill on min-h-[44px] px-4 cursor-pointer bg-[#FF8A80]! text-[#000000]!"
               >
                 Remove
               </button>

@@ -47,13 +47,13 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-[12.5px] text-[#A8A69E] hover:text-[#F5F3EC] mb-1.5 bg-transparent border-0 cursor-pointer transition-colors"
+            className="inline-flex items-center gap-1.5 text-[12.5px] text-[#9C9A92] hover:text-[#F4F2EC] mb-1.5 bg-transparent border-0 cursor-pointer transition-colors"
           >
             <i className="ti ti-arrow-left"></i>
             <span>Back to Dashboard</span>
           </button>
-          <h1 className="text-[20px] font-semibold text-[#F5F3EC]">Creator Wallet & Whop Payouts</h1>
-          <p className="text-[13px] text-[#A8A69E] mt-0.5">
+          <h1 className="text-[20px] font-semibold text-[#F4F2EC]">Creator Wallet & Whop Payouts</h1>
+          <p className="text-[13px] text-[#9C9A92] mt-0.5">
             Transparent double-entry ledger settlement via Whop Banking
           </p>
         </div>
@@ -63,7 +63,7 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
           type="button"
           onClick={handleWithdraw}
           disabled={isProcessing || availableDollars < 20}
-          className="px-5 py-2.5 rounded-xl bg-[#C7F26B] hover:bg-[#baf055] text-[#0B0B0B] text-[13px] font-semibold transition-all shadow-sm cursor-pointer border-0 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 rounded-xl bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] text-[13px] font-semibold transition-all shadow-sm cursor-pointer border-0 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <i className="ti ti-wallet text-[15px]"></i>
           <span>{isProcessing ? 'Processing...' : `Withdraw $${availableDollars.toFixed(2)}`}</span>
@@ -77,11 +77,41 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
         </div>
       )}
 
+      {/* Next Settlement Batch Banner & 0% Fee Guarantee */}
+      <div className="p-4 bg-[#141414] rounded-2xl border border-[#262626] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#C9B8FF]/15 text-[#C9B8FF] flex items-center justify-center text-[18px] shrink-0">
+            <i className="ti ti-calendar-event"></i>
+          </div>
+          <div>
+            <div className="text-[14px] font-semibold text-[#F4F2EC]">
+              Next Weekly Batch: <span className="text-[#C9B8FF]">Friday, Oct 16 at 17:00 UTC</span>
+            </div>
+            <div className="text-[12px] text-[#9C9A92] mt-0.5">
+              Available balance ≥ $20.00 transfers automatically. 0% fee deducted (you keep 100% of your earnings).
+            </div>
+          </div>
+        </div>
+
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#181818] border border-[#303030] text-[11.5px] text-[#C0DD97] shrink-0 self-start sm:self-auto font-medium">
+          <i className="ti ti-lock text-[12px]"></i>
+          <span>100% Prefunded Escrow</span>
+        </div>
+      </div>
+
+      {/* Regulatory & FTC Earnings Claim Notice */}
+      <div className="p-3 bg-[#111113] rounded-xl border border-[#222222] flex items-start gap-2.5 text-[11.5px] text-[#9C9A92] leading-relaxed">
+        <i className="ti ti-info-circle text-[15px] text-[#FAC775] shrink-0 mt-0.5"></i>
+        <span>
+          <b className="text-[#F4F2EC]">FTC Notice on Telemetry Projections:</b> In-app live earnings and projected campaign milestones are estimates based on incoming device telemetry. Final payouts require RavenCore SDK cryptographic hardware attestation and completion of the safety hold.
+        </span>
+      </div>
+
       {/* Balance Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626]">
-          <div className="text-[12px] text-[#A8A69E] mb-1">Available for Withdrawal</div>
-          <div className="text-[26px] font-mono font-bold text-[#C7F26B]">
+          <div className="text-[12px] text-[#9C9A92] mb-1">Available for Withdrawal</div>
+          <div className="text-[26px] font-mono font-bold text-[#C9B8FF]">
             ${availableDollars.toFixed(2)}
           </div>
           <div className="text-[11.5px] text-[#777] mt-1.5">
@@ -90,8 +120,8 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
         </div>
 
         <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626]">
-          <div className="text-[12px] text-[#A8A69E] mb-1">In Active Safety Holds</div>
-          <div className="text-[26px] font-mono font-bold text-[#F5F3EC]">
+          <div className="text-[12px] text-[#9C9A92] mb-1">In Active Safety Holds</div>
+          <div className="text-[26px] font-mono font-bold text-[#F4F2EC]">
             ${pendingDollars.toFixed(2)}
           </div>
           <div className="text-[11.5px] text-[#777] mt-1.5">
@@ -100,8 +130,8 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
         </div>
 
         <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626]">
-          <div className="text-[12px] text-[#A8A69E] mb-1">Total Payouts Settled</div>
-          <div className="text-[26px] font-mono font-bold text-[#F5F3EC]">
+          <div className="text-[12px] text-[#9C9A92] mb-1">Total Payouts Settled</div>
+          <div className="text-[26px] font-mono font-bold text-[#F4F2EC]">
             ${(payouts.reduce((sum, p) => sum + (p.status === 'settled' ? p.amountMinor : 0), 0) / 100).toFixed(2)}
           </div>
           <div className="text-[11.5px] text-[#777] mt-1.5">
@@ -113,17 +143,17 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
       {/* Whop Payout Destination Card */}
       <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-[#202020] text-[#C7F26B] flex items-center justify-center text-[22px] shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-[#202020] text-[#C9B8FF] flex items-center justify-center text-[22px] shrink-0">
             <i className="ti ti-building-bank"></i>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[15px] font-medium text-[#F5F3EC]">Chase Premier Checking (••4821)</span>
+              <span className="text-[15px] font-medium text-[#F4F2EC]">Chase Premier Checking (••4821)</span>
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                 Whop Verified
               </span>
             </div>
-            <div className="text-[12px] text-[#A8A69E] mt-0.5">
+            <div className="text-[12px] text-[#9C9A92] mt-0.5">
               ACH Direct Deposit · Daily transfers settle by 5:00 PM EST
             </div>
           </div>
@@ -131,7 +161,7 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
 
         <button
           type="button"
-          className="px-3.5 py-1.5 rounded-lg bg-[#202020] hover:bg-[#2A2A2A] text-[#F5F3EC] text-[12px] font-medium transition-colors border border-[#333] cursor-pointer"
+          className="px-3.5 py-1.5 rounded-lg bg-[#202020] hover:bg-[#222222] text-[#F4F2EC] text-[12px] font-medium transition-colors border border-[#333] cursor-pointer"
         >
           Manage in Whop
         </button>
@@ -139,7 +169,7 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
 
       {/* Payout History Table */}
       <div className="bg-[#141414] border border-[#262626] rounded-2xl p-5">
-        <h3 className="text-[15px] font-semibold text-[#F5F3EC] mb-3">Payout Transfer History</h3>
+        <h3 className="text-[15px] font-semibold text-[#F4F2EC] mb-3">Payout Transfer History</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[13px]">
             <thead>
@@ -155,14 +185,14 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
             <tbody className="divide-y divide-[#202020]">
               {payouts.map((p) => (
                 <tr key={p.id} className="hover:bg-[#181818]/60 transition-colors">
-                  <td className="py-3 font-mono text-[12px] text-[#F5F3EC]">
+                  <td className="py-3 font-mono text-[12px] text-[#F4F2EC]">
                     {p.providerPayoutId || p.id}
                   </td>
-                  <td className="py-3 capitalize text-[#A8A69E] flex items-center gap-1.5">
-                    <i className="ti ti-brand-stripe text-[14px] text-[#C7F26B]"></i>
+                  <td className="py-3 capitalize text-[#9C9A92] flex items-center gap-1.5">
+                    <i className="ti ti-brand-stripe text-[14px] text-[#C9B8FF]"></i>
                     <span>{p.provider}</span>
                   </td>
-                  <td className="py-3 text-[#A8A69E]">Chase Checking (••4821)</td>
+                  <td className="py-3 text-[#9C9A92]">Chase Checking (••4821)</td>
                   <td className="py-3 font-mono text-[12px] text-[#777]">
                     {new Date(p.submittedAt).toLocaleDateString()}
                   </td>
@@ -175,7 +205,7 @@ export const CreatorWalletView: React.FC<CreatorWalletViewProps> = ({
                       {p.status === 'settled' ? 'Settled' : 'In Transit'}
                     </span>
                   </td>
-                  <td className="py-3 font-mono text-right font-medium text-[#F5F3EC]">
+                  <td className="py-3 font-mono text-right font-medium text-[#F4F2EC]">
                     ${(p.amountMinor / 100).toFixed(2)}
                   </td>
                 </tr>

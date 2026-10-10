@@ -20,17 +20,17 @@ export const HelpSupportModal: React.FC<HelpSupportModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[18px] font-medium text-[#F5F3EC]">Help and support</div>
+            <div className="text-[18px] font-medium text-[#F4F2EC]">Help and support</div>
             <div className="sub mt-0.5">Answers to common questions about attribution and payouts.</div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -39,22 +39,22 @@ export const HelpSupportModal: React.FC<HelpSupportModalProps> = ({
 
         {/* FAQs */}
         <div className="space-y-3 pt-1 text-[13px]">
-          <div className="p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40 space-y-1">
-            <div className="font-medium text-[#F5F3EC]">How are installs verified?</div>
+          <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40 space-y-1">
+            <div className="font-medium text-[#F4F2EC]">How are installs verified?</div>
             <div className="text-[#9A9892] leading-relaxed">
               When a user opens the app through your link, the lightweight SDK verifies the device hardware and country origin over a 14-day attribution window.
             </div>
           </div>
 
-          <div className="p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40 space-y-1">
-            <div className="font-medium text-[#F5F3EC]">When do creator settlements pay out?</div>
+          <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40 space-y-1">
+            <div className="font-medium text-[#F4F2EC]">When do creator settlements pay out?</div>
             <div className="text-[#9A9892] leading-relaxed">
               Settlements occur weekly on Fridays at 17:00 UTC for all installs that have finished their 14-day hold, provided the $20 minimum balance is met.
             </div>
           </div>
 
-          <div className="p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40 space-y-1">
-            <div className="font-medium text-[#F5F3EC]">Have an attribution issue?</div>
+          <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40 space-y-1">
+            <div className="font-medium text-[#F4F2EC]">Have an attribution issue?</div>
             <div className="text-[#9A9892] leading-relaxed">
               Creators can contest rejected installs and founders can flag invalid traffic.
             </div>

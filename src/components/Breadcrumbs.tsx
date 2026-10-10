@@ -27,17 +27,17 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
 
             {isLast || !item.onClick ? (
               <span
-                className="flex items-center gap-1.5 font-medium text-[#F5F3EC] px-1 py-0.5"
+                className="flex items-center gap-1.5 font-medium text-[#F4F2EC] px-1 py-0.5"
                 aria-current={isLast ? 'page' : undefined}
               >
-                {item.icon && <i className={`ti ${item.icon} text-[13px] text-[#C7F26B]`} aria-hidden="true"></i>}
+                {item.icon && <i className={`ti ${item.icon} text-[13px] text-[#C9B8FF]`} aria-hidden="true"></i>}
                 <span>{item.label}</span>
               </span>
             ) : (
               <button
                 type="button"
                 onClick={item.onClick}
-                className="flex items-center gap-1.5 text-[#9A9892] hover:text-[#F5F3EC] hover:bg-[#1C1C1C] rounded-[6px] px-1.5 py-0.5 border-0 bg-transparent cursor-pointer transition-colors"
+                className="flex items-center gap-1.5 text-[#9A9892] hover:text-[#F4F2EC] hover:bg-[#141414] rounded-[6px] px-1.5 py-0.5 border-0 bg-transparent cursor-pointer transition-colors"
               >
                 {item.icon && <i className={`ti ${item.icon} text-[13px] text-[#9A9892]`} aria-hidden="true"></i>}
                 <span>{item.label}</span>

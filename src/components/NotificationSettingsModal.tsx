@@ -56,19 +56,19 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[18px] font-medium text-[#F5F3EC]">Notification settings</div>
+            <div className="text-[18px] font-medium text-[#F4F2EC]">Notification settings</div>
             <div className="sub mt-0.5">
               Customize alerts for your {isFounder ? 'founder' : 'creator'} workspace.
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -82,10 +82,10 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             return (
               <div
                 key={item.k}
-                className="flex items-center justify-between gap-3 p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40"
+                className="flex items-center justify-between gap-3 p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40"
               >
                 <div className="flex-1 min-w-0 pr-2">
-                  <div className="text-[14px] font-medium text-[#F5F3EC]">{item.title}</div>
+                  <div className="text-[14px] font-medium text-[#F4F2EC]">{item.title}</div>
                   <div className="text-[12px] text-[#9A9892] mt-0.5 leading-snug">{item.desc}</div>
                 </div>
                 <button

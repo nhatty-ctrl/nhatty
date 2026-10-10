@@ -100,6 +100,18 @@ export interface Campaign {
   sdkKey?: string;
   escrowSettled?: number;
   escrowBalance?: number;
+  prefundedEscrow?: boolean;
+  maxVideosPerCreator?: number;
+  maxPayoutPerCreator?: number;
+  dailyBudgetCap?: number;
+  budgetRemaining?: number;
+  pacingPercentage?: number;
+  isManagedLaunch?: boolean;
+  bonusTier?: { count: number; bonusAmount: number; label: string };
+  signedAgreementUrl?: string;
+  ftcCompliancePledge?: boolean;
+  founderPlan?: 'starter' | 'scale' | 'managed';
+  escrowVaultAddress?: string;
 }
 
 export interface CampaignStats {

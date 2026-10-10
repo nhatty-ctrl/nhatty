@@ -46,7 +46,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute -top-11 right-0 w-8 h-8 rounded-full bg-[#1C1C1F] hover:bg-[#27272A] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border border-[#2A2A2A] cursor-pointer transition-colors z-20"
+          className="absolute -top-11 right-0 w-8 h-8 rounded-full bg-[#1C1C1F] hover:bg-[#27272A] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border border-[#222222] cursor-pointer transition-colors z-20"
           aria-label="Close receipt"
         >
           <i className="ti ti-x text-[14px]"></i>
@@ -205,7 +205,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           <button
             type="button"
             onClick={handlePrint}
-            className="pill flex-1 justify-center bg-[#1C1C1F] hover:bg-[#27272A] text-[#F5F3EC] py-2 text-[12.5px] cursor-pointer"
+            className="pill flex-1 justify-center bg-[#1C1C1F] hover:bg-[#27272A] text-[#F4F2EC] py-2 text-[12.5px] cursor-pointer"
           >
             <i className="ti ti-printer text-[14px]"></i>
             <span>Print receipt</span>

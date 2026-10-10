@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const AVATAR_COLORS = [
-  '#C7F26B', // Lime
+  '#C9B8FF', // Lime
   '#7FB2FF', // Blue
   '#FF8A65', // Coral
   '#C4A6FF', // Purple
@@ -20,7 +20,7 @@ export interface AvatarPersona {
   renderFeatures: (d: string) => React.ReactNode;
 }
 
-const D = '#16140F';
+const D = '#000000';
 
 export const AVATAR_PERSONAS: AvatarPersona[] = [
   // Founders
@@ -186,7 +186,7 @@ export const AVATAR_PERSONAS: AvatarPersona[] = [
   },
 ];
 
-export const DEFAULT_AVATAR_PALETTE = AVATAR_COLORS[0]; // Lime '#C7F26B'
+export const DEFAULT_AVATAR_PALETTE = AVATAR_COLORS[0]; // Lime '#C9B8FF'
 export const DEFAULT_AVATAR_PERSONA = 'builder';
 export type AvatarMood = string;
 export const DEFAULT_AVATAR_MOOD = 'builder';

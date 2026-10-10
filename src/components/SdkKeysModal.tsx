@@ -38,17 +38,17 @@ export const SdkKeysModal: React.FC<SdkKeysModalProps> = ({ isOpen, onClose }) =
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[480px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[480px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[18px] font-medium text-[#F5F3EC]">SDK and app keys</div>
+            <div className="text-[18px] font-medium text-[#F4F2EC]">SDK and app keys</div>
             <div className="sub mt-0.5">Integrate the attribution SDK to verify real mobile installs.</div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -60,7 +60,7 @@ export const SdkKeysModal: React.FC<SdkKeysModalProps> = ({ isOpen, onClose }) =
           {keys.map((k) => (
             <div key={k.id} className="space-y-1">
               <div className="flex justify-between text-[12px]">
-                <span className="font-medium text-[#F5F3EC]">{k.label}</span>
+                <span className="font-medium text-[#F4F2EC]">{k.label}</span>
                 <span className="text-[#9A9892]">{k.desc}</span>
               </div>
               <div className="code">
@@ -78,9 +78,9 @@ export const SdkKeysModal: React.FC<SdkKeysModalProps> = ({ isOpen, onClose }) =
         </div>
 
         {/* Quick Docs Link */}
-        <div className="bg-[#1C1C1C] rounded-[16px] p-3.5 border border-[#2A2A2A]/40 flex items-center justify-between text-[12px]">
+        <div className="bg-[#141414] rounded-[16px] p-3.5 border border-[#222222]/40 flex items-center justify-between text-[12px]">
           <div>
-            <span className="text-[#F5F3EC] font-medium block">Documentation</span>
+            <span className="text-[#F4F2EC] font-medium block">Documentation</span>
             <span className="text-[#9A9892]">Guides for iOS, Android, React Native, and Unity.</span>
           </div>
           <button

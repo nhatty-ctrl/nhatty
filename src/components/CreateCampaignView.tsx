@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Campaign } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
+import { SdkConnectionTest } from './sdk/SdkConnectionTest';
 
 interface CreateCampaignViewProps {
   onBack: () => void;
@@ -110,10 +111,18 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
   // Rewards
   const [reward, setReward] = useState<number>(0.5);
   const [budget, setBudget] = useState<number>(1000);
-  const [approval, setApproval] = useState(false);
+  const [approval, setApproval] = useState(true);
   const [sub, setSub] = useState(false);
   const [pct, setPct] = useState(10);
   const [months, setMonths] = useState(12);
+
+  // NewWave & Umi Enhanced Business Model & Campaign Controls
+  const [founderPlan, setFounderPlan] = useState<'starter' | 'scale' | 'managed'>('starter');
+  const [maxVideos, setMaxVideos] = useState<number>(3);
+  const [dailyCap, setDailyCap] = useState<number>(100);
+  const [bonusEnabled, setBonusEnabled] = useState<boolean>(true);
+  const [bonusCount, setBonusCount] = useState<number>(100);
+  const [bonusAmount, setBonusAmount] = useState<number>(50);
 
   // Active inline editing
   const [editingField, setEditingField] = useState<'reward' | 'budget' | null>(null);
@@ -256,14 +265,27 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
       platforms: ['ios', 'android'],
       posted: 'Just now',
       budget,
+      budgetRemaining: budget,
+      escrowBalance: budget,
+      prefundedEscrow: true,
+      maxVideosPerCreator: maxVideos,
+      maxPayoutPerCreator: Math.round(maxVideos * reward * 20),
+      dailyBudgetCap: dailyCap,
+      pacingPercentage: 100,
+      isManagedLaunch: founderPlan === 'managed',
+      founderPlan,
+      bonusTier: bonusEnabled
+        ? { count: bonusCount, bonusAmount, label: `+$${bonusAmount} bonus at ${bonusCount} verified installs` }
+        : undefined,
+      ftcCompliancePledge: true,
       sdkConnected: sdkStatus === 'ok',
       requiresApproval: approval,
       applicationStatus: 'none',
       isCreatedByMe: true,
       logoUrl: logoPreview || undefined,
       sdkKey,
-      escrowBalance: budget,
       escrowSettled: 0,
+      escrowVaultAddress: `vault_stripe_${Math.random().toString(36).substring(2, 9)}`,
     };
 
     setDone(true);
@@ -300,46 +322,64 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
 
   const dur = diff(start, end);
   const currentPal = TH[cat] || TH.Games;
-  const platformFee = budget * 0.1;
-  const totalCharged = budget + platformFee;
+
+  // NewWave & Umi Enhanced Pricing Math:
+  // Subscription pricing for founders, 0% fee on creator pay!
+  const planFee = founderPlan === 'managed' ? 599 : founderPlan === 'scale' ? 399 : 199;
+  const estimatedOutcomes = Math.max(10, Math.floor(budget / reward));
+  const outcomeFeePerUnit = 0.02; // $0.02 nominal verified outcome infra fee
+  const outcomeInfraFee = Math.round(estimatedOutcomes * outcomeFeePerUnit * 100) / 100;
+  const prefundedEscrowDeposit = budget;
+  const totalCharged = prefundedEscrowDeposit + planFee + outcomeInfraFee;
 
   return (
-    <div className="w-full max-w-[860px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left select-none animate-[fade-in_0.2s_ease-out]">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumbs
-        items={[
-          { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
-          { label: 'Create campaign', icon: 'ti-plus', active: true },
-        ]}
-      />
+    <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6 text-left select-none animate-[fade-in_0.2s_ease-out]">
+      {/* Top Header & Breadcrumbs bar */}
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <Breadcrumbs
+          items={[
+            { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
+            { label: 'Create campaign', icon: 'ti-plus', active: true },
+          ]}
+        />
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-1.5 px-4 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors shadow-xs"
+        >
+          <i className="ti ti-arrow-left text-[13px]"></i>
+          <span>Back to campaigns</span>
+        </button>
+      </div>
 
-      {/* Main Container styled with .k and .edge */}
-      <div className="k border border-[#1F1F1F] shadow-2xl p-5 sm:p-7">
-        {/* Header with Title and Step Counter */}
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="text-[22px] font-medium tracking-[-0.4px] text-[#F5F3EC]">
+      {/* Stepper Status & Progress Bar (Expanded naturally, no rigid border box) */}
+      <div className="flex items-center justify-between pt-1">
+        <div>
+          <h1 className="font-serif text-[34px] sm:text-[42px] font-normal tracking-[-1px] text-[#F4F2EC] leading-tight">
             Create campaign
-          </div>
-          <div className="sub text-[13px] text-[#9A9892]">
+          </h1>
+          <div className="text-[13px] text-[#9C9A92] mt-0.5">
             {done
-              ? 'Done'
-              : `Step ${step + 1} of 3 · ${['Details', 'SDK', 'Fund'][step]}`}
+              ? 'Campaign published and live for creator partnerships'
+              : `Step ${step + 1} of 3 · ${['App details & rewards', 'Verified install SDK', 'Escrow funding'][step]}`}
           </div>
         </div>
 
-        {/* 3 Progress Segments */}
-        <div className="flex gap-1.5 mb-6">
+        <div className="flex items-center gap-2">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className={`seg ${done || i <= step ? 'on' : ''}`}
+              className={`w-10 sm:w-14 h-1.5 rounded-full transition-all duration-200 ${
+                done || i <= step ? 'bg-[#C9B8FF]' : 'bg-[#222222]'
+              }`}
             />
           ))}
         </div>
+      </div>
 
-        {/* ================= STEP 0: DETAILS ================= */}
-        {step === 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-[230px_minmax(0,1fr)] gap-8 items-start">
+      {/* ================= STEP 0: DETAILS ================= */}
+      {step === 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)] gap-8 sm:gap-12 items-start pt-2">
             {/* Left Column: Logo Card */}
             <div>
               <input
@@ -379,14 +419,14 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   aria-label="Upload a square logo"
                 >
                   {logo ? (
-                    <i className="ti ti-check text-[#C7F26B]"></i>
+                    <i className="ti ti-check text-[#C9B8FF]"></i>
                   ) : (
                     <i className="ti ti-photo-up"></i>
                   )}
                 </button>
               </div>
 
-              <div className="sub text-[12px] text-[#A8A69E] mt-2.5 leading-relaxed">
+              <div className="sub text-[12px] text-[#9C9A92] mt-2.5 leading-relaxed">
                 {logo
                   ? 'Square logo added.'
                   : 'Square image, at least 512 px. Until you add one we use the store icon.'}
@@ -395,7 +435,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               {/* Theme & Palette Selector (Image 3) */}
               <div className="pt-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="sub text-[12px] text-[#A8A69E] font-medium">Palette theme</span>
+                  <span className="sub text-[12px] text-[#9C9A92] font-medium">Palette theme</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -404,7 +444,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       const nextCat = categories[(currentIdx + 1) % categories.length];
                       setCat(nextCat);
                     }}
-                    className="edge ic w-7 h-7 text-[12px] cursor-pointer hover:bg-[#1C1C1C] transition-colors"
+                    className="edge ic w-7 h-7 text-[12px] cursor-pointer hover:bg-[#141414] transition-colors"
                     title="Randomize theme"
                     aria-label="Randomize theme"
                   >
@@ -419,7 +459,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       type="button"
                       onClick={() => setCat(cName)}
                       className={`edge flex items-center gap-1.5 p-1.5 rounded-[12px] text-[11.5px] cursor-pointer text-left transition-all ${
-                        cat === cName ? 'bg-[#1C1C1C] border-[#F5F3EC]/50 font-medium' : 'hover:bg-[#161616]'
+                        cat === cName ? 'bg-[#141414] border-[#F4F2EC]/50 font-medium' : 'hover:bg-[#0E0E0E]'
                       }`}
                     >
                       <span
@@ -428,7 +468,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       >
                         <i className={`ti ${iconName}`}></i>
                       </span>
-                      <span className="truncate text-[#F5F3EC]">{cName}</span>
+                      <span className="truncate text-[#F4F2EC]">{cName}</span>
                     </button>
                   ))}
                 </div>
@@ -448,13 +488,13 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   setNameTouched(true);
                   if (err) setErr('');
                 }}
-                className="fi text-[34px] sm:text-[38px] font-medium tracking-tight text-[#F5F3EC] bg-transparent border-0 outline-none w-full placeholder:text-[#6F6E69] h-[64px]"
+                className="fi text-[34px] sm:text-[38px] font-medium tracking-tight text-[#F4F2EC] bg-transparent border-0 outline-none w-full placeholder:text-[#6F6E69] h-[64px]"
                 aria-label="Campaign name"
               />
 
               {/* Category Chips Bar */}
               <div>
-                <div className="lab text-[13px] text-[#B9B7AF] mb-2">Category</div>
+                <div className="lab text-[13px] text-[#B8B6AE] mb-2">Category</div>
                 <div className="flex gap-1.5 flex-wrap">
                   {Object.entries(TH).map(([cName, [bgCol, fgCol, iconName]]) => (
                     <button
@@ -476,36 +516,36 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               </div>
 
               {/* Where is the app? */}
-              <div className="lab text-[13px] text-[#B9B7AF] pt-1">
+              <div className="lab text-[13px] text-[#B8B6AE] pt-1">
                 Where is the app?
               </div>
 
               <div className="edge fld flex items-center gap-3 h-[54px] px-4 rounded-[16px]">
-                <i className="ti ti-brand-apple text-[20px] text-[#A8A69E]" aria-hidden="true"></i>
+                <i className="ti ti-brand-apple text-[20px] text-[#9C9A92]" aria-hidden="true"></i>
                 <input
                   type="text"
                   placeholder="App Store link"
                   value={apple}
                   onChange={(e) => setApple(e.target.value)}
-                  className="fi text-[15px] bg-transparent border-0 text-[#F5F3EC] outline-none flex-1 placeholder:text-[#6F6E69]"
+                  className="fi text-[15px] bg-transparent border-0 text-[#F4F2EC] outline-none flex-1 placeholder:text-[#6F6E69]"
                   aria-label="App Store link"
                 />
               </div>
 
               <div className="edge fld flex items-center gap-3 h-[54px] px-4 rounded-[16px]">
-                <i className="ti ti-player-play text-[20px] text-[#A8A69E]" aria-hidden="true"></i>
+                <i className="ti ti-player-play text-[20px] text-[#9C9A92]" aria-hidden="true"></i>
                 <input
                   type="text"
                   placeholder="Google Play link"
                   value={play}
                   onChange={(e) => setPlay(e.target.value)}
-                  className="fi text-[15px] bg-transparent border-0 text-[#F5F3EC] outline-none flex-1 placeholder:text-[#6F6E69]"
+                  className="fi text-[15px] bg-transparent border-0 text-[#F4F2EC] outline-none flex-1 placeholder:text-[#6F6E69]"
                   aria-label="Google Play link"
                 />
               </div>
 
               {/* Auto-read link message */}
-              <div className="sub flex items-center gap-2 text-[12px] text-[#A8A69E] min-h-[20px]">
+              <div className="sub flex items-center gap-2 text-[12px] text-[#9C9A92] min-h-[20px]">
                 {ex === 'loading' ? (
                   <>
                     <i className="ti ti-loader-2 spin text-[16px]" aria-hidden="true"></i>
@@ -513,8 +553,8 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   </>
                 ) : ex === 'done' ? (
                   <>
-                    <i className="ti ti-circle-check text-[16px] text-[#C7F26B]" aria-hidden="true"></i>
-                    <span className="text-[#F5F3EC]">
+                    <i className="ti ti-circle-check text-[16px] text-[#C9B8FF]" aria-hidden="true"></i>
+                    <span className="text-[#F4F2EC]">
                       Pulled from link: {name || 'your app'} · {cat}
                     </span>
                   </>
@@ -524,7 +564,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               </div>
 
               {/* When does it run? */}
-              <div className="lab text-[13px] text-[#B9B7AF] pt-2">
+              <div className="lab text-[13px] text-[#B8B6AE] pt-2">
                 When does it run?
               </div>
 
@@ -537,7 +577,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   }`}
                 >
                   <span className="sub text-[11px] text-[#9A9892]">Starts</span>
-                  <b className="text-[14.5px] font-medium text-[#F5F3EC] block mt-0.5">
+                  <b className="text-[14.5px] font-medium text-[#F4F2EC] block mt-0.5">
                     {fd(start)}
                   </b>
                 </button>
@@ -550,7 +590,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   }`}
                 >
                   <span className="sub text-[11px] text-[#9A9892]">Ends</span>
-                  <b className="text-[14.5px] font-medium text-[#F5F3EC] block mt-0.5">
+                  <b className="text-[14.5px] font-medium text-[#F4F2EC] block mt-0.5">
                     {fd(end)}
                   </b>
                 </button>
@@ -600,7 +640,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       <i className="ti ti-chevron-left text-[14px]"></i>
                     </button>
 
-                    <div className="text-[14.5px] font-medium text-[#F5F3EC]">
+                    <div className="text-[14.5px] font-medium text-[#F4F2EC]">
                       {new Date(calMonth.y, calMonth.m, 1).toLocaleDateString(
                         'en-US',
                         { month: 'long', year: 'numeric' }
@@ -681,7 +721,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 onClick={() => setDescOpen(!descOpen)}
                 className="edge fld flex items-center justify-between w-full h-[50px] px-4 rounded-[16px] text-[14.5px] cursor-pointer"
               >
-                <div className="flex items-center gap-2.5 text-[#B9B7AF]">
+                <div className="flex items-center gap-2.5 text-[#B8B6AE]">
                   <i className="ti ti-file-text text-[18px]"></i>
                   <span>{desc ? 'Description added' : 'Add description'}</span>
                 </div>
@@ -698,12 +738,12 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="What is the app, and what kind of content fits it?"
-                  className="w-full bg-[#0B0B0B] border border-[#1F1F1F] rounded-[16px] p-3.5 text-[14px] text-[#F5F3EC] placeholder:text-[#6F6E69] outline-none focus:border-[#F5F3EC] resize-vertical leading-relaxed"
+                  className="w-full bg-[#000000] border border-[#1F1F1F] rounded-[16px] p-3.5 text-[14px] text-[#F4F2EC] placeholder:text-[#6F6E69] outline-none focus:border-[#F4F2EC] resize-vertical leading-relaxed"
                 />
               )}
 
               {/* Rewards Section */}
-              <div className="lab text-[13px] text-[#B9B7AF] pt-2">
+              <div className="lab text-[13px] text-[#B8B6AE] pt-2">
                 Rewards
               </div>
 
@@ -712,7 +752,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 <div className="opt flex items-center justify-between p-4 border-b border-[#1F1F1F]">
                   <div className="flex items-center gap-3">
                     <i className="ti ti-coin text-[20px] text-[#9A9892]"></i>
-                    <span className="text-[14.5px] text-[#F5F3EC]">
+                    <span className="text-[14.5px] text-[#F4F2EC]">
                       Reward per verified install
                     </span>
                   </div>
@@ -727,7 +767,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       onBlur={handleCommitEdit}
                       onKeyDown={(e) => e.key === 'Enter' && handleCommitEdit()}
                       autoFocus
-                      className="di w-24 text-[14px] font-mono text-[#F5F3EC]"
+                      className="di w-24 text-[14px] font-mono text-[#F4F2EC]"
                     />
                   ) : (
                     <button
@@ -736,7 +776,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                         setEditingField('reward');
                         setEditValue(reward.toString());
                       }}
-                      className="flex items-center gap-2 text-[14.5px] font-mono text-[#C7F26B] hover:underline cursor-pointer bg-transparent border-0"
+                      className="flex items-center gap-2 text-[14.5px] font-mono text-[#C9B8FF] hover:underline cursor-pointer bg-transparent border-0"
                     >
                       <span>{money(reward)}</span>
                       <i className="ti ti-pencil text-[15px] text-[#9A9892]"></i>
@@ -749,7 +789,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   <div className="flex items-center gap-3 min-w-0 pr-3">
                     <i className="ti ti-receipt text-[20px] text-[#9A9892]"></i>
                     <div>
-                      <div className="text-[14.5px] text-[#F5F3EC]">
+                      <div className="text-[14.5px] text-[#F4F2EC]">
                         Subscription share
                       </div>
                       <div className="sub text-[11.5px] text-[#9A9892] mt-0.5">
@@ -820,7 +860,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 <div className="opt flex items-center justify-between p-4 border-b border-[#1F1F1F]">
                   <div className="flex items-center gap-3">
                     <i className="ti ti-lock text-[20px] text-[#9A9892]"></i>
-                    <span className="text-[14.5px] text-[#F5F3EC]">
+                    <span className="text-[14.5px] text-[#F4F2EC]">
                       Require approval
                     </span>
                   </div>
@@ -841,7 +881,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 <div className="opt flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
                     <i className="ti ti-wallet text-[20px] text-[#9A9892]"></i>
-                    <span className="text-[14.5px] text-[#F5F3EC]">Budget</span>
+                    <span className="text-[14.5px] text-[#F4F2EC]">Budget</span>
                   </div>
 
                   {editingField === 'budget' ? (
@@ -854,7 +894,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                       onBlur={handleCommitEdit}
                       onKeyDown={(e) => e.key === 'Enter' && handleCommitEdit()}
                       autoFocus
-                      className="di w-28 text-[14px] font-mono text-[#F5F3EC]"
+                      className="di w-28 text-[14px] font-mono text-[#F4F2EC]"
                     />
                   ) : (
                     <button
@@ -863,7 +903,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                         setEditingField('budget');
                         setEditValue(budget.toString());
                       }}
-                      className="flex items-center gap-2 text-[14.5px] font-mono text-[#F5F3EC] hover:underline cursor-pointer bg-transparent border-0"
+                      className="flex items-center gap-2 text-[14.5px] font-mono text-[#F4F2EC] hover:underline cursor-pointer bg-transparent border-0"
                     >
                       <span>{money(budget).replace('.00', '')}</span>
                       <i className="ti ti-pencil text-[15px] text-[#9A9892]"></i>
@@ -872,10 +912,170 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </div>
               </div>
 
-              {/* Estimate Note */}
-              <div className="sub text-[12px] text-[#9A9892]">
-                Your budget covers about {fmt(budget / reward)} verified installs
-                {sub ? ', fewer if subscriptions pay out too.' : '.'}
+              {/* Estimate Note & 0% Creator Fee Callout */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-[#141414] rounded-[14px] border border-[#222222]">
+                <div className="sub text-[12px] text-[#9A9892]">
+                  Budget funds <b className="text-[#F4F2EC]">{fmt(budget / reward)} verified installs</b> directly to creators.
+                </div>
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-1 rounded-full border border-[#C9B8FF]/20 self-start sm:self-auto">
+                  <i className="ti ti-shield-check text-[13px]"></i>
+                  <span>0% Creator Cut · 100% Payout Backing</span>
+                </div>
+              </div>
+
+              {/* Campaign Controls & Pacing (NewWave & Umi Enhanced Controls) */}
+              <div className="space-y-2.5 pt-2">
+                <div className="lab text-[13px] text-[#B8B6AE] flex items-center justify-between">
+                  <span>Campaign Controls & Anti-Fraud Pacing</span>
+                  <span className="text-[11px] text-[#9A9892]">Protects budget & limits spam</span>
+                </div>
+
+                <div className="edge rounded-[18px] p-4 bg-[#0A0A0A] space-y-4">
+                  {/* Per-Creator Video Cap */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#1F1F1F]">
+                    <div>
+                      <div className="text-[13.5px] font-medium text-[#F4F2EC]">
+                        Per-creator video cap
+                      </div>
+                      <div className="sub text-[11.5px] text-[#9A9892]">
+                        Limits how many videos a single creator can monetize
+                      </div>
+                    </div>
+                    <div className="flex gap-1.5">
+                      {[1, 3, 5, 10].map((capNum) => (
+                        <button
+                          key={capNum}
+                          type="button"
+                          onClick={() => setMaxVideos(capNum)}
+                          className={`px-3 py-1 rounded-full text-[12px] font-medium cursor-pointer border transition-colors ${
+                            maxVideos === capNum
+                              ? 'bg-[#F4F2EC] text-[#000000] border-transparent'
+                              : 'bg-[#141414] text-[#9A9892] border-[#222222] hover:text-[#F4F2EC]'
+                          }`}
+                        >
+                          {capNum} {capNum === 1 ? 'video' : 'vids'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Daily Budget Cap */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#1F1F1F]">
+                    <div>
+                      <div className="text-[13.5px] font-medium text-[#F4F2EC]">
+                        Daily budget pacing
+                      </div>
+                      <div className="sub text-[11.5px] text-[#9A9892]">
+                        Smooths spend across time to prevent runaway spikes
+                      </div>
+                    </div>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {[50, 100, 250, 500].map((dCap) => (
+                        <button
+                          key={dCap}
+                          type="button"
+                          onClick={() => setDailyCap(dCap)}
+                          className={`px-3 py-1 rounded-full text-[12px] font-medium cursor-pointer border transition-colors ${
+                            dailyCap === dCap
+                              ? 'bg-[#F4F2EC] text-[#000000] border-transparent'
+                              : 'bg-[#141414] text-[#9A9892] border-[#222222] hover:text-[#F4F2EC]'
+                          }`}
+                        >
+                          ${dCap}/day
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Creator Milestone Bonus Tier */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-[13.5px] font-medium text-[#F4F2EC]">
+                        Creator milestone bonus
+                      </div>
+                      <div className="sub text-[11.5px] text-[#9A9892]">
+                        Reward top creators with a bonus on reaching 100 verified installs
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setBonusEnabled(!bonusEnabled)}
+                      className={`sw ${bonusEnabled ? 'on' : ''}`}
+                      role="switch"
+                      aria-checked={bonusEnabled}
+                      aria-label="Creator milestone bonus"
+                    >
+                      <i></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Founder Subscription Plan Selection (Subscription Pricing vs Cut) */}
+              <div className="space-y-2.5 pt-2">
+                <div className="lab text-[13px] text-[#B8B6AE] flex items-center justify-between">
+                  <span>Founder Platform Plan</span>
+                  <span className="text-[11px] text-[#C9B8FF] font-medium">Predictable SaaS · 0% fee on creator pay</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Starter Tier */}
+                  <div
+                    onClick={() => setFounderPlan('starter')}
+                    className={`p-3.5 rounded-[18px] border cursor-pointer transition-all ${
+                      founderPlan === 'starter'
+                        ? 'border-[#C9B8FF] bg-[#141414] shadow-sm'
+                        : 'border-[#222222] bg-[#0E0E0E] hover:border-[#383838]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[14px] font-semibold text-[#F4F2EC]">Starter</span>
+                      <span className="text-[15px] font-bold font-mono text-[#C9B8FF]">$199<span className="text-[11px] text-[#9A9892] font-normal">/mo</span></span>
+                    </div>
+                    <div className="text-[11.5px] text-[#9A9892] leading-relaxed">
+                      Self-serve founder beta. 0% cut on creator payouts. Real-time SDK verification.
+                    </div>
+                  </div>
+
+                  {/* Scale Tier */}
+                  <div
+                    onClick={() => setFounderPlan('scale')}
+                    className={`p-3.5 rounded-[18px] border cursor-pointer transition-all ${
+                      founderPlan === 'scale'
+                        ? 'border-[#C9B8FF] bg-[#141414] shadow-sm'
+                        : 'border-[#222222] bg-[#0E0E0E] hover:border-[#383838]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[14px] font-semibold text-[#F4F2EC]">Scale</span>
+                      <span className="text-[15px] font-bold font-mono text-[#C9B8FF]">$399<span className="text-[11px] text-[#9A9892] font-normal">/mo</span></span>
+                    </div>
+                    <div className="text-[11.5px] text-[#9A9892] leading-relaxed">
+                      Multi-campaign scaling, automated creator verification & priority fraud check.
+                    </div>
+                  </div>
+
+                  {/* Managed Launch Tier */}
+                  <div
+                    onClick={() => setFounderPlan('managed')}
+                    className={`p-3.5 rounded-[18px] border cursor-pointer transition-all relative ${
+                      founderPlan === 'managed'
+                        ? 'border-[#C9B8FF] bg-[#141414] shadow-sm'
+                        : 'border-[#222222] bg-[#0E0E0E] hover:border-[#383838]'
+                    }`}
+                  >
+                    <span className="absolute -top-2 right-3 text-[9.5px] uppercase font-bold tracking-wider bg-[#C9B8FF] text-[#000000] px-2 py-0.5 rounded-full">
+                      Design Partner
+                    </span>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[14px] font-semibold text-[#F4F2EC]">Managed</span>
+                      <span className="text-[15px] font-bold font-mono text-[#C9B8FF]">$599<span className="text-[11px] text-[#9A9892] font-normal">/mo</span></span>
+                    </div>
+                    <div className="text-[11.5px] text-[#9A9892] leading-relaxed">
+                      White-glove: Umi team sources, vets & monitors first 30 creators + FTC compliance.
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Error */}
@@ -889,10 +1089,10 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               <button
                 type="button"
                 onClick={handleNext}
-                className="btn main w-full h-[50px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[15px] cursor-pointer transition-all shadow-md flex items-center justify-center gap-2 mt-4"
+                className="w-full h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2 mt-4"
               >
                 <span>Continue to SDK</span>
-                <i className="ti ti-arrow-right" aria-hidden="true"></i>
+                <i className="ti ti-arrow-right text-[13px] stroke-[2.5]" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -901,7 +1101,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
         {/* ================= STEP 1: SDK ================= */}
         {step === 1 && (
           <div className="space-y-5 animate-[fade-in_0.2s_ease-out]">
-            <div className="text-[20px] font-medium text-[#F5F3EC]">
+            <div className="text-[20px] font-medium text-[#F4F2EC]">
               Install the SDK
             </div>
             <div className="sub text-[13px] text-[#9A9892]">
@@ -919,17 +1119,37 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   key={keyStr}
                   type="button"
                   onClick={() => setPlat(keyStr as any)}
-                  className={`edge btn sm ${plat === keyStr ? 'sel' : ''}`}
+                  className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold transition-all cursor-pointer border ${
+                    plat === keyStr
+                      ? 'bg-[#F4F2EC] text-[#000000] border-transparent shadow-xs'
+                      : 'bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border-[#222222]'
+                  }`}
                 >
                   {label}
                 </button>
               ))}
             </div>
 
+            {/* Differentiate on Verified Outcomes vs Vanity Views (Point 7) */}
+            <div className="p-4 rounded-[16px] bg-[#141414] border border-[#C9B8FF]/30 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-[#C9B8FF]/20 text-[#C9B8FF] flex items-center justify-center text-[12px]">
+                  <i className="ti ti-shield-check"></i>
+                </span>
+                <span className="text-[13.5px] font-semibold text-[#F4F2EC]">
+                  Umi Core Edge: Verified In-App Outcomes vs. Vanity Video Views
+                </span>
+              </div>
+              <p className="text-[12px] text-[#9C9A92] leading-relaxed pl-8">
+                Platforms that pay per public view (like NewWave) measure passive scroll-bys that can be inflated by bots with zero conversion guarantee.
+                <b className="text-[#F4F2EC]"> Umi’s RavenCore SDK verifies real user actions</b>: app installation, first launch, unique hardware attestation, and completed onboarding. You only pay for authentic, engaged users.
+              </p>
+            </div>
+
             {/* Code snippets */}
             <div className="space-y-4 pt-2">
               <div>
-                <div className="text-[14px] font-medium text-[#F5F3EC] mb-1.5">
+                <div className="text-[14px] font-medium text-[#F4F2EC] mb-1.5">
                   1. Add the package
                 </div>
                 <div className="edge code">
@@ -940,7 +1160,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               </div>
 
               <div>
-                <div className="text-[14px] font-medium text-[#F5F3EC] mb-1.5">
+                <div className="text-[14px] font-medium text-[#F4F2EC] mb-1.5">
                   2. Start it when your app launches
                 </div>
                 <div className="edge code">
@@ -951,68 +1171,22 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               </div>
 
               <div>
-                <div className="text-[14px] font-medium text-[#F5F3EC] mb-1.5">
-                  3. Check the connection
+                <div className="text-[14px] font-medium text-[#F4F2EC] mb-2">
+                  3. Test the connection
                 </div>
-                <div className="edge fld p-4 rounded-[16px] flex items-center gap-3">
-                  {sdkStatus === 'ok' ? (
-                    <>
-                      <i className="ti ti-circle-check text-[22px] text-[#C7F26B]" aria-hidden="true"></i>
-                      <div>
-                        <div className="font-medium text-[14px] text-[#F5F3EC]">
-                          Connected
-                        </div>
-                        <div className="sub text-[12px] text-[#9A9892]">
-                          First test event received from {name || 'your app'}
-                        </div>
-                      </div>
-                    </>
-                  ) : sdkStatus === 'testing' ? (
-                    <>
-                      <i className="ti ti-loader-2 spin text-[20px] text-[#F5F3EC]" aria-hidden="true"></i>
-                      <span className="sub text-[13px] text-[#9A9892]">
-                        Listening for your first event…
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <i className="ti ti-plug-off text-[20px] text-[#9A9892]" aria-hidden="true"></i>
-                      <span className="sub text-[13px] text-[#9A9892]">
-                        {sdkStatus === 'later'
-                          ? 'Skipped for now. The campaign stays a draft until it connects.'
-                          : 'Not connected yet'}
-                      </span>
-                    </>
-                  )}
-                </div>
+                <SdkConnectionTest
+                  platform={plat}
+                  appKey={sdkKey}
+                  appName={name}
+                  status={sdkStatus}
+                  onStatus={(st) => {
+                    setSdkStatus(st);
+                    if (st === 'ok') setErr('');
+                  }}
+                  onSkip={() => setSdkStatus('later')}
+                  simulate={true}
+                />
               </div>
-            </div>
-
-            {/* Test Connection Button */}
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setSdkStatus('testing');
-                  setErr('');
-                  setTimeout(() => {
-                    setSdkStatus('ok');
-                  }, 1400);
-                }}
-                className="edge btn"
-              >
-                Test connection
-              </button>
-
-              {sdkStatus !== 'ok' && (
-                <button
-                  type="button"
-                  onClick={() => setSdkStatus('later')}
-                  className="btn bg-transparent border-0 text-[#B9B7AF] hover:text-[#F5F3EC] cursor-pointer"
-                >
-                  Do this later
-                </button>
-              )}
             </div>
 
             {err && <div className="err text-[13px] text-[#FF8A80]">{err}</div>}
@@ -1021,7 +1195,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               <button
                 type="button"
                 onClick={() => setStep(0)}
-                className="edge btn h-[50px] px-6"
+                className="h-[46px] px-6 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#B8B6AE] hover:text-[#F4F2EC] border border-[#222222] font-medium text-[13.5px] cursor-pointer transition-colors"
               >
                 Back
               </button>
@@ -1029,9 +1203,10 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
               <button
                 type="button"
                 onClick={handleNext}
-                className="btn main flex-1 h-[50px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[15px]"
+                className="flex-1 h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2"
               >
-                Continue to funding
+                <span>Continue to funding</span>
+                <i className="ti ti-arrow-right text-[13px] stroke-[2.5]" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -1056,13 +1231,13 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                     cy="36"
                     r="32"
                     fill="none"
-                    stroke={sdkStatus === 'ok' ? '#C7F26B' : '#FAC775'}
+                    stroke={sdkStatus === 'ok' ? '#C9B8FF' : '#FAC775'}
                     strokeWidth="3"
                   />
                   <path
                     d="M22 37 L32 47 L51 26"
                     fill="none"
-                    stroke={sdkStatus === 'ok' ? '#C7F26B' : '#FAC775'}
+                    stroke={sdkStatus === 'ok' ? '#C9B8FF' : '#FAC775'}
                     strokeWidth="4"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -1072,7 +1247,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </svg>
 
                 <div>
-                  <div className="text-[22px] font-medium text-[#F5F3EC]">
+                  <div className="text-[22px] font-medium text-[#F4F2EC]">
                     {name} {sdkStatus === 'ok' ? 'is live' : 'is saved as a draft'}
                   </div>
                   <div className="sub text-[13px] text-[#9A9892] mt-1">
@@ -1083,22 +1258,30 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </div>
 
                 {/* Receipt Card matching File 1 */}
-                <div className="edge rounded-[18px] p-5 max-w-[420px] mx-auto space-y-2.5 text-left bg-[#111113]">
+                <div className="edge rounded-[18px] p-5 max-w-[460px] mx-auto space-y-2.5 text-left bg-[#111113]">
                   <div className="rl flex justify-between text-[14px]">
                     <span className="text-[#9A9892]">Receipt</span>
-                    <span className="font-mono text-[#F5F3EC]">UMI-R-2026-000001</span>
+                    <span className="font-mono text-[#F4F2EC]">UMI-ESCROW-2026-000001</span>
                   </div>
                   <div className="rl flex justify-between text-[14px]">
-                    <span className="text-[#9A9892]">Campaign budget</span>
-                    <span className="font-mono text-[#F5F3EC]">{money(budget)}</span>
+                    <span className="text-[#9A9892]">Prefunded Creator Escrow</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(budget)}</span>
                   </div>
                   <div className="rl flex justify-between text-[14px]">
-                    <span className="text-[#9A9892]">Platform fee (10%)</span>
-                    <span className="font-mono text-[#F5F3EC]">{money(platformFee)}</span>
+                    <span className="text-[#9A9892]">Platform plan ({founderPlan})</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(planFee)}/mo</span>
+                  </div>
+                  <div className="rl flex justify-between text-[14px]">
+                    <span className="text-[#9A9892]">Verification infra fee ($0.02/ea)</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(outcomeInfraFee)}</span>
                   </div>
                   <div className="rl flex justify-between font-medium text-[16px] border-t border-[#1F1F1F] pt-2">
-                    <span className="text-[#F5F3EC]">Total charged</span>
-                    <span className="font-mono text-[#C7F26B]">{money(totalCharged)}</span>
+                    <span className="text-[#F4F2EC]">Total charged today</span>
+                    <span className="font-mono text-[#C9B8FF]">{money(totalCharged)}</span>
+                  </div>
+                  <div className="pt-2 text-[11px] text-[#9A9892] flex items-center gap-1.5 border-t border-[#1F1F1F]/60">
+                    <i className="ti ti-shield-check text-[#C9B8FF]"></i>
+                    <span>100% of escrow is held in Stripe and disbursed to creators upon verified install</span>
                   </div>
                 </div>
 
@@ -1106,7 +1289,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   <button
                     type="button"
                     onClick={onBack}
-                    className="edge btn mx-auto"
+                    className="h-[46px] px-7 rounded-full bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] mx-auto"
                   >
                     View in Campaigns
                   </button>
@@ -1115,11 +1298,11 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
             ) : (
               /* Funding Checkout Form */
               <div className="space-y-4">
-                <div className="text-[19px] font-medium text-[#F5F3EC]">
+                <div className="text-[19px] font-medium text-[#F4F2EC]">
                   Fund the campaign
                 </div>
                 <div className="sub text-[13px] text-[#9A9892]">
-                  Your budget is held in escrow and paid to creators as installs are verified.
+                  Prefunded escrow is our trust mechanism. Creators only create content when funds are locked in escrow.
                 </div>
 
                 {/* Campaign Summary Card */}
@@ -1132,40 +1315,56 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   </span>
 
                   <div className="flex-1 min-w-0">
-                    <div className="text-[15px] font-medium text-[#F5F3EC] truncate">
+                    <div className="text-[15px] font-medium text-[#F4F2EC] truncate">
                       {name}
                     </div>
                     <div className="sub text-[12px] text-[#9A9892]">
-                      {approval ? 'Approval required' : 'Open to all'} · {money(reward)} per
-                      install
+                      {approval ? 'Approval & FTC pledge required' : 'Open to all'} · {money(reward)} per install
                       {sub ? ` · ${pct}% subscription share for ${months} months` : ''}
+                      {` · Max ${maxVideos} vids/creator · $${dailyCap}/day`}
                     </div>
                     <div className="sub text-[12px] text-[#9A9892]">
-                      {fd(start)} to {fd(end)}
+                      {fd(start)} to {fd(end)} · {founderPlan === 'managed' ? 'Umi Managed Tier' : `${founderPlan.toUpperCase()} Plan`}
                     </div>
                   </div>
                 </div>
 
-                {/* Financial Breakdown */}
+                {/* Prefunded Trust Vault Banner */}
+                <div className="p-3 bg-[#141414] rounded-[16px] border border-[#C9B8FF]/30 flex items-start gap-2.5 text-[12px]">
+                  <i className="ti ti-lock text-[17px] text-[#C9B8FF] shrink-0 mt-0.5"></i>
+                  <div>
+                    <div className="font-medium text-[#F4F2EC]">Prefunded Stripe Escrow Mechanism</div>
+                    <div className="text-[#9A9892] mt-0.5 leading-relaxed">
+                      Creators trust Umi because 100% of your campaign bounty is prefunded upfront. 
+                      Umi takes <b>0% of creator pay</b>. Unused budget is refunded when the campaign ends.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Breakdown (Subscription vs Cut) */}
                 <div className="edge rounded-[16px] p-4 space-y-2 bg-[#0A0A0A]">
                   <div className="flex justify-between text-[14px]">
-                    <span className="text-[#9A9892]">Campaign budget</span>
-                    <span className="font-mono text-[#F5F3EC]">{money(budget)}</span>
+                    <span className="text-[#9A9892]">Prefunded creator bounty escrow (100% to creators)</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(budget)}</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
-                    <span className="text-[#9A9892]">Platform fee (10%)</span>
-                    <span className="font-mono text-[#F5F3EC]">{money(platformFee)}</span>
+                    <span className="text-[#9A9892]">Founder plan subscription ({founderPlan})</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(planFee)}/mo</span>
+                  </div>
+                  <div className="flex justify-between text-[14px]">
+                    <span className="text-[#9A9892]">Outcome network infra fee ($0.02 / verified install)</span>
+                    <span className="font-mono text-[#F4F2EC]">{money(outcomeInfraFee)}</span>
                   </div>
                   <div className="flex justify-between text-[16px] font-medium border-t border-[#1F1F1F] pt-2">
-                    <span className="text-[#F5F3EC]">Total today</span>
-                    <span className="font-mono text-[#C7F26B]">{money(totalCharged)}</span>
+                    <span className="text-[#F4F2EC]">Total charged today</span>
+                    <span className="font-mono text-[#C9B8FF]">{money(totalCharged)}</span>
                   </div>
                 </div>
 
                 {/* Card on file */}
                 <div className="edge fld p-4 rounded-[16px] flex items-center gap-3">
                   <i className="ti ti-credit-card text-[20px] text-[#9A9892]" aria-hidden="true"></i>
-                  <div className="flex-1 text-[14.5px] text-[#F5F3EC]">
+                  <div className="flex-1 text-[14.5px] text-[#F4F2EC]">
                     Card ending 4242
                   </div>
                   <span className="sub text-[12px] text-[#9A9892]">Charged now</span>
@@ -1183,7 +1382,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="edge btn h-[50px] px-6"
+                    className="h-[46px] px-6 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#B8B6AE] hover:text-[#F4F2EC] border border-[#222222] font-medium text-[13.5px] cursor-pointer transition-colors"
                   >
                     Back
                   </button>
@@ -1191,16 +1390,16 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                   <button
                     type="button"
                     onClick={handlePublish}
-                    className="btn main flex-1 h-[50px] bg-[#F5F3EC] hover:bg-white text-black font-semibold rounded-full text-[15px]"
+                    className="flex-1 h-[46px] bg-[#F4F2EC] hover:bg-white text-[#000000] font-semibold rounded-full text-[14px] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(244,242,236,0.3)] active:scale-[0.99] flex items-center justify-center gap-2"
                   >
-                    Fund {money(totalCharged)} and publish
+                    <span>Fund {money(totalCharged)} and publish</span>
+                    <i className="ti ti-arrow-right text-[13px] stroke-[2.5]" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
             )}
           </div>
         )}
-      </div>
     </div>
   );
 };

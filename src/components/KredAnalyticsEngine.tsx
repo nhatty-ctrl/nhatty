@@ -7,6 +7,9 @@ interface KredAnalyticsEngineProps {
   onNavigateCampaign?: (id: string) => void;
   onNavigateEarnings?: () => void;
   compact?: boolean;
+  role?: 'creator' | 'founder';
+  onRoleChange?: (role: 'creator' | 'founder') => void;
+  hideHeaderSwitcher?: boolean;
 }
 
 const TODAY = new Date(2026, 9, 2);
@@ -46,13 +49,13 @@ const METRICS: Record<'creator' | 'founder', MetricDef[]> = {
   creator: [
     { key: 'clicks', label: 'Clicks', icon: 'ti-pointer', bg: '#CECBF6', fg: '#26215C' },
     { key: 'conf', label: 'Confirmed', icon: 'ti-circle-dot', bg: '#B5D4F4', fg: '#042C53' },
-    { key: 'ver', label: 'Verified installs', icon: 'ti-circle-check', bg: '#C7F26B', fg: '#16140F' },
+    { key: 'ver', label: 'Verified installs', icon: 'ti-circle-check', bg: '#C9B8FF', fg: '#000000' },
     { key: 'money', label: 'Earnings', icon: 'ti-coin', bg: '#FAC775', fg: '#412402' },
   ],
   founder: [
     { key: 'clicks', label: 'Clicks', icon: 'ti-pointer', bg: '#CECBF6', fg: '#26215C' },
     { key: 'conf', label: 'Confirmed', icon: 'ti-circle-dot', bg: '#B5D4F4', fg: '#042C53' },
-    { key: 'ver', label: 'Verified installs', icon: 'ti-circle-check', bg: '#C7F26B', fg: '#16140F' },
+    { key: 'ver', label: 'Verified installs', icon: 'ti-circle-check', bg: '#C9B8FF', fg: '#000000' },
     { key: 'money', label: 'Spend', icon: 'ti-coin', bg: '#FAC775', fg: '#412402' },
   ],
 };
@@ -114,8 +117,17 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
   onNavigateCampaign,
   onNavigateEarnings,
   compact = false,
+  role: roleProp,
+  onRoleChange,
+  hideHeaderSwitcher = false,
 }) => {
-  const [role, setRole] = useState<'creator' | 'founder'>('creator');
+  const [internalRole, setInternalRole] = useState<'creator' | 'founder'>(roleProp || 'creator');
+  const role = roleProp !== undefined ? roleProp : internalRole;
+
+  const setRole = (r: 'creator' | 'founder') => {
+    setInternalRole(r);
+    if (onRoleChange) onRoleChange(r);
+  };
   const [camp, setCamp] = useState<number>(() => {
     if (initialCampaignId) {
       const idx = CA.findIndex((c) => c.id === initialCampaignId.toLowerCase());
@@ -238,33 +250,53 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
       {/* Top Header: Title & Role Switcher */}
       <div className="flex justify-between items-center gap-3 flex-wrap">
         <div>
-          <h2 className="text-[24px] sm:text-[26px] font-medium tracking-tight text-[#F5F3EC]">
-            Analytics
+          <h2 className="text-[22px] sm:text-[24px] font-medium tracking-tight text-[#F4F2EC]">
+            {role === 'creator' ? 'Promoter Attribution Engine' : 'Founder Attribution Engine'}
           </h2>
-          <div className="sub text-[12px] text-[#9A9892]">
-            Daily verified telemetry, conversion, and escrow payouts
+          <div className="sub text-[12px] text-[#9C9A92]">
+            {role === 'creator'
+              ? 'Daily verified telemetry, click conversions, and creator escrow bounties'
+              : 'Daily app install velocity, SDK attribution check passes, and escrow spend'}
           </div>
         </div>
 
         {/* Role Switcher Pill */}
-        <div className="inline-flex rounded-full p-1 bg-[#161616] border border-white/5">
-          {(['creator', 'founder'] as const).map((r) => (
+        {!hideHeaderSwitcher && (
+          <div className="inline-flex rounded-full p-1 bg-[#141414] border border-[#222222] shadow-inner gap-1">
             <button
-              key={r}
               type="button"
               onClick={() => {
-                setRole(r);
+                setRole('creator');
                 setCamp(-1);
                 setHov(null);
               }}
-              className={`pill text-[12px] py-1 px-4 cursor-pointer font-medium transition-colors ${
-                role === r ? 'on text-black bg-[#F5F3EC]' : 'text-[#B9B7AF] bg-transparent'
+              className={`pill text-[12px] py-1 px-3.5 cursor-pointer font-medium transition-all flex items-center gap-1.5 rounded-full ${
+                role === 'creator'
+                  ? 'bg-[#F4F2EC] text-[#000000] font-semibold shadow-xs'
+                  : 'text-[#9C9A92] hover:text-[#F4F2EC] bg-transparent'
               }`}
             >
-              {r.charAt(0).toUpperCase() + r.slice(1)}
+              <i className="ti ti-speakerphone text-[13px]"></i>
+              <span>Promoting (Creator)</span>
             </button>
-          ))}
-        </div>
+            <button
+              type="button"
+              onClick={() => {
+                setRole('founder');
+                setCamp(-1);
+                setHov(null);
+              }}
+              className={`pill text-[12px] py-1 px-3.5 cursor-pointer font-medium transition-all flex items-center gap-1.5 rounded-full ${
+                role === 'founder'
+                  ? 'bg-[#F4F2EC] text-[#000000] font-semibold shadow-xs'
+                  : 'text-[#9C9A92] hover:text-[#F4F2EC] bg-transparent'
+              }`}
+            >
+              <i className="ti ti-device-mobile text-[13px]"></i>
+              <span>Has App (Founder)</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Filter Bar: Campaigns & Ranges */}
@@ -322,9 +354,9 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
       </div>
 
       {/* Main Metric Card */}
-      <div className="rounded-[24px] p-5 sm:p-7 bg-[#141414] border border-white/5 space-y-5">
+      <div className="rounded-[24px] p-5 sm:p-7 bg-[#0E0E0E] border border-white/5 space-y-5">
         {/* Carousel Pill Header */}
-        <div className="rounded-full flex items-center gap-3 p-1.5 pl-3 pr-2 bg-[#1C1C1C] border border-white/5">
+        <div className="rounded-full flex items-center gap-3 p-1.5 pl-3 pr-2 bg-[#141414] border border-white/5">
           <span
             className="w-8 h-8 rounded-[10px] flex items-center justify-center text-[16px] shrink-0 font-bold shadow-xs"
             style={{ backgroundColor: activeMetric.bg, color: activeMetric.fg }}
@@ -422,7 +454,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                   width={bw.toFixed(1)}
                   height={Math.max(1, pt + ph - y).toFixed(1)}
                   rx="1.5"
-                  fill={isHovered ? '#F5F3EC' : activeMetric.bg}
+                  fill={isHovered ? '#F4F2EC' : activeMetric.bg}
                   className="transition-colors cursor-pointer"
                 />
               );
@@ -471,7 +503,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                       width={boxW.toFixed(1)}
                       height="22"
                       rx="11"
-                      fill="#F5F3EC"
+                      fill="#F4F2EC"
                     />
                     <text
                       x={px.toFixed(1)}
@@ -490,7 +522,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
           </svg>
 
           {/* Interactive Scrub Status */}
-          <div className="sub text-[12px] text-[#F5F3EC] mt-1 pl-1">
+          <div className="sub text-[12px] text-[#F4F2EC] mt-1 pl-1">
             {hov !== null && hov >= 0
               ? `${dstr(n - 1 - hov)} · ${
                   isMoney ? money(curSeries[hov]) : num(curSeries[hov])
@@ -500,35 +532,35 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
         </div>
 
         {/* 4 Summary Stat Columns */}
-        <div className="nums grid grid-cols-2 sm:grid-cols-4 pt-3 border-t border-[#1F1F1F]">
+        <div className="nums grid grid-cols-2 sm:grid-cols-4 pt-3 border-t border-[#222222]">
           <div className="p-2 sm:p-3">
-            <div className="sub text-[11.5px] text-[#9A9892]">Total</div>
-            <div className="big text-[22px] font-medium text-[#F5F3EC] font-mono mt-0.5">
+            <div className="sub text-[11.5px] text-[#9C9A92]">Total</div>
+            <div className="big text-[22px] font-medium text-[#F4F2EC] font-mono mt-0.5">
               {isMoney ? money(totalVal) : num(totalVal)}
             </div>
           </div>
 
-          <div className="p-2 sm:p-3 border-l border-[#1F1F1F]">
-            <div className="sub text-[11.5px] text-[#9A9892]">Daily average</div>
-            <div className="big text-[22px] font-medium text-[#F5F3EC] font-mono mt-0.5">
+          <div className="p-2 sm:p-3 border-l border-[#222222]">
+            <div className="sub text-[11.5px] text-[#9C9A92]">Daily average</div>
+            <div className="big text-[22px] font-medium text-[#F4F2EC] font-mono mt-0.5">
               {isMoney ? money(totalVal / R) : num(totalVal / R)}
             </div>
           </div>
 
-          <div className="p-2 sm:p-3 border-t sm:border-t-0 sm:border-l border-[#1F1F1F]">
-            <div className="sub text-[11.5px] text-[#9A9892]">Best day</div>
-            <div className="big text-[22px] font-medium text-[#F5F3EC] font-mono mt-0.5">
+          <div className="p-2 sm:p-3 border-t sm:border-t-0 sm:border-l border-[#222222]">
+            <div className="sub text-[11.5px] text-[#9C9A92]">Best day</div>
+            <div className="big text-[22px] font-medium text-[#F4F2EC] font-mono mt-0.5">
               {isMoney ? money(bestVal) : num(bestVal)}
             </div>
           </div>
 
-          <div className="p-2 sm:p-3 border-t sm:border-t-0 border-l border-[#1F1F1F]">
-            <div className="sub text-[11.5px] text-[#9A9892]">
+          <div className="p-2 sm:p-3 border-t sm:border-t-0 border-l border-[#222222]">
+            <div className="sub text-[11.5px] text-[#9C9A92]">
               Vs previous {R} days
             </div>
             <div
               className={`big text-[22px] font-medium font-mono mt-0.5 ${
-                diffPct >= 0 ? 'text-[#C7F26B]' : 'text-[#FF8A80]'
+                diffPct >= 0 ? 'text-[#C9B8FF]' : 'text-[#FF8A80]'
               }`}
             >
               {diffPct >= 0 ? '+' : ''}
@@ -539,26 +571,26 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
       </div>
 
       {/* ================= LOWER ROLE SPECIFIC SECTION ================= */}
-      <div className="rounded-[24px] p-5 sm:p-7 bg-[#141414] border border-white/5 space-y-5">
+      <div className="rounded-[24px] p-5 sm:p-7 bg-[#0E0E0E] border border-white/5 space-y-5">
         {role === 'creator' ? (
           /* Creator: Earnings Status & By Campaign */
           <div className="space-y-4">
-            <div className="h text-[15px] font-medium text-[#F5F3EC]">
+            <div className="h text-[15px] font-medium text-[#F4F2EC]">
               Earnings status
             </div>
 
             <div className="nums grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                <div className="sub text-[12px] text-[#9A9892]">
+              <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                <div className="sub text-[12px] text-[#9C9A92]">
                   In the 14 day check
                 </div>
-                <div className="big text-[22px] font-medium text-[#F5F3EC] font-mono mt-1">
+                <div className="big text-[22px] font-medium text-[#F4F2EC] font-mono mt-1">
                   {money(creatorHold)}
                 </div>
               </div>
 
-              <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                <div className="sub text-[12px] text-[#9A9892]">
+              <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                <div className="sub text-[12px] text-[#9C9A92]">
                   Awaiting payout
                 </div>
                 <div className="big text-[22px] font-medium text-[#FAC775] font-mono mt-1">
@@ -566,15 +598,15 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                 </div>
               </div>
 
-              <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                <div className="sub text-[12px] text-[#9A9892]">Paid out</div>
-                <div className="big text-[22px] font-medium text-[#C7F26B] font-mono mt-1">
+              <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                <div className="sub text-[12px] text-[#9C9A92]">Paid out</div>
+                <div className="big text-[22px] font-medium text-[#C9B8FF] font-mono mt-1">
                   {money(creatorPaid)}
                 </div>
               </div>
             </div>
 
-            <div className="h text-[15px] font-medium text-[#F5F3EC] pt-3">
+            <div className="h text-[15px] font-medium text-[#F4F2EC] pt-3">
               By campaign
             </div>
 
@@ -587,7 +619,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                   <div
                     key={c.id}
                     onClick={() => onNavigateCampaign && onNavigateCampaign(c.id)}
-                    className="rw flex items-center gap-3.5 p-3 rounded-[16px] bg-[#141416] border border-[#1F1F1F] hover:border-[#2E2E34] transition-colors cursor-pointer"
+                    className="rw flex items-center gap-3.5 p-3 rounded-[16px] bg-[#141414] border border-[#222222] hover:border-[#2E2E34] transition-colors cursor-pointer"
                   >
                     <span
                       className="tl w-10 h-10 rounded-[12px] flex items-center justify-center text-[18px] shrink-0 font-bold"
@@ -597,10 +629,10 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                     </span>
 
                     <div className="flex-1 min-w-0">
-                      <div className="text-[14.5px] font-medium text-[#F5F3EC]">
+                      <div className="text-[14.5px] font-medium text-[#F4F2EC]">
                         {c.n}
                       </div>
-                      <div className="sub text-[12px] text-[#9A9892] mt-0.5">
+                      <div className="sub text-[12px] text-[#9C9A92] mt-0.5">
                         {num(r.v)} verified installs at {money(c.p)}
                       </div>
                       <div className="trk mt-2">
@@ -613,7 +645,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                       </div>
                     </div>
 
-                    <div className="text-[15px] font-semibold text-[#F5F3EC] font-mono">
+                    <div className="text-[15px] font-semibold text-[#F4F2EC] font-mono">
                       {money(r.m)}
                     </div>
                   </div>
@@ -626,16 +658,16 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
           <div className="space-y-5">
             {/* SDK Health */}
             <div>
-              <div className="h text-[15px] font-medium text-[#F5F3EC] mb-2">
+              <div className="h text-[15px] font-medium text-[#F4F2EC] mb-2">
                 SDK health
               </div>
-              <div className="rw flex items-center gap-3 p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#C7F26B] shrink-0 shadow-[0_0_8px_#C7F26B]" />
+              <div className="rw flex items-center gap-3 p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#C9B8FF] shrink-0 shadow-[0_0_8px_#C9B8FF]" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[14px] font-medium text-[#F5F3EC]">
+                  <div className="text-[14px] font-medium text-[#F4F2EC]">
                     Live
                   </div>
-                  <div className="sub text-[12px] text-[#9A9892]">
+                  <div className="sub text-[12px] text-[#9C9A92]">
                     {testPing
                       ? 'Test ping received successfully! Attestation active.'
                       : 'Last event 2 minutes ago · SDK 0.3.1 · iOS and Android'}
@@ -657,22 +689,22 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
 
             {/* Money & Settlement */}
             <div>
-              <div className="h text-[15px] font-medium text-[#F5F3EC] mb-2">
+              <div className="h text-[15px] font-medium text-[#F4F2EC] mb-2">
                 Money and settlement
               </div>
 
               <div className="nums grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                  <div className="sub text-[12px] text-[#9A9892]">
+                <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                  <div className="sub text-[12px] text-[#9C9A92]">
                     Budget left in escrow
                   </div>
-                  <div className="big text-[22px] font-medium text-[#F5F3EC] font-mono mt-1">
+                  <div className="big text-[22px] font-medium text-[#F4F2EC] font-mono mt-1">
                     {money(Math.max(0, founderBudget - founderSpent))}
                   </div>
                 </div>
 
-                <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                  <div className="sub text-[12px] text-[#9A9892]">
+                <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                  <div className="sub text-[12px] text-[#9C9A92]">
                     Spent in range
                   </div>
                   <div className="big text-[22px] font-medium text-[#FAC775] font-mono mt-1">
@@ -680,11 +712,11 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                   </div>
                 </div>
 
-                <div className="p-3 bg-[#141416] rounded-[16px] border border-[#1F1F1F]">
-                  <div className="sub text-[12px] text-[#9A9892]">
+                <div className="p-3 bg-[#141414] rounded-[16px] border border-[#222222]">
+                  <div className="sub text-[12px] text-[#9C9A92]">
                     Next settlement
                   </div>
-                  <div className="big text-[22px] font-medium text-[#C7F26B] font-mono mt-1">
+                  <div className="big text-[22px] font-medium text-[#C9B8FF] font-mono mt-1">
                     Fri, Oct 9
                   </div>
                 </div>
@@ -694,18 +726,18 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                 <div
                   style={{
                     width: `${budgetUsedPct}%`,
-                    backgroundColor: '#C7F26B',
+                    backgroundColor: '#C9B8FF',
                   }}
                 />
               </div>
-              <div className="sub text-[12px] text-[#9A9892] mt-1.5">
+              <div className="sub text-[12px] text-[#9C9A92] mt-1.5">
                 {budgetUsedPct}% of budget used
               </div>
             </div>
 
             {/* Top Creators Leaderboard */}
             <div>
-              <div className="h text-[15px] font-medium text-[#F5F3EC] mb-2">
+              <div className="h text-[15px] font-medium text-[#F4F2EC] mb-2">
                 Top creators
               </div>
 
@@ -713,7 +745,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                 {founderCreators.map((t) => (
                   <div
                     key={t.name}
-                    className="rw flex items-center gap-3 p-3 rounded-[16px] bg-[#141416] border border-[#1F1F1F]"
+                    className="rw flex items-center gap-3 p-3 rounded-[16px] bg-[#141414] border border-[#222222]"
                   >
                     <span
                       className="tl w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold shrink-0"
@@ -722,7 +754,7 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                       {t.name.charAt(0).toUpperCase()}
                     </span>
 
-                    <div className="flex-1 text-[14px] font-medium text-[#F5F3EC]">
+                    <div className="flex-1 text-[14px] font-medium text-[#F4F2EC]">
                       @{t.name}
                     </div>
 
@@ -730,12 +762,12 @@ export const KredAnalyticsEngine: React.FC<KredAnalyticsEngineProps> = ({
                       <div
                         style={{
                           width: `${(t.share / 31) * 100}%`,
-                          backgroundColor: '#C7F26B',
+                          backgroundColor: '#C9B8FF',
                         }}
                       />
                     </div>
 
-                    <div className="sub w-12 text-right text-[12px] font-mono text-[#F5F3EC]">
+                    <div className="sub w-12 text-right text-[12px] font-mono text-[#F4F2EC]">
                       {t.share}%
                     </div>
                   </div>

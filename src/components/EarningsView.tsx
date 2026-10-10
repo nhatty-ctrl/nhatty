@@ -250,25 +250,115 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
         ]}
       />
 
+      {/* Next Settlement & Trust Guarantee Banner (Point 4) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-[#0E0E0E] rounded-[18px] border border-[#222222]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#C9B8FF]/15 text-[#C9B8FF] flex items-center justify-center text-[18px] shrink-0">
+            <i className="ti ti-calendar-event"></i>
+          </div>
+          <div>
+            <div className="text-[14.5px] font-medium text-[#F4F2EC]">
+              Next Settlement Batch: <span className="text-[#C9B8FF] font-semibold">Friday, October 16</span>
+            </div>
+            <div className="text-[12px] text-[#9C9A92] mt-0.5">
+              Available balances ≥ $20.00 disburse weekly. 100% of funds backed in prefunded Stripe escrow.
+            </div>
+          </div>
+        </div>
+
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141414] border border-[#222222] text-[12px] text-[#B8B6AE] shrink-0 self-start sm:self-auto">
+          <span className="w-2 h-2 rounded-full bg-[#C9B8FF] animate-pulse"></span>
+          <span>Weekly Settlement Active</span>
+        </div>
+      </div>
+
+      {/* 5-Stage Earnings Pipeline (Point 4: Reported -> Qualified -> Held -> Available -> Paid) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-[14px] font-semibold text-[#F4F2EC]">Earnings Pipeline by Stage</span>
+          <span className="text-[11.5px] text-[#9C9A92]">Real-time tracking from link click to bank transfer</span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {/* Stage 1: Reported */}
+          <div className="p-3.5 bg-[#0E0E0E] rounded-[16px] border border-[#222222] space-y-1">
+            <div className="flex items-center justify-between text-[11px] text-[#9C9A92]">
+              <span>1. Reported</span>
+              <i className="ti ti-activity text-[#C9B8FF]"></i>
+            </div>
+            <div className="text-[20px] font-semibold font-mono text-[#F4F2EC]">$32.40</div>
+            <div className="text-[10.5px] text-[#9C9A92] leading-tight">Live telemetry incoming</div>
+          </div>
+
+          {/* Stage 2: Qualified */}
+          <div className="p-3.5 bg-[#0E0E0E] rounded-[16px] border border-[#222222] space-y-1">
+            <div className="flex items-center justify-between text-[11px] text-[#9C9A92]">
+              <span>2. Qualified</span>
+              <i className="ti ti-shield-check text-[#B5D4F4]"></i>
+            </div>
+            <div className="text-[20px] font-semibold font-mono text-[#F4F2EC]">$118.20</div>
+            <div className="text-[10.5px] text-[#9C9A92] leading-tight">SDK attestation passed</div>
+          </div>
+
+          {/* Stage 3: Held */}
+          <div className="p-3.5 bg-[#0E0E0E] rounded-[16px] border border-[#222222] space-y-1">
+            <div className="flex items-center justify-between text-[11px] text-[#9C9A92]">
+              <span>3. Held (14d)</span>
+              <i className="ti ti-clock text-[#FAC775]"></i>
+            </div>
+            <div className="text-[20px] font-semibold font-mono text-[#FAC775]">{money(verEarnings)}</div>
+            <div className="text-[10.5px] text-[#9C9A92] leading-tight">Safety hold window</div>
+          </div>
+
+          {/* Stage 4: Available */}
+          <div className="p-3.5 bg-[#0E0E0E] rounded-[16px] border border-[#C9B8FF]/40 bg-[#141414] space-y-1">
+            <div className="flex items-center justify-between text-[11px] text-[#C9B8FF]">
+              <span className="font-semibold">4. Available</span>
+              <i className="ti ti-wallet text-[#C9B8FF]"></i>
+            </div>
+            <div className="text-[20px] font-semibold font-mono text-[#C9B8FF]">${availableBalance.toFixed(2)}</div>
+            <div className="text-[10.5px] text-[#B8B6AE] leading-tight">Ready for Friday batch</div>
+          </div>
+
+          {/* Stage 5: Paid */}
+          <div className="p-3.5 bg-[#0E0E0E] rounded-[16px] border border-[#222222] space-y-1 col-span-2 sm:col-span-1">
+            <div className="flex items-center justify-between text-[11px] text-[#9C9A92]">
+              <span>5. Paid</span>
+              <i className="ti ti-circle-check text-[#C0DD97]"></i>
+            </div>
+            <div className="text-[20px] font-semibold font-mono text-[#F4F2EC]">{money(paidEarnings)}</div>
+            <div className="text-[10.5px] text-[#9C9A92] leading-tight">Settled to bank/card</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Regulatory / FTC Earnings Claim Disclaimer (Point 4) */}
+      <div className="p-3 bg-[#111111] rounded-[14px] border border-[#222222] flex items-start gap-2.5 text-[11.5px] text-[#9C9A92] leading-relaxed">
+        <i className="ti ti-info-circle text-[15px] text-[#FAC775] shrink-0 mt-0.5"></i>
+        <span>
+          <b className="text-[#F4F2EC]">Regulatory Disclosure on Earnings Projections:</b> Live reported numbers and projected milestones are estimated telemetry previews and do not represent a guaranteed payout amount. Final payouts are subject to RavenCore SDK device hardware authentication, anti-fraud deduplication, and completion of the 14-day hold window.
+        </span>
+      </div>
+
       {/* Title & Date Range Filter (Matching image.png layout) */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[30px] sm:text-[34px] font-semibold tracking-[-0.6px] text-[#F5F3EC]">
+          <h1 className="text-[30px] sm:text-[34px] font-semibold tracking-[-0.6px] text-[#F4F2EC]">
             Earnings
           </h1>
-          <p className="text-[13.5px] text-[#A8A69E] mt-1">
+          <p className="text-[13.5px] text-[#9C9A92] mt-1">
             What your links brought in, what's on hold, and where payouts go.
           </p>
         </div>
 
         {/* Date range filter segmented controls */}
-        <div className="flex gap-1.5 self-start sm:self-auto shrink-0 bg-[#161616] p-1 rounded-full border border-[#2A2A2A]">
+        <div className="flex gap-1.5 self-start sm:self-auto shrink-0 bg-[#0E0E0E] p-1 rounded-full border border-[#222222]">
           {[7, 30, 90].map((d) => (
             <button
               key={`range-${d}`}
               onClick={() => setRange(d)}
               className={`pill text-[12px] py-1.5 px-3.5 cursor-pointer border-0 ${
-                range === d ? 'on font-medium' : 'bg-transparent text-[#A8A69E] hover:text-[#F5F3EC]'
+                range === d ? 'on font-medium' : 'bg-transparent text-[#9C9A92] hover:text-[#F4F2EC]'
               }`}
             >
               {d} days
@@ -279,13 +369,13 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
       {!hasEarnings ? (
         /* Empty State */
-        <div className="card text-center py-14 px-6 space-y-3 bg-[#161616] border border-[#2A2A2A] rounded-[24px]">
-          <div className="w-12 h-12 rounded-full bg-[#1C1C1C] text-[#A8A69E] flex items-center justify-center text-[22px] mx-auto">
+        <div className="card text-center py-14 px-6 space-y-3 bg-[#0E0E0E] border border-[#222222] rounded-[24px]">
+          <div className="w-12 h-12 rounded-full bg-[#141414] text-[#9C9A92] flex items-center justify-center text-[22px] mx-auto">
             <i className="ti ti-coin"></i>
           </div>
           <div>
-            <div className="text-[16px] font-medium text-[#F5F3EC]">No earnings yet</div>
-            <div className="text-[13px] text-[#A8A69E] mt-1 max-w-[420px] mx-auto leading-relaxed">
+            <div className="text-[16px] font-medium text-[#F4F2EC]">No earnings yet</div>
+            <div className="text-[13px] text-[#9C9A92] mt-1 max-w-[420px] mx-auto leading-relaxed">
               Join an open campaign to get your tracking link and start earning per verified install.
             </div>
           </div>
@@ -305,72 +395,72 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
           {/* Top 4 Stat Cards in a spacious Grid (Exact visual match to image.png) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1: Earned */}
-            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
-              <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+            <div className="card p-5 bg-[#0E0E0E] border border-[#222222] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center gap-2 text-[13px] text-[#9C9A92]">
                 <i className="ti ti-coin text-[16px] text-[#C0DD97]"></i>
-                <span className="font-medium text-[#F5F3EC]">Earned</span>
-                <span className="text-[11px] text-[#A8A69E]">({range}d)</span>
+                <span className="font-medium text-[#F4F2EC]">Earned</span>
+                <span className="text-[11px] text-[#9C9A92]">({range}d)</span>
               </div>
               <div className="my-3">
-                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F4F2EC] font-mono">
                   {money(totEarnings)}
                 </div>
               </div>
-              <div className="text-[12px] text-[#A8A69E] leading-snug">
+              <div className="text-[12px] text-[#9C9A92] leading-snug">
                 your verified install bounty in this period
               </div>
             </div>
 
             {/* Card 2: Available */}
-            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+            <div className="card p-5 bg-[#0E0E0E] border border-[#222222] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
-                  <i className="ti ti-wallet text-[16px] text-[#C7F26B]"></i>
-                  <span className="font-medium text-[#F5F3EC]">Available</span>
+                <div className="flex items-center gap-2 text-[13px] text-[#9C9A92]">
+                  <i className="ti ti-wallet text-[16px] text-[#C9B8FF]"></i>
+                  <span className="font-medium text-[#F4F2EC]">Available</span>
                 </div>
                 {canWithdraw && (
-                  <span className="w-2 h-2 rounded-full bg-[#C7F26B]" title="Ready to withdraw" />
+                  <span className="w-2 h-2 rounded-full bg-[#C9B8FF]" title="Ready to withdraw" />
                 )}
               </div>
               <div className="my-3">
-                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F4F2EC] font-mono">
                   ${availableBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
               </div>
-              <div className="text-[12px] text-[#A8A69E] leading-snug">
+              <div className="text-[12px] text-[#9C9A92] leading-snug">
                 paid out once you clear $20.00
               </div>
             </div>
 
             {/* Card 3: On hold */}
-            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
-              <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+            <div className="card p-5 bg-[#0E0E0E] border border-[#222222] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center gap-2 text-[13px] text-[#9C9A92]">
                 <i className="ti ti-clock text-[16px] text-[#FAC775]"></i>
-                <span className="font-medium text-[#F5F3EC]">On hold</span>
+                <span className="font-medium text-[#F4F2EC]">On hold</span>
               </div>
               <div className="my-3">
-                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F4F2EC] font-mono">
                   {money(verEarnings)}
                 </div>
               </div>
-              <div className="text-[12px] text-[#A8A69E] leading-snug">
+              <div className="text-[12px] text-[#9C9A92] leading-snug">
                 clears 14 days after each install
               </div>
             </div>
 
             {/* Card 4: Sent / Paid */}
-            <div className="card p-5 bg-[#161616] border border-[#2A2A2A] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
-              <div className="flex items-center gap-2 text-[13px] text-[#A8A69E]">
+            <div className="card p-5 bg-[#0E0E0E] border border-[#222222] rounded-[18px] flex flex-col justify-between transition-colors hover:border-[#383838]">
+              <div className="flex items-center gap-2 text-[13px] text-[#9C9A92]">
                 <i className="ti ti-circle-check text-[16px] text-[#B5D4F4]"></i>
-                <span className="font-medium text-[#F5F3EC]">Sent</span>
-                <span className="text-[11px] text-[#A8A69E]">({range}d)</span>
+                <span className="font-medium text-[#F4F2EC]">Sent</span>
+                <span className="text-[11px] text-[#9C9A92]">({range}d)</span>
               </div>
               <div className="my-3">
-                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F5F3EC] font-mono">
+                <div className="text-[32px] font-semibold tracking-[-0.8px] text-[#F4F2EC] font-mono">
                   {money(paidEarnings)}
                 </div>
               </div>
-              <div className="text-[12px] text-[#A8A69E] leading-snug">
+              <div className="text-[12px] text-[#9C9A92] leading-snug">
                 transfers submitted or confirmed
               </div>
             </div>
@@ -378,22 +468,22 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
           {/* IN-PAGE EMBEDDED WITHDRAWAL FLOW MODAL / BANNER */}
           {isWithdrawOpen && (
-            <div className="card border border-[#C7F26B]/50 bg-[#161616] rounded-[24px] p-5 sm:p-6 space-y-4 animate-[fade-in_0.2s_ease-out]">
-              <div className="flex items-center justify-between border-b border-[#2A2A2A] pb-3">
+            <div className="card border border-[#C9B8FF]/50 bg-[#0E0E0E] rounded-[24px] p-5 sm:p-6 space-y-4 animate-[fade-in_0.2s_ease-out]">
+              <div className="flex items-center justify-between border-b border-[#222222] pb-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-8 h-8 rounded-full bg-[#C7F26B] text-[#16140F] flex items-center justify-center font-medium text-[14px]">
+                  <span className="w-8 h-8 rounded-full bg-[#C9B8FF] text-[#000000] flex items-center justify-center font-medium text-[14px]">
                     <i className="ti ti-arrow-down-right"></i>
                   </span>
                   <div>
-                    <h2 className="text-[17px] font-medium text-[#F5F3EC]">Withdrawal flow</h2>
-                    <p className="sub text-[11px] text-[#A8A69E]">Transfer verified creator earnings to your destination.</p>
+                    <h2 className="text-[17px] font-medium text-[#F4F2EC]">Withdrawal flow</h2>
+                    <p className="sub text-[11px] text-[#9C9A92]">Transfer verified creator earnings to your destination.</p>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setIsWithdrawOpen(false)}
-                  className="w-8 h-8 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
                   aria-label="Close withdrawal flow"
                 >
                   <i className="ti ti-x text-[14px]"></i>
@@ -409,9 +499,9 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                   className="space-y-4"
                 >
                   <div>
-                    <label className="fl text-[#A8A69E]" htmlFor="withdraw-amt">Amount to withdraw (USD)</label>
+                    <label className="fl text-[#9C9A92]" htmlFor="withdraw-amt">Amount to withdraw (USD)</label>
                     <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A8A69E] font-mono text-[14px]">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9C9A92] font-mono text-[14px]">
                         $
                       </span>
                       <input
@@ -452,22 +542,22 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                   </div>
 
                   <div>
-                    <label className="fl text-[#A8A69E]">Destination payout rail</label>
+                    <label className="fl text-[#9C9A92]">Destination payout rail</label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => setWithdrawMethod('bank')}
                         className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                           withdrawMethod === 'bank'
-                            ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                            : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                            ? 'border-[#C9B8FF] bg-[#141414]'
+                            : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                         }`}
                       >
                         <div>
-                          <div className="text-[13px] font-medium text-[#F5F3EC]">Chase Checking</div>
-                          <div className="text-[11px] text-[#A8A69E]">••••5821</div>
+                          <div className="text-[13px] font-medium text-[#F4F2EC]">Chase Checking</div>
+                          <div className="text-[11px] text-[#9C9A92]">••••5821</div>
                         </div>
-                        <i className="ti ti-building-bank text-[18px] text-[#A8A69E]"></i>
+                        <i className="ti ti-building-bank text-[18px] text-[#9C9A92]"></i>
                       </button>
 
                       <button
@@ -475,15 +565,15 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                         onClick={() => setWithdrawMethod('card')}
                         className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                           withdrawMethod === 'card'
-                            ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                            : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                            ? 'border-[#C9B8FF] bg-[#141414]'
+                            : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                         }`}
                       >
                         <div>
-                          <div className="text-[13px] font-medium text-[#F5F3EC]">Visa Debit</div>
-                          <div className="text-[11px] text-[#A8A69E]">••••4242</div>
+                          <div className="text-[13px] font-medium text-[#F4F2EC]">Visa Debit</div>
+                          <div className="text-[11px] text-[#9C9A92]">••••4242</div>
                         </div>
-                        <i className="ti ti-credit-card text-[18px] text-[#A8A69E]"></i>
+                        <i className="ti ti-credit-card text-[18px] text-[#9C9A92]"></i>
                       </button>
 
                       <button
@@ -491,15 +581,15 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                         onClick={() => setWithdrawMethod('usdc')}
                         className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                           withdrawMethod === 'usdc'
-                            ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                            : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                            ? 'border-[#C9B8FF] bg-[#141414]'
+                            : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                         }`}
                       >
                         <div>
-                          <div className="text-[13px] font-medium text-[#F5F3EC]">Polygon USDC</div>
-                          <div className="text-[11px] text-[#A8A69E]">0x71C...4e8B</div>
+                          <div className="text-[13px] font-medium text-[#F4F2EC]">Polygon USDC</div>
+                          <div className="text-[11px] text-[#9C9A92]">0x71C...4e8B</div>
                         </div>
-                        <i className="ti ti-currency-dollar text-[18px] text-[#C7F26B]"></i>
+                        <i className="ti ti-currency-dollar text-[18px] text-[#C9B8FF]"></i>
                       </button>
                     </div>
                   </div>
@@ -524,18 +614,18 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
               {withdrawStep === 2 && (
                 <div className="space-y-4">
-                  <div className="bg-[#1C1C1C] rounded-[16px] p-4 border border-[#2A2A2A]/40 space-y-2 text-[13px]">
-                    <div className="flex justify-between text-[#A8A69E]">
+                  <div className="bg-[#141414] rounded-[16px] p-4 border border-[#222222]/40 space-y-2 text-[13px]">
+                    <div className="flex justify-between text-[#9C9A92]">
                       <span>Amount requested</span>
-                      <span className="font-mono text-[#F5F3EC]">${parseFloat(withdrawAmount).toFixed(2)}</span>
+                      <span className="font-mono text-[#F4F2EC]">${parseFloat(withdrawAmount).toFixed(2)}</span>
                     </div>
-                    <div className="flex justify-between text-[#A8A69E]">
+                    <div className="flex justify-between text-[#9C9A92]">
                       <span>Transfer fee</span>
-                      <span className="font-mono text-[#C7F26B]">$0.00 (Zero fee)</span>
+                      <span className="font-mono text-[#C9B8FF]">$0.00 (Zero fee)</span>
                     </div>
-                    <div className="flex justify-between text-[#A8A69E]">
+                    <div className="flex justify-between text-[#9C9A92]">
                       <span>Destination</span>
-                      <span className="text-[#F5F3EC]">
+                      <span className="text-[#F4F2EC]">
                         {withdrawMethod === 'bank'
                           ? 'Chase Checking (••••5821)'
                           : withdrawMethod === 'card'
@@ -543,13 +633,13 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                           : 'Polygon USDC (0x71C...4e8B)'}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[#A8A69E]">
+                    <div className="flex justify-between text-[#9C9A92]">
                       <span>Release schedule</span>
-                      <span className="text-[#F5F3EC]">Friday, Oct 9 at 17:00 UTC</span>
+                      <span className="text-[#F4F2EC]">Friday, Oct 9 at 17:00 UTC</span>
                     </div>
-                    <div className="border-t border-[#2A2A2A] pt-2 flex justify-between font-medium text-[15px] text-[#F5F3EC]">
+                    <div className="border-t border-[#222222] pt-2 flex justify-between font-medium text-[15px] text-[#F4F2EC]">
                       <span>Net withdrawal</span>
-                      <span className="font-mono text-[#C7F26B]">${parseFloat(withdrawAmount).toFixed(2)}</span>
+                      <span className="font-mono text-[#C9B8FF]">${parseFloat(withdrawAmount).toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -576,13 +666,13 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
               {withdrawStep === 3 && withdrawalSuccess && (
                 <div className="text-center py-4 space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-[#C7F26B] text-[#16140F] inline-flex items-center justify-center text-[24px]">
+                  <div className="w-12 h-12 rounded-full bg-[#C9B8FF] text-[#000000] inline-flex items-center justify-center text-[24px]">
                     <i className="ti ti-check"></i>
                   </div>
-                  <div className="text-[20px] font-medium text-[#F5F3EC]">
+                  <div className="text-[20px] font-medium text-[#F4F2EC]">
                     ${withdrawalSuccess.amount.toFixed(2)} withdrawal requested
                   </div>
-                  <div className="text-[13px] text-[#A8A69E] max-w-[420px] mx-auto">
+                  <div className="text-[13px] text-[#9C9A92] max-w-[420px] mx-auto">
                     Settlement {withdrawalSuccess.id} sent to {withdrawalSuccess.method}. Releases on {withdrawalSuccess.settleDate}.
                   </div>
                   <div className="pt-2 flex items-center justify-center gap-2 flex-wrap">
@@ -610,17 +700,17 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
           {/* Middle Two-Card Row (Exact visual architecture of Products & Payouts in image.png) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Left Card: Campaigns & Bounties (Matching "Products" card) */}
-            <div className="lg:col-span-7 card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] flex flex-col justify-between">
+            <div className="lg:col-span-7 card p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between pb-3 border-b border-[#2A2A2A]">
+                <div className="flex items-center justify-between pb-3 border-b border-[#222222]">
                   <div>
-                    <h2 className="text-[17px] font-medium text-[#F5F3EC]">Campaigns & Bounties</h2>
-                    <p className="text-[12px] text-[#A8A69E] mt-0.5">Verified install revenue by participating app</p>
+                    <h2 className="text-[17px] font-medium text-[#F4F2EC]">Campaigns & Bounties</h2>
+                    <p className="text-[12px] text-[#9C9A92] mt-0.5">Verified install revenue by participating app</p>
                   </div>
                   <button
                     type="button"
                     onClick={onBrowseCampaigns}
-                    className="pill text-[12px] py-1 px-3 cursor-pointer text-[#A8A69E] hover:text-[#F5F3EC]"
+                    className="pill text-[12px] py-1 px-3 cursor-pointer text-[#9C9A92] hover:text-[#F4F2EC]"
                   >
                     Browse open
                   </button>
@@ -636,7 +726,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                       <div
                         key={c.id}
                         onClick={() => onNavigateCampaign && onNavigateCampaign(c.id)}
-                        className="flex items-center gap-3.5 p-3 rounded-[14px] bg-[#1C1C1C] border border-[#2A2A2A]/40 hover:border-[#383838] transition-colors cursor-pointer"
+                        className="flex items-center gap-3.5 p-3 rounded-[14px] bg-[#141414] border border-[#222222]/60 hover:border-[#383838] transition-colors cursor-pointer"
                       >
                         <div
                           className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center text-[20px] shrink-0"
@@ -646,14 +736,14 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
-                            <span className="text-[14px] font-medium text-[#F5F3EC] truncate">{c.n}</span>
-                            <span className="text-[14px] font-mono font-medium text-[#F5F3EC]">{money(e)}</span>
+                            <span className="text-[14px] font-medium text-[#F4F2EC] truncate">{c.n}</span>
+                            <span className="text-[14px] font-mono font-medium text-[#F4F2EC]">{money(e)}</span>
                           </div>
-                          <div className="flex items-center justify-between text-[12px] text-[#A8A69E] mt-0.5">
+                          <div className="flex items-center justify-between text-[12px] text-[#9C9A92] mt-0.5">
                             <span>{num(inst)} installs · {c.cat}</span>
                             <span>${c.pay.toFixed(2)}/install</span>
                           </div>
-                          <div className="h-[4px] rounded-full bg-[#242424] overflow-hidden mt-2 w-full">
+                          <div className="h-[4px] rounded-full bg-[#1B1B1B] overflow-hidden mt-2 w-full">
                             <div
                               className="h-full rounded-full transition-all"
                               style={{ width: `${Math.max(4, pct)}%`, backgroundColor: c.bg }}
@@ -666,31 +756,31 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#2A2A2A] mt-4 flex items-center justify-between text-[12px] text-[#A8A69E]">
+              <div className="pt-4 border-t border-[#222222] mt-4 flex items-center justify-between text-[12px] text-[#9C9A92]">
                 <span>Total funded installs: {num(CREATOR_CAMPAIGN_DATA.reduce((acc, c, i) => acc + sum(E[i], 0, range - 1), 0))}</span>
-                <span className="text-[#C7F26B] font-medium font-mono">${money(totEarnings)} total</span>
+                <span className="text-[#C9B8FF] font-medium font-mono">${money(totEarnings)} total</span>
               </div>
             </div>
 
             {/* Right Card: Payouts (Matching "Payouts" card in image.png) */}
-            <div className="lg:col-span-5 card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] flex flex-col justify-between">
+            <div className="lg:col-span-5 card p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between pb-3 border-b border-[#2A2A2A]">
-                  <h2 className="text-[17px] font-medium text-[#F5F3EC]">Payouts</h2>
-                  <span className="chip text-[11px] py-0.5 px-2.5 bg-[#C7F26B]/20 text-[#C7F26B] font-medium flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C7F26B]" />
+                <div className="flex items-center justify-between pb-3 border-b border-[#222222]">
+                  <h2 className="text-[17px] font-medium text-[#F4F2EC]">Payouts</h2>
+                  <span className="chip text-[11px] py-0.5 px-2.5 bg-[#C9B8FF]/20 text-[#C9B8FF] font-medium flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9B8FF]" />
                     <span>USDC · paid once you clear $20</span>
                   </span>
                 </div>
 
                 {/* Segmented Control for Payout Mode (matching image.png) */}
                 <div className="mt-4">
-                  <div className="inline-flex bg-[#1C1C1C] p-1 rounded-[12px] border border-[#2A2A2A]">
+                  <div className="inline-flex bg-[#141414] p-1 rounded-[12px] border border-[#222222]">
                     <button
                       type="button"
                       onClick={() => setPayoutTab('email')}
                       className={`text-[12px] font-medium py-1 px-3 rounded-[9px] cursor-pointer border-0 transition-colors ${
-                        payoutTab === 'email' ? 'bg-[#F5F3EC] text-[#0B0B0B]' : 'bg-transparent text-[#A8A69E] hover:text-[#F5F3EC]'
+                        payoutTab === 'email' ? 'bg-[#F4F2EC] text-[#000000]' : 'bg-transparent text-[#9C9A92] hover:text-[#F4F2EC]'
                       }`}
                     >
                       Email
@@ -699,7 +789,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                       type="button"
                       onClick={() => setPayoutTab('wallet')}
                       className={`text-[12px] font-medium py-1 px-3 rounded-[9px] cursor-pointer border-0 transition-colors ${
-                        payoutTab === 'wallet' ? 'bg-[#F5F3EC] text-[#0B0B0B]' : 'bg-transparent text-[#A8A69E] hover:text-[#F5F3EC]'
+                        payoutTab === 'wallet' ? 'bg-[#F4F2EC] text-[#000000]' : 'bg-transparent text-[#9C9A92] hover:text-[#F4F2EC]'
                       }`}
                     >
                       Wallet address
@@ -709,28 +799,28 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
                 {/* Destination Display Input (matching image.png) */}
                 <div className="mt-4 space-y-1.5">
-                  <label className="text-[12px] text-[#A8A69E] block">
+                  <label className="text-[12px] text-[#9C9A92] block">
                     {payoutTab === 'email' ? 'Payout email' : 'Polygon USDC wallet address'}
                   </label>
-                  <div className="p-3 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A] flex items-center justify-between">
-                    <span className="text-[13.5px] font-mono text-[#F5F3EC]">
+                  <div className="p-3 bg-[#141414] rounded-[14px] border border-[#222222] flex items-center justify-between">
+                    <span className="text-[13.5px] font-mono text-[#F4F2EC]">
                       {payoutTab === 'email' ? 'alex.rivera@creator.io' : '0x71C...4e8B (Polygon)'}
                     </span>
-                    <i className={`ti ${payoutTab === 'email' ? 'ti-mail' : 'ti-wallet'} text-[#A8A69E]`}></i>
+                    <i className={`ti ${payoutTab === 'email' ? 'ti-mail' : 'ti-wallet'} text-[#9C9A92]`}></i>
                   </div>
                 </div>
 
-                <div className="text-[12px] text-[#A8A69E] mt-3 leading-relaxed">
+                <div className="text-[12px] text-[#9C9A92] mt-3 leading-relaxed">
                   Coinbase / Circle sends the money here, onboards you, and cashes out in your local currency. Nothing to install.
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-[#2A2A2A] mt-5 flex items-center justify-between gap-3">
+              <div className="pt-4 border-t border-[#222222] mt-5 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={onWithdraw}
-                  className="pill text-[12px] py-1.5 px-3 cursor-pointer text-[#A8A69E] hover:text-[#F5F3EC]"
+                  className="pill text-[12px] py-1.5 px-3 cursor-pointer text-[#9C9A92] hover:text-[#F4F2EC]"
                 >
                   Configure methods
                 </button>
@@ -744,7 +834,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                     Withdraw ${availableBalance.toFixed(2)}
                   </button>
                 ) : (
-                  <span className="text-[11px] text-[#A8A69E]">
+                  <span className="text-[11px] text-[#9C9A92]">
                     ${availableBalance.toFixed(2)} / $20 min
                   </span>
                 )}
@@ -753,11 +843,11 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
           </div>
 
           {/* Bottom Full-Width Card: Settlements & Sales Activity (Matching "Sales" section in image.png) */}
-          <div className="card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#2A2A2A]">
+          <div className="card p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#222222]">
               <div>
-                <h2 className="text-[17px] font-medium text-[#F5F3EC]">Settlements & Sales History</h2>
-                <p className="text-[12px] text-[#A8A69E] mt-0.5">
+                <h2 className="text-[17px] font-medium text-[#F4F2EC]">Settlements & Sales History</h2>
+                <p className="text-[12px] text-[#9C9A92] mt-0.5">
                   Verified settlements matching your selected {range}-day period ({money(paidEarnings)} settled).
                 </p>
               </div>
@@ -766,7 +856,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowDataTable(!showDataTable)}
-                  className="pill gh text-[12px] py-1 px-3 cursor-pointer text-[#A8A69E] hover:text-[#F5F3EC] flex items-center gap-1.5"
+                  className="pill gh text-[12px] py-1 px-3 cursor-pointer text-[#9C9A92] hover:text-[#F4F2EC] flex items-center gap-1.5"
                 >
                   <i className={`ti ${showDataTable ? 'ti-chart-bar' : 'ti-table'}`}></i>
                   <span>{showDataTable ? 'Show timeline chart' : 'Show data table'}</span>
@@ -776,10 +866,10 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
 
             {/* Sleek SVG Area Graph */}
             {!showDataTable && (
-              <div className="p-4 sm:p-5 bg-[#121212] rounded-[16px] border border-[#222]">
-                <div className="flex items-center justify-between text-[12px] text-[#A8A69E] mb-2 px-1">
+              <div className="p-4 sm:p-5 bg-[#000000] rounded-[16px] border border-[#222222]">
+                <div className="flex items-center justify-between text-[12px] text-[#9C9A92] mb-2 px-1">
                   <span>Settlement Volume Trend</span>
-                  <span className="font-mono text-[#F5F3EC]">Peak bucket: {money(maxChartVal)}</span>
+                  <span className="font-mono text-[#F4F2EC]">Peak bucket: {money(maxChartVal)}</span>
                 </div>
                 <div className="w-full overflow-hidden">
                   <svg
@@ -789,9 +879,9 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                   >
                     <defs>
                       <linearGradient id="earningsGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#C7F26B" stopOpacity="0.4" />
-                        <stop offset="60%" stopColor="#C7F26B" stopOpacity="0.08" />
-                        <stop offset="100%" stopColor="#C7F26B" stopOpacity="0.0" />
+                        <stop offset="0%" stopColor="#C9B8FF" stopOpacity="0.4" />
+                        <stop offset="60%" stopColor="#C9B8FF" stopOpacity="0.08" />
+                        <stop offset="100%" stopColor="#C9B8FF" stopOpacity="0.0" />
                       </linearGradient>
                     </defs>
 
@@ -825,7 +915,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                           <path
                             d={lPath}
                             fill="none"
-                            stroke="#C7F26B"
+                            stroke="#C9B8FF"
                             strokeWidth="2.5"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -837,7 +927,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                               cy={pt.y}
                               r="3.5"
                               fill="#0E0E0E"
-                              stroke="#C7F26B"
+                              stroke="#C9B8FF"
                               strokeWidth="2"
                               className="cursor-pointer transition-all hover:r-5"
                               onMouseEnter={() =>
@@ -852,8 +942,8 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                   </svg>
                 </div>
                 {hoveredTip && (
-                  <div className="mt-2 text-center text-[12px] text-[#F5F3EC] font-mono animate-[fade-in_0.1s_ease-out]">
-                    <span className="bg-[#1C1C1C] px-3 py-1 rounded-full border border-[#333]">
+                  <div className="mt-2 text-center text-[12px] text-[#F4F2EC] font-mono animate-[fade-in_0.1s_ease-out]">
+                    <span className="bg-[#141414] px-3 py-1 rounded-full border border-[#222222]">
                       {hoveredTip}
                     </span>
                   </div>
@@ -884,7 +974,7 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                     });
                     setIsReceiptModalOpen(true);
                   }}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/30 hover:border-[#C7F26B]/50 transition-colors cursor-pointer"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/30 hover:border-[#C9B8FF]/50 transition-colors cursor-pointer"
                   title="Click to view digital settlement receipt"
                 >
                   <div className="flex items-center gap-3">
@@ -895,8 +985,8 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                       <i className={`ti ${p.icon}`} aria-hidden="true"></i>
                     </span>
                     <div>
-                      <div className="text-[13.5px] font-medium text-[#F5F3EC]">{p.date}</div>
-                      <div className="text-[11px] text-[#A8A69E]">Weekly settlement at 17:00 UTC · {p.id}</div>
+                      <div className="text-[13.5px] font-medium text-[#F4F2EC]">{p.date}</div>
+                      <div className="text-[11px] text-[#9C9A92]">Weekly settlement at 17:00 UTC · {p.id}</div>
                     </div>
                   </div>
 
@@ -908,10 +998,10 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                       <i className={`ti ${p.icon}`}></i>
                       <span>{p.status}</span>
                     </span>
-                    <span className="font-mono text-[15px] font-medium text-[#F5F3EC] min-w-[70px] text-right">
+                    <span className="font-mono text-[15px] font-medium text-[#F4F2EC] min-w-[70px] text-right">
                       {money(p.val)}
                     </span>
-                    <i className="ti ti-receipt text-[14px] text-[#A8A69E] hover:text-[#C7F26B]" />
+                    <i className="ti ti-receipt text-[14px] text-[#9C9A92] hover:text-[#C9B8FF]" />
                   </div>
                 </div>
               ))}

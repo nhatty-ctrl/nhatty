@@ -142,14 +142,14 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-12 z-50 w-[360px] max-w-[calc(100vw-24px)] rounded-[24px] bg-[#161616] border border-[#2A2A2A] shadow-2xl p-3 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
+      className="absolute right-0 top-12 z-50 w-[360px] max-w-[calc(100vw-24px)] rounded-[24px] bg-[#0E0E0E] border border-[#222222] shadow-2xl p-3 animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left"
     >
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-2.5 px-1 border-b border-[#2A2A2A]">
+      <div className="flex items-center justify-between pb-2.5 px-1 border-b border-[#222222]">
         <div className="flex items-center gap-2">
-          <span className="text-[15px] font-medium text-[#F5F3EC]">Notifications</span>
+          <span className="text-[15px] font-medium text-[#F4F2EC]">Notifications</span>
           {unreadCount > 0 && (
-            <span className="chip text-[10.5px] py-0.5 px-2 bg-[#C7F26B] text-[#0B0B0B] font-semibold">
+            <span className="chip text-[10.5px] py-0.5 px-2 bg-[#C9B8FF] text-[#000000] font-semibold">
               {unreadCount} new
             </span>
           )}
@@ -160,7 +160,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
             <button
               type="button"
               onClick={onMarkAllRead}
-              className="text-[11.5px] text-[#A8A69E] hover:text-[#F5F3EC] transition-colors cursor-pointer bg-transparent border-0"
+              className="text-[11.5px] text-[#9C9A92] hover:text-[#F4F2EC] transition-colors cursor-pointer bg-transparent border-0"
             >
               Mark all read
             </button>
@@ -173,7 +173,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
                 onNavigateSettings();
                 onClose();
               }}
-              className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#252525] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center transition-colors cursor-pointer border-0"
+              className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#252525] text-[#9C9A92] hover:text-[#F4F2EC] flex items-center justify-center transition-colors cursor-pointer border-0"
               title="Notification settings"
             >
               <i className="ti ti-settings text-[14px]"></i>
@@ -210,7 +210,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
                 key={n.id}
                 onClick={() => onMarkRead(n.id)}
                 className={`p-2.5 rounded-[16px] transition-colors cursor-pointer flex items-start gap-3 relative group ${
-                  isRead ? 'hover:bg-[#1C1C1C]/60 opacity-80' : 'bg-[#1C1C1C]/70 hover:bg-[#1C1C1C]'
+                  isRead ? 'hover:bg-[#141414]/60 opacity-80' : 'bg-[#141414]/70 hover:bg-[#141414]'
                 }`}
               >
                 {/* Icon Tile */}
@@ -224,10 +224,10 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[13px] font-medium text-[#F5F3EC] truncate">{n.t}</span>
-                    <span className="text-[11px] text-[#A8A69E] shrink-0 font-mono">{n.tm}</span>
+                    <span className="text-[13px] font-medium text-[#F4F2EC] truncate">{n.t}</span>
+                    <span className="text-[11px] text-[#9C9A92] shrink-0 font-mono">{n.tm}</span>
                   </div>
-                  <p className="text-[12px] text-[#A8A69E] mt-0.5 leading-snug line-clamp-2">
+                  <p className="text-[12px] text-[#9C9A92] mt-0.5 leading-snug line-clamp-2">
                     {n.d}
                   </p>
                 </div>
@@ -239,19 +239,19 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
             );
           })
         ) : (
-          <div className="py-8 text-center text-[12.5px] text-[#A8A69E]">
+          <div className="py-8 text-center text-[12.5px] text-[#9C9A92]">
             No unread notifications
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="pt-2 px-1 border-t border-[#2A2A2A] flex justify-between items-center text-[11.5px] text-[#A8A69E]">
+      <div className="pt-2 px-1 border-t border-[#222222] flex justify-between items-center text-[11.5px] text-[#9C9A92]">
         <span>Weekly settlements released every Friday</span>
         <button
           type="button"
           onClick={onClose}
-          className="hover:text-[#F5F3EC] cursor-pointer bg-transparent border-0"
+          className="hover:text-[#F4F2EC] cursor-pointer bg-transparent border-0"
         >
           Close
         </button>

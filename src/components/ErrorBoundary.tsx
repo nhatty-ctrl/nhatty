@@ -43,14 +43,14 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#0B0B0B] text-[#F5F3EC] flex items-center justify-center p-6">
-          <div className="card max-w-[500px] w-full bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-8 text-center space-y-5 shadow-2xl">
+        <div className="min-h-screen bg-[#000000] text-[#F4F2EC] flex items-center justify-center p-6">
+          <div className="card max-w-[500px] w-full bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-8 text-center space-y-5 shadow-2xl">
             <div className="w-14 h-14 rounded-full bg-[#FF8A80]/15 text-[#FF8A80] inline-flex items-center justify-center text-[28px]">
               <i className="ti ti-alert-triangle" aria-hidden="true"></i>
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-[22px] font-medium tracking-tight text-[#F5F3EC]">
+              <h1 className="text-[22px] font-medium tracking-tight text-[#F4F2EC]">
                 Something interrupted this view
               </h1>
               <p className="text-[13px] text-[#9A9892] leading-relaxed">

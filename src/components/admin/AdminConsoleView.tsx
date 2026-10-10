@@ -71,14 +71,14 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#262626]">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[12px] font-medium text-[#C7F26B] uppercase tracking-wider font-mono">
+            <span className="text-[12px] font-medium text-[#C9B8FF] uppercase tracking-wider font-mono">
               [Umi Control Plane]
             </span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#1F1F1F] text-[#A8A69E] border border-[#333]">
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#1F1F1F] text-[#9C9A92] border border-[#333]">
               Environment: Production
             </span>
           </div>
-          <h1 className="text-[22px] font-semibold text-[#F5F3EC]">Operations, Ledger & Audit Console</h1>
+          <h1 className="text-[22px] font-semibold text-[#F4F2EC]">Operations, Ledger & Audit Console</h1>
         </div>
 
         {/* Global Test & Audit Actions */}
@@ -86,16 +86,16 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <button
             type="button"
             onClick={handleRunInvariantAudit}
-            className="px-3.5 py-2 rounded-xl bg-[#1C1C1C] hover:bg-[#252525] text-[#F5F3EC] text-[12px] font-medium border border-[#333] transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-[#141414] hover:bg-[#252525] text-[#F4F2EC] text-[12px] font-medium border border-[#333] transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            <i className="ti ti-check text-[#C7F26B]"></i>
+            <i className="ti ti-check text-[#C9B8FF]"></i>
             <span>Run Invariant Audit</span>
           </button>
 
           <button
             type="button"
             onClick={handleSimulateRevenueCat}
-            className="px-3.5 py-2 rounded-xl bg-[#1C1C1C] hover:bg-[#252525] text-[#F5F3EC] text-[12px] font-medium border border-[#333] transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-xl bg-[#141414] hover:bg-[#252525] text-[#F4F2EC] text-[12px] font-medium border border-[#333] transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <i className="ti ti-brand-apple text-[#388BFD]"></i>
             <span>Test RevenueCat Webhook</span>
@@ -104,7 +104,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       </div>
 
       {actionNotice && (
-        <div className="p-3.5 rounded-xl bg-[#181818] border border-[#C7F26B]/30 text-[#C7F26B] text-[12.5px] font-mono flex items-center justify-between animate-[fadeIn_0.1s_ease-out]">
+        <div className="p-3.5 rounded-xl bg-[#181818] border border-[#C9B8FF]/30 text-[#C9B8FF] text-[12.5px] font-mono flex items-center justify-between animate-[fadeIn_0.1s_ease-out]">
           <div className="flex items-center gap-2">
             <i className="ti ti-info-circle text-[15px]"></i>
             <span>{actionNotice}</span>
@@ -135,8 +135,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
             onClick={() => setActiveTab(t.id as any)}
             className={`px-3.5 py-2 rounded-lg text-[12.5px] font-medium transition-all cursor-pointer border-0 flex items-center gap-2 whitespace-nowrap ${
               activeTab === t.id
-                ? 'bg-[#262626] text-[#F5F3EC] shadow-sm'
-                : 'text-[#888] hover:text-[#F5F3EC] bg-transparent'
+                ? 'bg-[#262626] text-[#F4F2EC] shadow-sm'
+                : 'text-[#888] hover:text-[#F4F2EC] bg-transparent'
             }`}
           >
             <i className={`ti ${t.icon} text-[14px]`}></i>
@@ -150,39 +150,39 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
-              <div className="text-[12px] text-[#A8A69E] mb-1">SDK Ingestion Health</div>
+              <div className="text-[12px] text-[#9C9A92] mb-1">SDK Ingestion Health</div>
               <div className="text-[22px] font-mono font-bold text-emerald-400">99.98%</div>
               <div className="text-[11.5px] text-[#777] mt-1">Convex HTTP endpoints online</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
-              <div className="text-[12px] text-[#A8A69E] mb-1">Webhook Backlog</div>
-              <div className="text-[22px] font-mono font-bold text-[#F5F3EC]">0 pending</div>
+              <div className="text-[12px] text-[#9C9A92] mb-1">Webhook Backlog</div>
+              <div className="text-[22px] font-mono font-bold text-[#F4F2EC]">0 pending</div>
               <div className="text-[11.5px] text-[#777] mt-1">Whop & RevenueCat in sync</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
-              <div className="text-[12px] text-[#A8A69E] mb-1">Reconciliation Discrepancies</div>
+              <div className="text-[12px] text-[#9C9A92] mb-1">Reconciliation Discrepancies</div>
               <div className="text-[22px] font-mono font-bold text-emerald-400">$0.00</div>
               <div className="text-[11.5px] text-[#777] mt-1">Ledger matches Whop accounts</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
-              <div className="text-[12px] text-[#A8A69E] mb-1">Automated Freeze Rate</div>
-              <div className="text-[22px] font-mono font-bold text-[#C7F26B]">0.38%</div>
+              <div className="text-[12px] text-[#9C9A92] mb-1">Automated Freeze Rate</div>
+              <div className="text-[22px] font-mono font-bold text-[#C9B8FF]">0.38%</div>
               <div className="text-[11.5px] text-[#777] mt-1">Velocity & IP cluster triggers</div>
             </div>
           </div>
 
           {/* Architecture Status */}
           <div className="p-5 rounded-2xl bg-[#141414] border border-[#262626]">
-            <h3 className="text-[15px] font-semibold text-[#F5F3EC] mb-2">Convex Backend Architecture Status</h3>
-            <p className="text-[12.5px] text-[#A8A69E] mb-4">
+            <h3 className="text-[15px] font-semibold text-[#F4F2EC] mb-2">Convex Backend Architecture Status</h3>
+            <p className="text-[12.5px] text-[#9C9A92] mb-4">
               Control plane, transactional mutations, hold schedulers, and webhook ingestion nodes
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[12.5px]">
-              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#242424]">
+              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#1B1B1B]">
                 <div className="flex items-center gap-2 text-emerald-400 font-medium mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   <span>Convex Mutations & Queries</span>
@@ -190,7 +190,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 <div className="text-[#888] text-[11.5px]">Atomic campaign, reward, budget, and double-entry ledger transitions.</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#242424]">
+              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#1B1B1B]">
                 <div className="flex items-center gap-2 text-emerald-400 font-medium mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   <span>Convex HTTP Actions</span>
@@ -198,7 +198,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 <div className="text-[#888] text-[11.5px]">Direct iOS SDK event intake and Whop/RevenueCat webhooks.</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#242424]">
+              <div className="p-3.5 rounded-xl bg-[#181818] border border-[#1B1B1B]">
                 <div className="flex items-center gap-2 text-emerald-400 font-medium mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   <span>Scheduled Functions</span>
@@ -221,7 +221,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 value={attrSearch}
                 onChange={(e) => setAttrSearch(e.target.value)}
                 placeholder="Search install tokens, creators, campaigns, evidence..."
-                className="w-full h-10 pl-9 pr-3.5 bg-[#161616] border border-[#262626] rounded-xl text-[13px] text-[#F5F3EC] outline-none focus:border-[#C7F26B]"
+                className="w-full h-10 pl-9 pr-3.5 bg-[#0E0E0E] border border-[#262626] rounded-xl text-[13px] text-[#F4F2EC] outline-none focus:border-[#C9B8FF]"
               />
             </div>
             <div className="text-[12px] text-[#888] font-mono">
@@ -250,15 +250,15 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                       onClick={() => setSelectedAttr(a)}
                       className="hover:bg-[#181818] cursor-pointer transition-colors"
                     >
-                      <td className="p-3.5 font-mono text-[12px] text-[#C7F26B] font-medium">
+                      <td className="p-3.5 font-mono text-[12px] text-[#C9B8FF] font-medium">
                         {a.id}
                       </td>
-                      <td className="p-3.5 font-mono text-[12px] text-[#A8A69E]">
+                      <td className="p-3.5 font-mono text-[12px] text-[#9C9A92]">
                         {a.installId.slice(0, 16)}...
                       </td>
-                      <td className="p-3.5 text-[#F5F3EC]">{a.campaignName}</td>
+                      <td className="p-3.5 text-[#F4F2EC]">{a.campaignName}</td>
                       <td className="p-3.5 font-mono text-[#DDD]">{a.creatorHandle}</td>
-                      <td className="p-3.5 font-mono text-[#F5F3EC]">
+                      <td className="p-3.5 font-mono text-[#F4F2EC]">
                         {(a.confidence * 100).toFixed(0)}%
                       </td>
                       <td className="p-3.5">
@@ -282,9 +282,9 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
           {/* Decision Detail Drawer */}
           {selectedAttr && (
-            <div className="p-5 rounded-2xl bg-[#141414] border border-[#C7F26B]/30 space-y-3">
+            <div className="p-5 rounded-2xl bg-[#141414] border border-[#C9B8FF]/30 space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-[14px] font-semibold text-[#F5F3EC]">
+                <h4 className="text-[14px] font-semibold text-[#F4F2EC]">
                   Attribution Evidence Graph: {selectedAttr.id}
                 </h4>
                 <button
@@ -299,7 +299,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[12px] font-mono">
                 <div className="p-3 rounded-xl bg-[#181818] border border-[#222]">
                   <div className="text-[#777] mb-1">Evidence Records Attached:</div>
-                  <div className="text-[#C7F26B]">{selectedAttr.evidenceIds.join(', ')}</div>
+                  <div className="text-[#C9B8FF]">{selectedAttr.evidenceIds.join(', ')}</div>
                 </div>
                 <div className="p-3 rounded-xl bg-[#181818] border border-[#222]">
                   <div className="text-[#777] mb-1">Active Rule Policy:</div>
@@ -320,7 +320,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
         <div className="space-y-6">
           {/* Balance Sheet Accounts */}
           <div>
-            <h3 className="text-[15px] font-semibold text-[#F5F3EC] mb-3">Balance Sheet Accounts</h3>
+            <h3 className="text-[15px] font-semibold text-[#F4F2EC] mb-3">Balance Sheet Accounts</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {ledgerAccounts.map((acc) => (
                 <div key={acc.id} className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
@@ -330,8 +330,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                       {acc.allowNegative ? 'Clearing' : 'Strict Non-Negative'}
                     </span>
                   </div>
-                  <div className="text-[14px] font-medium text-[#F5F3EC] truncate">{acc.name}</div>
-                  <div className="text-[20px] font-mono font-bold text-[#C7F26B] mt-2">
+                  <div className="text-[14px] font-medium text-[#F4F2EC] truncate">{acc.name}</div>
+                  <div className="text-[20px] font-mono font-bold text-[#C9B8FF] mt-2">
                     ${(acc.balanceMinor / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </div>
                 </div>
@@ -342,7 +342,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           {/* Journal Entries */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[15px] font-semibold text-[#F5F3EC]">Append-Only Journal Transactions</h3>
+              <h3 className="text-[15px] font-semibold text-[#F4F2EC]">Append-Only Journal Transactions</h3>
               <span className="text-[12px] text-[#888] font-mono">
                 {ledgerTransactions.length} balanced transactions
               </span>
@@ -353,8 +353,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 <div key={tx.id} className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2.5">
                     <div>
-                      <span className="font-mono text-[12px] text-[#C7F26B] font-semibold mr-2">{tx.id}</span>
-                      <span className="text-[13px] text-[#F5F3EC] font-medium">{tx.description}</span>
+                      <span className="font-mono text-[12px] text-[#C9B8FF] font-semibold mr-2">{tx.id}</span>
+                      <span className="text-[13px] text-[#F4F2EC] font-medium">{tx.description}</span>
                     </div>
                     <span className="font-mono text-[11px] text-[#777]">
                       {new Date(tx.createdAt).toLocaleTimeString()}
@@ -368,8 +368,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                         key={ent.id}
                         className={`p-2.5 rounded-xl border flex items-center justify-between ${
                           ent.direction === 'debit'
-                            ? 'bg-[#181818] border-[#2A2A2A] text-[#B9B7AF]'
-                            : 'bg-[#1C1C1C] border-[#333] text-[#F5F3EC]'
+                            ? 'bg-[#181818] border-[#222222] text-[#B8B6AE]'
+                            : 'bg-[#141414] border-[#333] text-[#F4F2EC]'
                         }`}
                       >
                         <div className="flex items-center gap-2 min-w-0">
@@ -380,7 +380,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                           </span>
                           <span className="truncate">{ent.accountName}</span>
                         </div>
-                        <span className="font-bold text-[#F5F3EC] shrink-0 ml-2">
+                        <span className="font-bold text-[#F4F2EC] shrink-0 ml-2">
                           ${(ent.amountMinor / 100).toFixed(2)}
                         </span>
                       </div>
@@ -399,30 +399,30 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[14px] font-semibold text-[#F5F3EC]">Whop Payouts & Funding</span>
+                <span className="text-[14px] font-semibold text-[#F4F2EC]">Whop Payouts & Funding</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               </div>
-              <p className="text-[12px] text-[#A8A69E]">
+              <p className="text-[12px] text-[#9C9A92]">
                 External money movement gateway for escrow funding and creator ACH/Stripe transfers.
               </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[14px] font-semibold text-[#F5F3EC]">RevenueCat Webhook</span>
+                <span className="text-[14px] font-semibold text-[#F4F2EC]">RevenueCat Webhook</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               </div>
-              <p className="text-[12px] text-[#A8A69E]">
+              <p className="text-[12px] text-[#9C9A92]">
                 Receives signed server-to-server subscription and in-app purchase attribution signals.
               </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[14px] font-semibold text-[#F5F3EC]">Apple Server Notifications</span>
+                <span className="text-[14px] font-semibold text-[#F4F2EC]">Apple Server Notifications</span>
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               </div>
-              <p className="text-[12px] text-[#A8A69E]">
+              <p className="text-[12px] text-[#9C9A92]">
                 App Store Server Notifications V2 inbox for renewal, refund, and revoke events.
               </p>
             </div>
@@ -430,7 +430,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
 
           {/* Webhook Inbox Table */}
           <div className="bg-[#141414] border border-[#262626] rounded-2xl p-5">
-            <h3 className="text-[15px] font-semibold text-[#F5F3EC] mb-3">Received Provider Webhooks</h3>
+            <h3 className="text-[15px] font-semibold text-[#F4F2EC] mb-3">Received Provider Webhooks</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[13px]">
                 <thead>
@@ -445,13 +445,13 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                 <tbody className="divide-y divide-[#202020]">
                   {providerInbox.map((item) => (
                     <tr key={item.id} className="hover:bg-[#181818]/60 transition-colors">
-                      <td className="py-3 font-medium uppercase font-mono text-[11.5px] text-[#C7F26B]">
+                      <td className="py-3 font-medium uppercase font-mono text-[11.5px] text-[#C9B8FF]">
                         {item.provider}
                       </td>
-                      <td className="py-3 font-mono text-[12px] text-[#F5F3EC]">
+                      <td className="py-3 font-mono text-[12px] text-[#F4F2EC]">
                         {item.eventType}
                       </td>
-                      <td className="py-3 text-[#B9B7AF] text-[12.5px]">{item.summary}</td>
+                      <td className="py-3 text-[#B8B6AE] text-[12.5px]">{item.summary}</td>
                       <td className="py-3">
                         <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">
                           {item.processingState}
@@ -472,8 +472,8 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       {/* Tab 5: Risk & Automated Freezes */}
       {activeTab === 'risk' && (
         <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626] text-[12.5px] text-[#A8A69E] leading-relaxed">
-            <strong className="text-[#F5F3EC]">Automated Risk Rule Engine:</strong> Convex mutations enforce velocity limits (max 10 events/min per IP/creator), duplicate install hashes, and timing invariants. Triggered events are non-accusatorily placed in <span className="font-mono text-rose-400">Frozen</span> status for admin forensic inspection without affecting innocent creators.
+          <div className="p-4 rounded-2xl bg-[#141414] border border-[#262626] text-[12.5px] text-[#9C9A92] leading-relaxed">
+            <strong className="text-[#F4F2EC]">Automated Risk Rule Engine:</strong> Convex mutations enforce velocity limits (max 10 events/min per IP/creator), duplicate install hashes, and timing invariants. Triggered events are non-accusatorily placed in <span className="font-mono text-rose-400">Frozen</span> status for admin forensic inspection without affecting innocent creators.
           </div>
 
           <div className="space-y-3">
@@ -485,11 +485,11 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                       <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-medium font-mono">
                         Frozen Security Flag
                       </span>
-                      <span className="text-[13px] font-medium text-[#F5F3EC]">
+                      <span className="text-[13px] font-medium text-[#F4F2EC]">
                         {rew.campaignName} · ${(rew.amountMinor / 100).toFixed(2)}
                       </span>
                     </div>
-                    <div className="text-[12px] font-mono text-[#A8A69E]">
+                    <div className="text-[12px] font-mono text-[#9C9A92]">
                       Creator: {rew.creatorHandle} · Attribution: {rew.attributionId}
                     </div>
                     <div className="text-[12px] text-rose-400 mt-1">
@@ -504,7 +504,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
                         umiStore.unfreezeReward(rew.id);
                         setActionNotice(`Unfroze reward ${rew.id}. Status restored to On Hold.`);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-[#202020] hover:bg-[#2A2A2A] text-[#C7F26B] text-[12px] font-medium transition-colors border border-[#333] cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl bg-[#202020] hover:bg-[#222222] text-[#C9B8FF] text-[12px] font-medium transition-colors border border-[#333] cursor-pointer"
                     >
                       Release Freeze (Approve)
                     </button>
@@ -523,7 +523,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       {/* Tab 6: Audit Log */}
       {activeTab === 'audit' && (
         <div className="bg-[#141414] border border-[#262626] rounded-2xl p-5">
-          <h3 className="text-[15px] font-semibold text-[#F5F3EC] mb-3">System & Admin Audit Log</h3>
+          <h3 className="text-[15px] font-semibold text-[#F4F2EC] mb-3">System & Admin Audit Log</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
@@ -538,10 +538,10 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
               <tbody className="divide-y divide-[#202020]">
                 {auditLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-[#181818]/60 transition-colors">
-                    <td className="py-3 font-mono text-[12px] text-[#C7F26B]">{log.actor}</td>
-                    <td className="py-3 font-mono text-[12px] text-[#F5F3EC]">{log.action}</td>
+                    <td className="py-3 font-mono text-[12px] text-[#C9B8FF]">{log.actor}</td>
+                    <td className="py-3 font-mono text-[12px] text-[#F4F2EC]">{log.action}</td>
                     <td className="py-3 font-mono text-[11.5px] text-[#888]">{log.targetType}/{log.targetId}</td>
-                    <td className="py-3 text-[#A8A69E] text-[12.5px]">{log.details}</td>
+                    <td className="py-3 text-[#9C9A92] text-[12.5px]">{log.details}</td>
                     <td className="py-3 font-mono text-[11.5px] text-[#777] text-right">
                       {new Date(log.timestamp).toLocaleTimeString()}
                     </td>

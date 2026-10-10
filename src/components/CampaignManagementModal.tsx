@@ -58,7 +58,7 @@ export const CampaignManagementModal: React.FC<CampaignManagementModalProps> = (
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -70,13 +70,13 @@ export const CampaignManagementModal: React.FC<CampaignManagementModalProps> = (
               <i className={`ti ${campaign.icon}`}></i>
             </span>
             <div>
-              <div className="text-[17px] font-medium text-[#F5F3EC]">{campaign.name}</div>
+              <div className="text-[17px] font-medium text-[#F4F2EC]">{campaign.name}</div>
               <div className="sub text-[12px]">Campaign management</div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -103,7 +103,7 @@ export const CampaignManagementModal: React.FC<CampaignManagementModalProps> = (
               <button
                 type="button"
                 onClick={handleEndEarly}
-                className="pill on min-h-[44px] px-4 cursor-pointer bg-[#FF8A80]! text-[#16140F]!"
+                className="pill on min-h-[44px] px-4 cursor-pointer bg-[#FF8A80]! text-[#000000]!"
               >
                 Confirm end campaign
               </button>
@@ -113,10 +113,10 @@ export const CampaignManagementModal: React.FC<CampaignManagementModalProps> = (
           /* Controls */
           <div className="space-y-4 pt-1">
             {/* Status overview */}
-            <div className="bg-[#1C1C1C] rounded-[16px] p-3.5 border border-[#2A2A2A]/40 flex items-center justify-between">
+            <div className="bg-[#141414] rounded-[16px] p-3.5 border border-[#222222]/40 flex items-center justify-between">
               <div>
                 <div className="sub text-[11px]">Campaign status</div>
-                <div className="text-[15px] font-medium text-[#F5F3EC] mt-0.5">
+                <div className="text-[15px] font-medium text-[#F4F2EC] mt-0.5">
                   {isEnded ? 'Ended' : isPaused ? 'Paused' : 'Active and funding'}
                 </div>
               </div>
@@ -165,9 +165,9 @@ export const CampaignManagementModal: React.FC<CampaignManagementModalProps> = (
 
             {/* End Campaign Early Trigger */}
             {!isEnded && (
-              <div className="pt-2 border-t border-[#2A2A2A] flex justify-between items-center">
+              <div className="pt-2 border-t border-[#222222] flex justify-between items-center">
                 <div>
-                  <div className="text-[13px] font-medium text-[#F5F3EC]">End campaign</div>
+                  <div className="text-[13px] font-medium text-[#F4F2EC]">End campaign</div>
                   <div className="sub text-[11px]">Refund remaining funds to account balance.</div>
                 </div>
                 <button

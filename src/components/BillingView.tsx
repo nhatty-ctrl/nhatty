@@ -112,8 +112,9 @@ export const BillingView: React.FC<BillingViewProps> = ({
   ]);
 
   const activeAmount = selectedPreset > 0 ? selectedPreset : (parseFloat(customAmount) || 0);
-  const platformFee = Math.round(activeAmount * 0.1 * 100) / 100;
-  const totalBilled = activeAmount + platformFee;
+  // 0% cut on creator pay! $0.02 verification infra fee per outcome
+  const networkInfraFee = Math.max(10, Math.round((activeAmount / 0.5) * 0.02 * 100) / 100);
+  const totalBilled = activeAmount + networkInfraFee;
 
   const handleSelectPreset = (amt: number) => {
     setSelectedPreset(amt);
@@ -181,15 +182,15 @@ export const BillingView: React.FC<BillingViewProps> = ({
   <meta charset="utf-8">
   <title>KRED Receipt - ${inv.id}</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #0B0B0B; color: #F5F3EC; padding: 40px; margin: 0; }
-    .box { max-width: 580px; margin: 0 auto; background: #161616; border: 1px solid #2A2A2A; border-radius: 16px; padding: 32px; }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2A2A2A; padding-bottom: 20px; }
-    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #C7F26B; }
-    .badge { background: #C7F26B; color: #16140F; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #000000; color: #F4F2EC; padding: 40px; margin: 0; }
+    .box { max-width: 580px; margin: 0 auto; background: #0E0E0E; border: 1px solid #222222; border-radius: 16px; padding: 32px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222222; padding-bottom: 20px; }
+    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #C9B8FF; }
+    .badge { background: #C9B8FF; color: #000000; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
     .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #222; font-size: 14px; }
-    .label { color: #A8A69E; }
+    .label { color: #9C9A92; }
     .val { font-weight: 500; }
-    .total { font-size: 20px; color: #C7F26B; font-weight: 700; border-bottom: none; padding-top: 16px; }
+    .total { font-size: 20px; color: #C9B8FF; font-weight: 700; border-bottom: none; padding-top: 16px; }
     .footer { margin-top: 28px; text-align: center; font-size: 11px; color: #777; }
   </style>
 </head>
@@ -198,7 +199,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
     <div class="header">
       <div>
         <div class="logo">KRED Escrow Receipt</div>
-        <div style="font-size: 13px; color: #A8A69E; margin-top: 4px;">Receipt ${inv.id} · ${inv.date}</div>
+        <div style="font-size: 13px; color: #9C9A92; margin-top: 4px;">Receipt ${inv.id} · ${inv.date}</div>
       </div>
       <div class="badge">${inv.status}</div>
     </div>
@@ -209,7 +210,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
       <div class="row"><span class="label">Billing Email</span><span class="val">${billingInfo.email}</span></div>
       <div class="row"><span class="label">Payment Rail</span><span class="val">${inv.method}</span></div>
       <div class="row"><span class="label">Billing Cycle</span><span class="val">${inv.period}</span></div>
-      <div class="row total"><span class="label" style="color: #F5F3EC;">Total Paid (Escrow + 10% Fee)</span><span class="val">$${inv.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>
+      <div class="row total"><span class="label" style="color: #F4F2EC;">Total Paid (Escrow + 10% Fee)</span><span class="val">$${inv.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>
     </div>
     <div class="footer">KRED Inc. · Real-time attribution & creator campaign escrow platform · All funds held in audited smart contract escrow until verification.</div>
   </div>
@@ -287,18 +288,18 @@ export const BillingView: React.FC<BillingViewProps> = ({
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.6px] text-[#F5F3EC]">
+          <h1 className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.6px] text-[#F4F2EC]">
             Billing and invoices
           </h1>
-          <p className="text-[13.5px] text-[#A8A69E] mt-1">
+          <p className="text-[13.5px] text-[#9C9A92] mt-1">
             Manage campaign budget escrow, add funds, and view tax-compliant settlement receipts.
           </p>
         </div>
 
         {/* Current Balance Badge */}
-        <div className="bg-[#161616] border border-[#2A2A2A] rounded-[16px] px-4 py-2.5 flex items-center gap-3">
-          <div className="text-[12px] text-[#A8A69E]">Escrow balance:</div>
-          <div className="text-[20px] font-medium font-mono text-[#C7F26B]">
+        <div className="bg-[#0E0E0E] border border-[#222222] rounded-[16px] px-4 py-2.5 flex items-center gap-3">
+          <div className="text-[12px] text-[#9C9A92]">Escrow balance:</div>
+          <div className="text-[20px] font-medium font-mono text-[#C9B8FF]">
             ${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
         </div>
@@ -306,36 +307,122 @@ export const BillingView: React.FC<BillingViewProps> = ({
 
       {/* Notification banner */}
       {notification && (
-        <div className="p-3 bg-[#1C1C1C] border border-[#C7F26B]/50 rounded-[14px] text-[13px] text-[#F5F3EC] flex items-center justify-between animate-[fade-in_0.15s_ease-out]">
+        <div className="p-3 bg-[#141414] border border-[#C9B8FF]/50 rounded-[14px] text-[13px] text-[#F4F2EC] flex items-center justify-between animate-[fade-in_0.15s_ease-out]">
           <div className="flex items-center gap-2">
-            <i className="ti ti-circle-check text-[#C7F26B] text-[16px]"></i>
+            <i className="ti ti-circle-check text-[#C9B8FF] text-[16px]"></i>
             <span>{notification}</span>
           </div>
           <button
             type="button"
             onClick={() => setNotification(null)}
-            className="text-[#A8A69E] hover:text-[#F5F3EC] border-0 bg-transparent cursor-pointer"
+            className="text-[#9C9A92] hover:text-[#F4F2EC] border-0 bg-transparent cursor-pointer"
           >
             <i className="ti ti-x text-[13px]"></i>
           </button>
         </div>
       )}
 
+      {/* Founder Subscription Plan Status Card (Point 1 & Point 2) */}
+      <div className="p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] uppercase font-bold tracking-wider text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-0.5 rounded-full border border-[#C9B8FF]/20">
+              Active Founder Plan
+            </span>
+            <span className="text-[12px] text-[#C0DD97] font-medium flex items-center gap-1">
+              <i className="ti ti-circle-check"></i>
+              <span>0% Creator Fee Guarantee</span>
+            </span>
+          </div>
+          <h2 className="text-[19px] font-semibold text-[#F4F2EC]">Founder Starter Plan · $199 / month</h2>
+          <p className="text-[12.5px] text-[#9C9A92] leading-relaxed max-w-[640px]">
+            Umi charges a predictable SaaS subscription rather than taking a cut from creators. 100% of your prefunded escrow bounty goes directly to creators, driving maximum creator trust.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="text-right hidden sm:block">
+            <div className="text-[11px] text-[#9C9A92]">Next billing cycle</div>
+            <div className="text-[13px] font-medium text-[#F4F2EC]">November 1, 2026</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Plan Tiers & The Fee Math Breakdown (Point 1, Point 2, Point 6) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        <div className="p-4 rounded-[18px] bg-[#0E0E0E] border border-[#C9B8FF]/40 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[14px] font-semibold text-[#F4F2EC]">Starter Plan</span>
+            <span className="text-[11px] font-mono text-[#C9B8FF] bg-[#C9B8FF]/15 px-2 py-0.5 rounded-full font-medium">Current</span>
+          </div>
+          <div className="text-[22px] font-bold font-mono text-[#C9B8FF]">$199<span className="text-[12px] text-[#888] font-normal">/mo</span></div>
+          <p className="text-[12px] text-[#9C9A92] leading-relaxed">
+            For early beta founders. Up to 3 live campaigns. 0% cut taken on creator pay. Real-time RavenCore SDK hardware attestation.
+          </p>
+        </div>
+
+        <div className="p-4 rounded-[18px] bg-[#0E0E0E] border border-[#222222] hover:border-[#333333] transition-colors space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[14px] font-semibold text-[#F4F2EC]">Scale Plan</span>
+            <span className="text-[11px] font-mono text-[#777]">$0.03/event</span>
+          </div>
+          <div className="text-[22px] font-bold font-mono text-[#F4F2EC]">$399<span className="text-[12px] text-[#888] font-normal">/mo</span></div>
+          <p className="text-[12px] text-[#9C9A92] leading-relaxed">
+            Unlimited campaigns, automated anti-fraud queuing, prioritized attribution webhooks, and multi-seat founder access.
+          </p>
+        </div>
+
+        <div className="p-4 rounded-[18px] bg-[#0E0E0E] border border-[#222222] hover:border-[#333333] transition-colors space-y-2 relative">
+          <span className="absolute -top-2 right-3 text-[9.5px] uppercase font-bold tracking-wider bg-[#C9B8FF] text-black px-2 py-0.5 rounded-full">Design Partner</span>
+          <div className="flex items-center justify-between">
+            <span className="text-[14px] font-semibold text-[#F4F2EC]">Managed Launch</span>
+            <span className="text-[11px] font-mono text-[#FAC775]">Concierge</span>
+          </div>
+          <div className="text-[22px] font-bold font-mono text-[#F4F2EC]">$1,499<span className="text-[12px] text-[#888] font-normal">/mo</span></div>
+          <p className="text-[12px] text-[#9C9A92] leading-relaxed">
+            White-glove launch for your first 3 to 5 campaigns: Umi team sources and vets 30+ creators, writes high-converting briefs, and audits #ad FTC compliance.
+          </p>
+        </div>
+      </div>
+
+      {/* The Fee Math Callout Card */}
+      <div className="p-4 sm:p-5 rounded-[18px] bg-[#121215] border border-[#26262A] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5 max-w-[760px]">
+          <div className="flex items-center gap-2">
+            <i className="ti ti-calculator text-[#C9B8FF] text-[17px]"></i>
+            <span className="text-[14px] font-semibold text-[#F4F2EC]">The Fee Math: Why SaaS Subscriptions Win</span>
+          </div>
+          <p className="text-[12px] text-[#9C9A92] leading-relaxed">
+            Under a traditional volume-cut model (e.g. 7% on founder and 3% on creator on a $0.50 install bounty), Umi grossed $0.05. After Stripe processor fees (2.9% + $0.30), Umi nets only <b>$0.036 per outcome</b>. Covering $199/month under volume cuts would require roughly <b>5,500 qualified outcomes</b>—an unrealistic hurdle for early betas. A predictable $199 subscription plus a small $0.05 verification fee provides stable revenue independent of volume and keeps fees <b>100% off creator payouts (0% creator fee)</b> for unbeatable creator trust.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="px-3 py-2 rounded-xl bg-[#18181C] border border-[#27272A] text-center min-w-[120px]">
+            <div className="text-[10px] text-[#71717A] uppercase font-mono">Net under cut</div>
+            <div className="text-[13px] font-mono font-medium text-[#FF8A80] mt-0.5">$0.036 / inst.</div>
+          </div>
+          <div className="px-3 py-2 rounded-xl bg-[#18181C] border border-[#27272A] text-center min-w-[120px]">
+            <div className="text-[10px] text-[#71717A] uppercase font-mono">Creator Cut</div>
+            <div className="text-[13px] font-mono font-semibold text-[#C0DD97] mt-0.5">0% (Keep 100%)</div>
+          </div>
+        </div>
+      </div>
+
       {/* Two Column Grid for Add Funds and Tax Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Add Funds Form Card (7 cols) */}
-        <div className="lg:col-span-7 card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-5">
+        <div className="lg:col-span-7 card p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] space-y-5">
           <div>
-            <h2 className="text-[17px] font-medium text-[#F5F3EC]">Add funds to escrow</h2>
-            <p className="sub text-[12px] text-[#A8A69E] mt-0.5">
-              Escrow deposits cover verified install bounties. 10% platform fee applied at deposit.
+            <h2 className="text-[17px] font-medium text-[#F4F2EC]">Prefund campaign escrow</h2>
+            <p className="sub text-[12px] text-[#9C9A92] mt-0.5">
+              Prefunded escrow is our trust mechanism. Creators only produce content when bounties are locked in Stripe escrow.
             </p>
           </div>
 
           <form onSubmit={handleExecuteAddFunds} className="space-y-4">
             {/* Preset Buttons */}
             <div>
-              <label className="fl text-[12px] text-[#A8A69E] mb-2 block">Quick deposit amount</label>
+              <label className="fl text-[12px] text-[#9C9A92] mb-2 block">Quick deposit amount</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[500, 1000, 2500, 5000].map((amt) => (
                   <button
@@ -343,7 +430,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                     type="button"
                     onClick={() => handleSelectPreset(amt)}
                     className={`pill text-[13px] py-2 px-3 justify-center min-h-[42px] cursor-pointer ${
-                      selectedPreset === amt ? 'on font-medium' : 'out hover:bg-[#242424]'
+                      selectedPreset === amt ? 'on font-medium' : 'out hover:bg-[#1B1B1B]'
                     }`}
                   >
                     ${amt.toLocaleString()}
@@ -354,11 +441,11 @@ export const BillingView: React.FC<BillingViewProps> = ({
 
             {/* Custom Amount */}
             <div>
-              <label className="fl text-[12px] text-[#A8A69E] mb-1.5 block" htmlFor="custom-amt">
+              <label className="fl text-[12px] text-[#9C9A92] mb-1.5 block" htmlFor="custom-amt">
                 Or enter custom deposit (USD)
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A8A69E] font-mono text-[14px]">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9C9A92] font-mono text-[14px]">
                   $
                 </span>
                 <input
@@ -376,22 +463,22 @@ export const BillingView: React.FC<BillingViewProps> = ({
 
             {/* Payment Method Selector (Finding 5) */}
             <div>
-              <label className="fl text-[12px] text-[#A8A69E] mb-2 block">Payment method rail</label>
+              <label className="fl text-[12px] text-[#9C9A92] mb-2 block">Payment method rail</label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => setSelectedPaymentMethod('card_4242')}
                   className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                     selectedPaymentMethod === 'card_4242'
-                      ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                      : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                      ? 'border-[#C9B8FF] bg-[#141414]'
+                      : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                   }`}
                 >
                   <div>
-                    <div className="text-[13px] font-medium text-[#F5F3EC]">Visa •••• 4242</div>
-                    <div className="text-[11px] text-[#A8A69E]">Instant debit/credit</div>
+                    <div className="text-[13px] font-medium text-[#F4F2EC]">Visa •••• 4242</div>
+                    <div className="text-[11px] text-[#9C9A92]">Instant debit/credit</div>
                   </div>
-                  <i className="ti ti-credit-card text-[18px] text-[#A8A69E]"></i>
+                  <i className="ti ti-credit-card text-[18px] text-[#9C9A92]"></i>
                 </button>
 
                 <button
@@ -399,15 +486,15 @@ export const BillingView: React.FC<BillingViewProps> = ({
                   onClick={() => setSelectedPaymentMethod('bank_5821')}
                   className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                     selectedPaymentMethod === 'bank_5821'
-                      ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                      : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                      ? 'border-[#C9B8FF] bg-[#141414]'
+                      : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                   }`}
                 >
                   <div>
-                    <div className="text-[13px] font-medium text-[#F5F3EC]">Chase •••• 5821</div>
-                    <div className="text-[11px] text-[#A8A69E]">ACH bank transfer</div>
+                    <div className="text-[13px] font-medium text-[#F4F2EC]">Chase •••• 5821</div>
+                    <div className="text-[11px] text-[#9C9A92]">ACH bank transfer</div>
                   </div>
-                  <i className="ti ti-building-bank text-[18px] text-[#A8A69E]"></i>
+                  <i className="ti ti-building-bank text-[18px] text-[#9C9A92]"></i>
                 </button>
 
                 <button
@@ -415,32 +502,36 @@ export const BillingView: React.FC<BillingViewProps> = ({
                   onClick={() => setSelectedPaymentMethod('usdc')}
                   className={`p-3 rounded-[14px] border text-left cursor-pointer transition-colors flex items-center justify-between ${
                     selectedPaymentMethod === 'usdc'
-                      ? 'border-[#C7F26B] bg-[#1C1C1C]'
-                      : 'border-[#2A2A2A] bg-[#161616] hover:bg-[#1C1C1C]'
+                      ? 'border-[#C9B8FF] bg-[#141414]'
+                      : 'border-[#222222] bg-[#0E0E0E] hover:bg-[#141414]'
                   }`}
                 >
                   <div>
-                    <div className="text-[13px] font-medium text-[#F5F3EC]">USDC on Polygon</div>
-                    <div className="text-[11px] text-[#A8A69E]">Web3 wallet deposit</div>
+                    <div className="text-[13px] font-medium text-[#F4F2EC]">USDC on Polygon</div>
+                    <div className="text-[11px] text-[#9C9A92]">Web3 wallet deposit</div>
                   </div>
-                  <i className="ti ti-currency-dollar text-[18px] text-[#C7F26B]"></i>
+                  <i className="ti ti-currency-dollar text-[18px] text-[#C9B8FF]"></i>
                 </button>
               </div>
             </div>
 
             {/* Fee Calculation Breakdown */}
-            <div className="p-3.5 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40 space-y-2 text-[13px]">
-              <div className="flex justify-between text-[#A8A69E]">
-                <span>Deposit into campaign escrow</span>
-                <span className="font-mono text-[#F5F3EC]">${activeAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            <div className="p-3.5 bg-[#141414] rounded-[16px] border border-[#222222]/40 space-y-2 text-[13px]">
+              <div className="flex justify-between text-[#9C9A92]">
+                <span>Prefunded creator bounty escrow (100% to creators)</span>
+                <span className="font-mono text-[#F4F2EC]">${activeAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
-              <div className="flex justify-between text-[#A8A69E]">
-                <span>KRED 10% platform fee</span>
-                <span className="font-mono text-[#F5F3EC]">${platformFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              <div className="flex justify-between text-[#9C9A92]">
+                <span>Platform cut on creator pay</span>
+                <span className="font-medium text-[#C9B8FF]">0% ($0.00 fee)</span>
               </div>
-              <div className="border-t border-[#2A2A2A] pt-2 flex justify-between font-medium text-[15px] text-[#F5F3EC]">
+              <div className="flex justify-between text-[#9C9A92]">
+                <span>Outcome network infra fee ($0.02 / install)</span>
+                <span className="font-mono text-[#F4F2EC]">${networkInfraFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              </div>
+              <div className="border-t border-[#222222] pt-2 flex justify-between font-medium text-[15px] text-[#F4F2EC]">
                 <span>Total charged</span>
-                <span className="font-mono text-[#C7F26B]">${totalBilled.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                <span className="font-mono text-[#C9B8FF]">${totalBilled.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
 
@@ -459,11 +550,11 @@ export const BillingView: React.FC<BillingViewProps> = ({
         </div>
 
         {/* Tax & Billing Details Card (5 cols) */}
-        <div className="lg:col-span-5 card p-5 sm:p-6 bg-[#161616] border border-[#2A2A2A] rounded-[20px] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#2A2A2A]">
+        <div className="lg:col-span-5 card p-5 sm:p-6 bg-[#0E0E0E] border border-[#222222] rounded-[20px] space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#222222]">
             <div>
-              <h2 className="text-[17px] font-medium text-[#F5F3EC]">Billing and Tax Info</h2>
-              <p className="text-[12px] text-[#A8A69E] mt-0.5">Used for invoice receipts and compliance</p>
+              <h2 className="text-[17px] font-medium text-[#F4F2EC]">Billing and Tax Info</h2>
+              <p className="text-[12px] text-[#9C9A92] mt-0.5">Used for invoice receipts and compliance</p>
             </div>
             <button
               type="button"
@@ -482,22 +573,22 @@ export const BillingView: React.FC<BillingViewProps> = ({
             </button>
           </div>
 
-          <div className="space-y-3 text-[#A8A69E] text-[13px]">
-            <div className="p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/40">
-              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F5F3EC]">Company entity</span>
-              <span className="mt-1 block text-[#B9B7AF] font-medium">{billingInfo.company}</span>
+          <div className="space-y-3 text-[#9C9A92] text-[13px]">
+            <div className="p-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/40">
+              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F4F2EC]">Company entity</span>
+              <span className="mt-1 block text-[#B8B6AE] font-medium">{billingInfo.company}</span>
             </div>
-            <div className="p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/40">
-              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F5F3EC]">Tax ID / EIN / VAT</span>
-              <span className="mt-1 block text-[#B9B7AF] font-mono">{billingInfo.taxId}</span>
+            <div className="p-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/40">
+              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F4F2EC]">Tax ID / EIN / VAT</span>
+              <span className="mt-1 block text-[#B8B6AE] font-mono">{billingInfo.taxId}</span>
             </div>
-            <div className="p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/40">
-              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F5F3EC]">Billing jurisdiction</span>
-              <span className="mt-1 block text-[#B9B7AF]">{billingInfo.jurisdiction}</span>
+            <div className="p-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/40">
+              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F4F2EC]">Billing jurisdiction</span>
+              <span className="mt-1 block text-[#B8B6AE]">{billingInfo.jurisdiction}</span>
             </div>
-            <div className="p-3.5 bg-[#1C1C1C] rounded-[14px] border border-[#2A2A2A]/40">
-              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F5F3EC]">AP Contact Email</span>
-              <span className="mt-1 block text-[#B9B7AF] font-mono">{billingInfo.email}</span>
+            <div className="p-3.5 bg-[#141414] rounded-[14px] border border-[#222222]/40">
+              <span className="text-[11px] uppercase tracking-wider block font-medium text-[#F4F2EC]">AP Contact Email</span>
+              <span className="mt-1 block text-[#B8B6AE] font-mono">{billingInfo.email}</span>
             </div>
           </div>
         </div>
@@ -507,8 +598,8 @@ export const BillingView: React.FC<BillingViewProps> = ({
       <div className="card space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-[16px] font-medium text-[#F5F3EC]">Invoice & receipt history</h2>
-            <p className="text-[12px] text-[#A8A69E] mt-0.5">Download verifiable receipts for accounting and tax write-offs.</p>
+            <h2 className="text-[16px] font-medium text-[#F4F2EC]">Invoice & receipt history</h2>
+            <p className="text-[12px] text-[#9C9A92] mt-0.5">Download verifiable receipts for accounting and tax write-offs.</p>
           </div>
 
           {/* Filter Tabs with Live Record Counts */}
@@ -517,7 +608,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               type="button"
               onClick={() => setFilterInvoice('all')}
               className={`pill text-[12px] py-1 px-3 border-0 cursor-pointer ${
-                filterInvoice === 'all' ? 'on font-medium' : 'bg-[#1C1C1C] text-[#A8A69E]'
+                filterInvoice === 'all' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
               All ({invoices.length})
@@ -526,7 +617,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               type="button"
               onClick={() => setFilterInvoice('paid')}
               className={`pill text-[12px] py-1 px-3 border-0 cursor-pointer ${
-                filterInvoice === 'paid' ? 'on font-medium' : 'bg-[#1C1C1C] text-[#A8A69E]'
+                filterInvoice === 'paid' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
               Paid ({paidCount})
@@ -535,7 +626,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               type="button"
               onClick={() => setFilterInvoice('processing')}
               className={`pill text-[12px] py-1 px-3 border-0 cursor-pointer ${
-                filterInvoice === 'processing' ? 'on font-medium' : 'bg-[#1C1C1C] text-[#A8A69E]'
+                filterInvoice === 'processing' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
               Processing ({processingCount})
@@ -548,7 +639,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
           {visibleInvoices.map((inv) => (
             <div
               key={inv.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40 hover:border-[#2A2A2A] transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#141414] rounded-[16px] border border-[#222222]/40 hover:border-[#222222] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <span
@@ -562,25 +653,25 @@ export const BillingView: React.FC<BillingViewProps> = ({
                 </span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-medium text-[#F5F3EC]">{inv.id}</span>
+                    <span className="text-[14px] font-medium text-[#F4F2EC]">{inv.id}</span>
                     <span
                       className={`chip text-[10px] py-0.5 px-2 font-medium capitalize ${
                         inv.status === 'paid'
-                          ? 'bg-[#C7F26B]/20 text-[#C7F26B]'
+                          ? 'bg-[#C9B8FF]/20 text-[#C9B8FF]'
                           : 'bg-[#FAC775]/20 text-[#FAC775]'
                       }`}
                     >
                       {inv.status}
                     </span>
                   </div>
-                  <div className="text-[12px] text-[#A8A69E] mt-0.5">
+                  <div className="text-[12px] text-[#9C9A92] mt-0.5">
                     {inv.date} · {inv.method}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-0 border-[#2A2A2A]/40">
-                <div className="font-mono text-[15px] font-medium text-[#F5F3EC]">
+              <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-0 border-[#222222]/40">
+                <div className="font-mono text-[15px] font-medium text-[#F4F2EC]">
                   ${inv.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
 
@@ -588,7 +679,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setViewInvoice(inv)}
-                    className="pill text-[12px] py-1 px-2.5 text-[#B9B7AF] hover:text-[#F5F3EC] hover:bg-[#242424] cursor-pointer"
+                    className="pill text-[12px] py-1 px-2.5 text-[#B8B6AE] hover:text-[#F4F2EC] hover:bg-[#1B1B1B] cursor-pointer"
                   >
                     View
                   </button>
@@ -617,17 +708,17 @@ export const BillingView: React.FC<BillingViewProps> = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="card w-full max-w-[480px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl space-y-4 text-left"
+            className="card w-full max-w-[480px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl space-y-4 text-left"
           >
-            <div className="flex items-center justify-between border-b border-[#2A2A2A] pb-3">
+            <div className="flex items-center justify-between border-b border-[#222222] pb-3">
               <div>
-                <h3 className="text-[18px] font-medium text-[#F5F3EC]">Edit billing details</h3>
-                <p className="text-[12px] text-[#A8A69E]">Information used for invoice generation and tax compliance.</p>
+                <h3 className="text-[18px] font-medium text-[#F4F2EC]">Edit billing details</h3>
+                <p className="text-[12px] text-[#9C9A92]">Information used for invoice generation and tax compliance.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsEditingInfo(false)}
-                className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+                className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
                 aria-label="Close"
               >
                 <i className="ti ti-x text-[13px]"></i>
@@ -636,7 +727,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
 
             <form onSubmit={handleSaveBillingInfo} className="space-y-3.5">
               <div>
-                <label className="fl text-[12px] text-[#A8A69E] mb-1 block" htmlFor="edit-company">
+                <label className="fl text-[12px] text-[#9C9A92] mb-1 block" htmlFor="edit-company">
                   Legal company entity *
                 </label>
                 <input
@@ -650,7 +741,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               </div>
 
               <div>
-                <label className="fl text-[12px] text-[#A8A69E] mb-1 block" htmlFor="edit-tax-id">
+                <label className="fl text-[12px] text-[#9C9A92] mb-1 block" htmlFor="edit-tax-id">
                   Tax ID / EIN / VAT *
                 </label>
                 <input
@@ -664,7 +755,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               </div>
 
               <div>
-                <label className="fl text-[12px] text-[#A8A69E] mb-1 block" htmlFor="edit-jurisdiction">
+                <label className="fl text-[12px] text-[#9C9A92] mb-1 block" htmlFor="edit-jurisdiction">
                   Billing address & jurisdiction *
                 </label>
                 <input
@@ -678,7 +769,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
               </div>
 
               <div>
-                <label className="fl text-[12px] text-[#A8A69E] mb-1 block" htmlFor="edit-email">
+                <label className="fl text-[12px] text-[#9C9A92] mb-1 block" htmlFor="edit-email">
                   Accounts payable email
                 </label>
                 <input
@@ -698,7 +789,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-[#2A2A2A]">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[#222222]">
                 <button
                   type="button"
                   onClick={() => setIsEditingInfo(false)}
@@ -726,17 +817,17 @@ export const BillingView: React.FC<BillingViewProps> = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl space-y-4 text-left"
+            className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl space-y-4 text-left"
           >
-            <div className="flex items-center justify-between border-b border-[#2A2A2A] pb-3">
+            <div className="flex items-center justify-between border-b border-[#222222] pb-3">
               <div>
-                <div className="text-[18px] font-medium text-[#F5F3EC]">{viewInvoice.id}</div>
-                <div className="sub text-[12px] text-[#A8A69E]">{viewInvoice.date}</div>
+                <div className="text-[18px] font-medium text-[#F4F2EC]">{viewInvoice.id}</div>
+                <div className="sub text-[12px] text-[#9C9A92]">{viewInvoice.date}</div>
               </div>
               <span
                 className={`chip text-[12px] py-0.5 px-2.5 font-semibold capitalize ${
                   viewInvoice.status === 'paid'
-                    ? 'bg-[#C7F26B] text-[#16140F]'
+                    ? 'bg-[#C9B8FF] text-[#000000]'
                     : 'bg-[#FAC775] text-[#412402]'
                 }`}
               >
@@ -745,31 +836,31 @@ export const BillingView: React.FC<BillingViewProps> = ({
             </div>
 
             <div className="space-y-2.5 text-[13px]">
-              <div className="flex justify-between text-[#A8A69E]">
+              <div className="flex justify-between text-[#9C9A92]">
                 <span>Billed to entity</span>
-                <span className="text-[#F5F3EC] font-medium">{billingInfo.company}</span>
+                <span className="text-[#F4F2EC] font-medium">{billingInfo.company}</span>
               </div>
-              <div className="flex justify-between text-[#A8A69E]">
+              <div className="flex justify-between text-[#9C9A92]">
                 <span>Tax ID / EIN</span>
-                <span className="text-[#F5F3EC] font-mono">{billingInfo.taxId}</span>
+                <span className="text-[#F4F2EC] font-mono">{billingInfo.taxId}</span>
               </div>
-              <div className="flex justify-between text-[#A8A69E]">
+              <div className="flex justify-between text-[#9C9A92]">
                 <span>Payment rail</span>
-                <span className="text-[#F5F3EC] font-medium">{viewInvoice.method}</span>
+                <span className="text-[#F4F2EC] font-medium">{viewInvoice.method}</span>
               </div>
-              <div className="flex justify-between text-[#A8A69E]">
+              <div className="flex justify-between text-[#9C9A92]">
                 <span>Billing cycle</span>
-                <span className="text-[#F5F3EC]">{viewInvoice.period}</span>
+                <span className="text-[#F4F2EC]">{viewInvoice.period}</span>
               </div>
-              <div className="border-t border-[#2A2A2A] pt-2.5 flex justify-between font-medium text-[16px] text-[#F5F3EC]">
+              <div className="border-t border-[#222222] pt-2.5 flex justify-between font-medium text-[16px] text-[#F4F2EC]">
                 <span>Total amount</span>
-                <span className="font-mono text-[#C7F26B]">
+                <span className="font-mono text-[#C9B8FF]">
                   ${viewInvoice.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-[#2A2A2A]">
+            <div className="flex justify-end gap-2 pt-3 border-t border-[#222222]">
               <button
                 type="button"
                 onClick={() => setViewInvoice(null)}

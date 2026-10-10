@@ -75,10 +75,10 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC]">
+          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
             Notification settings
           </h1>
-          <p className="text-[13px] text-[#A8A69E] mt-1">
+          <p className="text-[13px] text-[#9C9A92] mt-1">
             Control the activity and financial alerts you receive. Changes are saved to your account.
           </p>
         </div>
@@ -95,15 +95,15 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
 
       {/* Real-time Save Feedback Notification */}
       {savedBanner && (
-        <div className="p-3 bg-[#1C1C1C] border border-[#C7F26B]/50 rounded-[14px] text-[13px] text-[#F5F3EC] flex items-center justify-between animate-[fade-in_0.15s_ease-out]">
+        <div className="p-3 bg-[#141414] border border-[#C9B8FF]/50 rounded-[14px] text-[13px] text-[#F4F2EC] flex items-center justify-between animate-[fade-in_0.15s_ease-out]">
           <div className="flex items-center gap-2">
-            <i className="ti ti-check text-[#C7F26B]"></i>
+            <i className="ti ti-check text-[#C9B8FF]"></i>
             <span>{savedBanner} (saved locally)</span>
           </div>
           <button
             type="button"
             onClick={() => setSavedBanner(null)}
-            className="text-[#A8A69E] hover:text-[#F5F3EC] border-0 bg-transparent cursor-pointer"
+            className="text-[#9C9A92] hover:text-[#F4F2EC] border-0 bg-transparent cursor-pointer"
           >
             <i className="ti ti-x text-[12px]"></i>
           </button>
@@ -112,12 +112,12 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
 
       {/* Creator Category Notifications (Finding 9 & 10) */}
       <div className="card space-y-3">
-        <div className="flex items-center justify-between pb-1 border-b border-[#2A2A2A]/60">
+        <div className="flex items-center justify-between pb-1 border-b border-[#222222]/60">
           <div>
-            <div className="text-[16px] font-medium text-[#F5F3EC]">Creator activity alerts</div>
-            <div className="text-[12px] text-[#A8A69E]">Install tracking, weekly Friday payouts, and campaign announcements.</div>
+            <div className="text-[16px] font-medium text-[#F4F2EC]">Creator activity alerts</div>
+            <div className="text-[12px] text-[#9C9A92]">Install tracking, weekly Friday payouts, and campaign announcements.</div>
           </div>
-          <span className="chip py-0.5 px-2 text-[10px] bg-[#C7F26B]/20 text-[#C7F26B] font-semibold uppercase tracking-wider">
+          <span className="chip py-0.5 px-2 text-[10px] bg-[#C9B8FF]/20 text-[#C9B8FF] font-semibold uppercase tracking-wider">
             Creator role
           </span>
         </div>
@@ -128,11 +128,11 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
             return (
               <div
                 key={item.k}
-                className="flex items-center justify-between gap-3 p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40"
+                className="flex items-center justify-between gap-3 p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40"
               >
                 <div className="flex-1 min-w-0 pr-2">
-                  <div className="text-[14px] font-medium text-[#F5F3EC]">{item.title}</div>
-                  <div className="text-[12px] text-[#A8A69E] mt-0.5 leading-snug">{item.desc}</div>
+                  <div className="text-[14px] font-medium text-[#F4F2EC]">{item.title}</div>
+                  <div className="text-[12px] text-[#9C9A92] mt-0.5 leading-snug">{item.desc}</div>
                 </div>
                 <button
                   type="button"
@@ -152,10 +152,10 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
 
       {/* Founder Category Notifications (Finding 9 & 10) */}
       <div className="card space-y-3">
-        <div className="flex items-center justify-between pb-1 border-b border-[#2A2A2A]/60">
+        <div className="flex items-center justify-between pb-1 border-b border-[#222222]/60">
           <div>
-            <div className="text-[16px] font-medium text-[#F5F3EC]">App owner & advertiser alerts</div>
-            <div className="text-[12px] text-[#A8A69E]">SDK telemetry, budget thresholds, fraud prevention, and milestones.</div>
+            <div className="text-[16px] font-medium text-[#F4F2EC]">App owner & advertiser alerts</div>
+            <div className="text-[12px] text-[#9C9A92]">SDK telemetry, budget thresholds, fraud prevention, and milestones.</div>
           </div>
           <span className="chip py-0.5 px-2 text-[10px] bg-[#B5D4F4]/20 text-[#B5D4F4] font-semibold uppercase tracking-wider">
             Founder role
@@ -168,11 +168,11 @@ export const NotificationSettingsView: React.FC<NotificationSettingsViewProps> =
             return (
               <div
                 key={item.k}
-                className="flex items-center justify-between gap-3 p-3 bg-[#1C1C1C] rounded-[16px] border border-[#2A2A2A]/40"
+                className="flex items-center justify-between gap-3 p-3 bg-[#141414] rounded-[16px] border border-[#222222]/40"
               >
                 <div className="flex-1 min-w-0 pr-2">
-                  <div className="text-[14px] font-medium text-[#F5F3EC]">{item.title}</div>
-                  <div className="text-[12px] text-[#A8A69E] mt-0.5 leading-snug">{item.desc}</div>
+                  <div className="text-[14px] font-medium text-[#F4F2EC]">{item.title}</div>
+                  <div className="text-[12px] text-[#9C9A92] mt-0.5 leading-snug">{item.desc}</div>
                 </div>
                 <button
                   type="button"

@@ -41,12 +41,12 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
+        className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] select-none text-left relative space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[18px] font-medium text-[#F5F3EC]">
+            <div className="text-[18px] font-medium text-[#F4F2EC]">
               {isFounder ? 'Flag suspicious traffic' : 'Contest rejected install'}
             </div>
             <div className="sub mt-0.5">
@@ -57,7 +57,7 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer"
             aria-label="Close"
           >
             <i className="ti ti-x text-[14px]"></i>
@@ -66,10 +66,10 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
 
         {submitted ? (
           <div className="text-center py-8 space-y-2">
-            <div className="w-12 h-12 rounded-full bg-[#C7F26B] text-[#16140F] inline-flex items-center justify-center text-[24px]">
+            <div className="w-12 h-12 rounded-full bg-[#C9B8FF] text-[#000000] inline-flex items-center justify-center text-[24px]">
               <i className="ti ti-check" aria-hidden="true"></i>
             </div>
-            <div className="text-[16px] font-medium text-[#F5F3EC]">
+            <div className="text-[16px] font-medium text-[#F4F2EC]">
               Dispute ticket submitted
             </div>
             <div className="sub text-[13px]">
@@ -129,7 +129,7 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({
               />
             </div>
 
-            <div className="bg-[#1C1C1C] rounded-[16px] p-3 text-[12px] text-[#9A9892]">
+            <div className="bg-[#141414] rounded-[16px] p-3 text-[12px] text-[#9A9892]">
               Status is displayed on the analytics ledger until resolved. Settlement holds are suspended during active dispute review.
             </div>
 

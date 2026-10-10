@@ -51,12 +51,12 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="card w-full max-w-[460px] bg-[#161616] border border-[#2A2A2A] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] relative select-none text-left"
+        className="card w-full max-w-[460px] bg-[#0E0E0E] border border-[#222222] rounded-[24px] p-6 shadow-2xl animate-[pop_0.18s_cubic-bezier(0.16,1,0.3,1)] relative select-none text-left"
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#1C1C1C] hover:bg-[#242424] text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center border-0 cursor-pointer transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center border-0 cursor-pointer transition-colors"
           aria-label="Close"
         >
           <i className="ti ti-x text-[15px]"></i>
@@ -71,17 +71,17 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
             <i className={`ti ${campaign.icon || 'ti-device-gamepad-2'}`} aria-hidden="true"></i>
           </div>
           <div>
-            <div className="text-[17px] font-medium text-[#F5F3EC]">
+            <div className="text-[17px] font-medium text-[#F4F2EC]">
               {isFreshJoin ? `Joined ${campaign.name}` : `${campaign.name} QR Card`}
             </div>
-            <div className="text-[12px] text-[#A8A69E]">
+            <div className="text-[12px] text-[#9C9A92]">
               ${campaign.price} per verified install · Guaranteed escrow
             </div>
           </div>
         </div>
 
         {/* View Mode Pills: Digital | Print Flyer | Test Scanner */}
-        <div className="flex items-center gap-1.5 mt-4 p-1 bg-[#1C1C1C] rounded-full border border-[#2A2A2A]/40">
+        <div className="flex items-center gap-1.5 mt-4 p-1 bg-[#141414] rounded-full border border-[#222222]/40">
           <button
             type="button"
             onClick={() => {
@@ -125,26 +125,26 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
 
         {/* Card Body by Format */}
         {qrFormat === 'digital' && (
-          <div className="flex flex-col items-center justify-center my-4 p-5 bg-[#1C1C1C] rounded-[20px] border border-[#2A2A2A]/40 animate-[fade-in_0.15s_ease-out]">
+          <div className="flex flex-col items-center justify-center my-4 p-5 bg-[#141414] rounded-[20px] border border-[#222222]/40 animate-[fade-in_0.15s_ease-out]">
             <TrackingQrCode
               url={exactUrl}
               size={180}
               showDownload={true}
               downloadFileName={`kred_qr_${slug}.png`}
             />
-            <span className="text-[11.5px] text-[#A8A69E] mt-2.5 text-center font-mono">
+            <span className="text-[11.5px] text-[#9C9A92] mt-2.5 text-center font-mono">
               {exactUrl}
             </span>
           </div>
         )}
 
         {qrFormat === 'print' && (
-          <div className="my-4 p-6 bg-white text-[#0B0B0B] rounded-[20px] shadow-lg flex flex-col items-center text-center animate-[fade-in_0.15s_ease-out]">
+          <div className="my-4 p-6 bg-white text-[#000000] rounded-[20px] shadow-lg flex flex-col items-center text-center animate-[fade-in_0.15s_ease-out]">
             <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#388BFD]">
               <i className="ti ti-asterisk"></i>
               <span>KRED PARTNER VERIFIED</span>
             </div>
-            <div className="text-[19px] font-bold mt-1 text-[#0B0B0B]">
+            <div className="text-[19px] font-bold mt-1 text-[#000000]">
               Scan to install {campaign.name}
             </div>
             <div className="text-[12px] text-[#555] mb-3">
@@ -165,29 +165,29 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
         )}
 
         {qrFormat === 'simulate' && (
-          <div className="my-4 p-5 bg-[#1C1C1C] rounded-[20px] border border-[#2A2A2A]/40 animate-[fade-in_0.15s_ease-out]">
-            <div className="flex items-center gap-2.5 text-[#C7F26B] text-[13px] font-medium pb-2 border-b border-[#2A2A2A]">
+          <div className="my-4 p-5 bg-[#141414] rounded-[20px] border border-[#222222]/40 animate-[fade-in_0.15s_ease-out]">
+            <div className="flex items-center gap-2.5 text-[#C9B8FF] text-[13px] font-medium pb-2 border-b border-[#222222]">
               <i className="ti ti-circle-check text-[16px]"></i>
               <span>Live attribution scanner simulator</span>
             </div>
 
-            <div className="space-y-3 mt-3 text-[12.5px] text-[#B9B7AF]">
+            <div className="space-y-3 mt-3 text-[12.5px] text-[#B8B6AE]">
               <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-[#2A2A2A] text-[#F5F3EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#222222] text-[#F4F2EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
                   1
                 </span>
                 <span>User scans code on iOS or Android Camera</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-[#2A2A2A] text-[#F5F3EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#222222] text-[#F4F2EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
                   2
                 </span>
                 <span>
-                  Redirects to <span className="font-mono text-[#F5F3EC]">{exactUrl}</span> (instant device fingerprint token stored)
+                  Redirects to <span className="font-mono text-[#F4F2EC]">{exactUrl}</span> (instant device fingerprint token stored)
                 </span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-[#2A2A2A] text-[#F5F3EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#222222] text-[#F4F2EC] flex items-center justify-center text-[10px] shrink-0 font-mono mt-0.5">
                   3
                 </span>
                 <span>
@@ -196,9 +196,9 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#2A2A2A] flex justify-between items-center text-[11.5px] text-[#9A9892]">
+            <div className="mt-4 pt-3 border-t border-[#222222] flex justify-between items-center text-[11.5px] text-[#9A9892]">
               <span>Status: Ready for audience sharing</span>
-              <span className="chip py-0.5 px-2 bg-[#C7F26B]/20 text-[#C7F26B] font-mono text-[10.5px]">
+              <span className="chip py-0.5 px-2 bg-[#C9B8FF]/20 text-[#C9B8FF] font-mono text-[10.5px]">
                 Escrow verified
               </span>
             </div>
@@ -206,8 +206,8 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({
         )}
 
         {/* Link Box */}
-        <div className="flex items-center gap-2 bg-[#1C1C1C] rounded-full p-1.5 pl-4 border border-[#2A2A2A]/40 mt-3">
-          <span className="flex-1 font-mono text-[12px] text-[#F5F3EC] truncate">
+        <div className="flex items-center gap-2 bg-[#141414] rounded-full p-1.5 pl-4 border border-[#222222]/40 mt-3">
+          <span className="flex-1 font-mono text-[12px] text-[#F4F2EC] truncate">
             {linkOf(campaign)}
           </span>
           <button

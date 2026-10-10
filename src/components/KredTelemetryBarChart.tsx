@@ -82,14 +82,14 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
   };
 
   const resolvedBadgeBg = badgeBg || (barColor === '#F4C0D1' ? '#F4C0D1' : barColor);
-  const resolvedBadgeFg = badgeFg || (barColor === '#F4C0D1' ? '#4B1528' : '#0B0B0B');
+  const resolvedBadgeFg = badgeFg || (barColor === '#F4C0D1' ? '#4B1528' : '#000000');
 
   return (
     <div
       className={`bg-transparent border-0 text-left select-none relative w-full py-2 ${className}`}
     >
       {/* Serif Typography Headline matching Image 1 & Design System */}
-      <h3 className="font-serif text-[20px] sm:text-[24px] text-[#F5F3EC] leading-[1.3] tracking-[-0.2px] font-normal pr-2">
+      <h3 className="font-serif text-[20px] sm:text-[24px] text-[#F4F2EC] leading-[1.3] tracking-[-0.2px] font-normal pr-2">
         {title}
       </h3>
 
@@ -102,7 +102,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
           >
             <i className={`ti ${icon}`}></i>
           </div>
-          <span className="text-[13px] text-[#B9B7AF] truncate font-medium">
+          <span className="text-[13px] text-[#B8B6AE] truncate font-medium">
             {pillLabel}
           </span>
         </div>
@@ -110,8 +110,8 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
         <button
           type="button"
           onClick={handlePlayToggle}
-          className={`w-7 h-7 rounded-full bg-[#242424] hover:bg-[#2A2A2A] text-[#F5F3EC] flex items-center justify-center cursor-pointer transition-all shrink-0 ml-2 shadow-xs ${
-            isPlaying ? 'scale-95 bg-[#C7F26B] text-[#0B0B0B]' : ''
+          className={`w-7 h-7 rounded-full bg-[#1B1B1B] hover:bg-[#222222] text-[#F4F2EC] flex items-center justify-center cursor-pointer transition-all shrink-0 ml-2 shadow-xs ${
+            isPlaying ? 'scale-95 bg-[#C9B8FF] text-[#000000]' : ''
           }`}
           aria-label="Refresh telemetry data"
           title="Refresh telemetry"
@@ -128,10 +128,10 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
       <div className="relative pt-2 pb-1">
         {/* Tooltip on hover */}
         {hoveredPoint && (
-          <div className="absolute top-0 right-2 z-20 px-3 py-1.5 bg-[#1C1C1C] border border-[#2A2A2A] rounded-[10px] text-[11.5px] font-mono shadow-xl animate-[fade-in_0.1s_ease-out]">
-            <span className="text-[#A8A69E]">{hoveredPoint.date}: </span>
-            <span className="text-[#F5F3EC] font-semibold">{hoveredPoint.value} runs </span>
-            <span className="text-[#C7F26B] font-medium">
+          <div className="absolute top-0 right-2 z-20 px-3 py-1.5 bg-[#141414] border border-[#222222] rounded-[10px] text-[11.5px] font-mono shadow-xl animate-[fade-in_0.1s_ease-out]">
+            <span className="text-[#9C9A92]">{hoveredPoint.date}: </span>
+            <span className="text-[#F4F2EC] font-semibold">{hoveredPoint.value} runs </span>
+            <span className="text-[#C9B8FF] font-medium">
               (${((hoveredPoint.earnings ?? hoveredPoint.value * bountyPrice)).toFixed(2)})
             </span>
           </div>
@@ -139,7 +139,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
 
         <div className="flex">
           {/* Y-axis Labels on Left */}
-          <div className="w-6 shrink-0 flex flex-col justify-between items-end pr-2.5 text-[11px] font-mono text-[#A8A69E] h-[150px] sm:h-[170px] select-none py-1">
+          <div className="w-6 shrink-0 flex flex-col justify-between items-end pr-2.5 text-[11px] font-mono text-[#9C9A92] h-[150px] sm:h-[170px] select-none py-1">
             {yTicks.map((val) => (
               <span key={val} className="leading-none">
                 {val}
@@ -152,7 +152,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
             {/* Horizontal Gridlines */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none py-1">
               {yTicks.map((val) => (
-                <div key={val} className="w-full border-b border-[#2A2A2A]/60" />
+                <div key={val} className="w-full border-b border-[#222222]/60" />
               ))}
             </div>
 
@@ -162,7 +162,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
                 <div
                   key={day}
                   className={`h-full border-r ${
-                    idx === 0 ? 'border-transparent' : 'border-dashed border-[#2A2A2A]'
+                    idx === 0 ? 'border-transparent' : 'border-dashed border-[#222222]'
                   }`}
                 />
               ))}
@@ -184,7 +184,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
                     <div
                       style={{
                         height: `${heightPercent}%`,
-                        backgroundColor: isHovered ? '#F5F3EC' : barColor,
+                        backgroundColor: isHovered ? '#F4F2EC' : barColor,
                         boxShadow: isHovered ? `0 0 10px ${barColor}` : undefined,
                       }}
                       className="w-full max-w-[9px] rounded-t-[2px] transition-all duration-150 group-hover:opacity-100 opacity-90"
@@ -197,7 +197,7 @@ export const KredTelemetryBarChart: React.FC<KredTelemetryBarChartProps> = ({
         </div>
 
         {/* X-axis Labels at Bottom matching Image 1 */}
-        <div className="flex pl-6 pt-2 text-[11px] font-mono text-[#A8A69E] justify-between px-1 select-none">
+        <div className="flex pl-6 pt-2 text-[11px] font-mono text-[#9C9A92] justify-between px-1 select-none">
           {xTickDays.map((day, idx) => (
             <span key={day} className="text-center">
               {idx === 0 ? `Dec ${day}` : day}

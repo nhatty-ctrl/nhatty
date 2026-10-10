@@ -53,10 +53,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       {/* Title & Search bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F5F3EC]">
+          <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
             Discover
           </h1>
-          <p className="text-[13px] text-[#9A9892] mt-1">
+          <p className="text-[13px] text-[#9C9A92] mt-1">
             Explore verified mobile install campaigns across top app categories.
           </p>
         </div>
@@ -64,7 +64,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         {/* Search input */}
         <div className="relative w-full sm:w-64">
           <i
-            className="ti ti-search absolute left-3.5 top-3.5 text-[#9A9892] text-[16px]"
+            className="ti ti-search absolute left-3.5 top-3.5 text-[#9C9A92] text-[16px]"
             aria-hidden="true"
           ></i>
           <input
@@ -77,7 +77,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-2.5 text-[#9A9892] hover:text-white"
+              className="absolute right-3 top-2.5 text-[#9C9A92] hover:text-white"
             >
               <i className="ti ti-x text-[14px]"></i>
             </button>
@@ -85,15 +85,20 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
         </div>
       </div>
 
-      {/* Category Pills Slider */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      {/* Category Pills Slider (sleek pill buttons) */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none items-center py-0.5">
         {categories.map((catName) => {
           const isSelected = activeCat === catName;
           return (
             <button
               key={catName}
+              type="button"
               onClick={() => setActiveCat(catName)}
-              className={`chip shrink-0 ${isSelected ? 'sel' : ''}`}
+              className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-1.5 px-3.5 rounded-full cursor-pointer transition-all duration-150 shrink-0 select-none shadow-xs ${
+                isSelected
+                  ? 'bg-[#F4F2EC] text-[#000000] shadow-sm'
+                  : 'bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border border-[#222222]'
+              }`}
             >
               {catName}
             </button>
@@ -104,7 +109,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       {/* Categories Grid (when on 'All' with no query) */}
       {activeCat === 'All' && !searchQuery && (
         <div className="pt-1">
-          <div className="font-medium text-[15px] text-[#F5F3EC] mb-2.5">
+          <div className="font-medium text-[15px] text-[#F4F2EC] mb-2.5">
             Browse by Category
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -127,10 +132,10 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
       {/* Filtered Campaigns list */}
       <div className="space-y-4 pt-2">
         <div className="flex justify-between items-baseline">
-          <span className="font-medium text-[15px] text-[#F5F3EC]">
+          <span className="font-medium text-[15px] text-[#F4F2EC]">
             {activeCat === 'All' ? 'All Campaigns' : `${activeCat} Campaigns`}
           </span>
-          <span className="text-[12px] text-[#9A9892]">
+          <span className="text-[12px] text-[#9C9A92]">
             {filteredCampaigns.length} available
           </span>
         </div>
@@ -145,7 +150,7 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             />
           ))
         ) : (
-          <div className="card text-center text-[#9A9892] text-[13px] py-12">
+          <div className="card text-center text-[#9C9A92] text-[13px] py-12">
             No campaigns found matching your criteria.
           </div>
         )}

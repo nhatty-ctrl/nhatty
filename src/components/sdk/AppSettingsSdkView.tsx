@@ -254,11 +254,11 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
       icon: 'ti-activity',
       label: 'Status',
       value: env === 'live' ? (
-        <span className="flex items-center gap-1.5 text-[#C7F26B]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C7F26B] animate-pulse"></span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C7F26B] animate-pulse delay-75"></span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C7F26B] animate-pulse delay-150"></span>
-          <span className="ml-1 text-[#F5F3EC]">Healthy</span>
+        <span className="flex items-center gap-1.5 text-[#C9B8FF]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C9B8FF] animate-pulse"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C9B8FF] animate-pulse delay-75"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#C9B8FF] animate-pulse delay-150"></span>
+          <span className="ml-1 text-[#F4F2EC]">Healthy</span>
         </span>
       ) : (
         <span className="text-[#FAC775]">Test mode</span>
@@ -304,13 +304,13 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
   ];
 
   return (
-    <div className="w-full min-h-[calc(100vh-64px)] bg-[#0B0B0B] text-[#F5F3EC] font-sans select-none text-left">
+    <div className="w-full min-h-[calc(100vh-64px)] bg-[#000000] text-[#F4F2EC] font-sans select-none text-left">
       {/* Top Header Bar */}
       <div className="flex items-center gap-2 sm:gap-4 px-4 sm:px-8 py-3.5 border-b border-[#1E1E1E] flex-wrap bg-[#0E0E0E]">
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 text-[12px] text-[#A8A69E] hover:text-[#F5F3EC] bg-transparent border-0 cursor-pointer px-1 py-1 transition-colors"
+            className="inline-flex items-center gap-1.5 text-[12px] text-[#9C9A92] hover:text-[#F4F2EC] bg-transparent border-0 cursor-pointer px-1 py-1 transition-colors"
           >
             <i className="ti ti-arrow-left text-[14px]"></i>
             <span>Back to dashboard</span>
@@ -321,7 +321,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
             <button
               type="button"
               onClick={() => setIsAppMenuOpen(!isAppMenuOpen)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-[#1A1A1A] hover:bg-[#222222] cursor-pointer text-[13px] text-[#F5F3EC] transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/20 bg-[#1A1A1A] hover:bg-[#222222] cursor-pointer text-[13px] text-[#F4F2EC] transition-all"
             >
               <span
                 style={{ backgroundColor: activeApp.bg, color: activeApp.fg }}
@@ -346,8 +346,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 text-[13px] rounded-lg border-0 cursor-pointer text-left transition-colors ${
                       activeApp.id === app.id
-                        ? 'bg-[#222222] text-[#F5F3EC] font-medium'
-                        : 'bg-transparent text-[#B9B7AF] hover:bg-[#1E1E1E] hover:text-[#F5F3EC]'
+                        ? 'bg-[#222222] text-[#F4F2EC] font-medium'
+                        : 'bg-transparent text-[#B8B6AE] hover:bg-[#1E1E1E] hover:text-[#F4F2EC]'
                     }`}
                   >
                     <span
@@ -372,10 +372,10 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 showToast('Switched to Live environment');
               }}
               className={`rounded-full h-7 px-3 text-[12px] font-medium inline-flex items-center gap-1.5 border-0 cursor-pointer transition-all ${
-                env === 'live' ? 'bg-[#F5F3EC] text-[#0B0B0B]' : 'bg-transparent text-[#B9B7AF] hover:text-[#F5F3EC]'
+                env === 'live' ? 'bg-[#F4F2EC] text-[#000000]' : 'bg-transparent text-[#B8B6AE] hover:text-[#F4F2EC]'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C7F26B]"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C9B8FF]"></span>
               <span>Live</span>
             </button>
             <button
@@ -385,7 +385,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 showToast('Switched to Sandbox environment');
               }}
               className={`rounded-full h-7 px-3 text-[12px] font-medium inline-flex items-center gap-1.5 border-0 cursor-pointer transition-all ${
-                env === 'test' ? 'bg-[#F5F3EC] text-[#0B0B0B]' : 'bg-transparent text-[#B9B7AF] hover:text-[#F5F3EC]'
+                env === 'test' ? 'bg-[#F4F2EC] text-[#000000]' : 'bg-transparent text-[#B8B6AE] hover:text-[#F4F2EC]'
               }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#FAC775]"></span>
@@ -399,7 +399,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
           <button
             type="button"
             onClick={onNavigateDocs}
-            className="inline-flex items-center gap-1.5 h-8 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12px] font-medium cursor-pointer transition-colors"
+            className="inline-flex items-center gap-1.5 h-8 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12px] font-medium cursor-pointer transition-colors"
           >
             <i className="ti ti-book text-[14px]"></i>
             <span>Docs</span>
@@ -410,7 +410,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[240px_minmax(0,1fr)] min-h-[640px]">
           {/* Left Sidebar */}
           <div className="p-4 sm:p-6 border-b md:border-b-0 md:border-r border-[#1E1E1E] bg-[#0E0E0E]/60 text-left">
-            <div className="text-[15px] font-medium text-[#F5F3EC] px-2.5 pb-2">Settings</div>
+            <div className="text-[15px] font-medium text-[#F4F2EC] px-2.5 pb-2">Settings</div>
 
             <div className="font-mono text-[11px] uppercase tracking-wider text-[#71717A] px-2.5 mt-3 mb-1.5">
               Configuration
@@ -422,8 +422,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('overview')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'overview'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>Overview</span>
@@ -434,8 +434,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('general')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'general'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>General</span>
@@ -446,8 +446,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('keys')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'keys'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>API keys</span>
@@ -458,8 +458,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('hooks')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'hooks'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>Webhooks</span>
@@ -476,8 +476,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('rc')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'rc'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>RevenueCat</span>
@@ -489,8 +489,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('whop')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'whop'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>Whop payments</span>
@@ -511,8 +511,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 }}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'fund'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>Funding & receipts</span>
@@ -524,8 +524,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                 onClick={() => setPage('usage')}
                 className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                   page === 'usage'
-                    ? 'border-white/30 bg-[#1E1E1E] text-[#F5F3EC] font-medium shadow-sm'
-                    : 'border-transparent bg-transparent text-[#A8A69E] hover:text-[#F5F3EC] hover:bg-[#161616]'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
                 }`}
               >
                 <span>Usage</span>
@@ -535,25 +535,25 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
           </div>
 
           {/* Right Main Content */}
-          <div className="p-6 sm:p-10 lg:p-12 min-w-0 bg-[#0B0B0B]">
+          <div className="p-6 sm:p-10 lg:p-12 min-w-0 bg-[#000000]">
             {page === 'overview' ? (
               /* Overview Screen */
               <div className="space-y-8 animate-[fadeIn_0.12s_ease-out]">
                 {/* App Title & Key Copy Row */}
                 <div>
-                  <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-tight text-[#F5F3EC]">{activeApp.name}</h1>
+                  <h1 className="text-[32px] sm:text-[36px] font-semibold tracking-tight text-[#F4F2EC]">{activeApp.name}</h1>
                   <div className="flex items-center gap-3 mt-2.5 flex-wrap">
-                    <span className="font-mono text-[13px] text-[#F5F3EC] bg-[#1A1A1A] px-3.5 py-1.5 rounded-full border border-white/10 select-all">
+                    <span className="font-mono text-[13px] text-[#F4F2EC] bg-[#1A1A1A] px-3.5 py-1.5 rounded-full border border-white/10 select-all">
                       {livePublishableKey ? livePublishableKey.val : 'No key in this environment'}
                     </span>
                     <button
                       type="button"
                       onClick={() => livePublishableKey && copyText(livePublishableKey.val, 'Publishable key copied')}
-                      className="h-8 px-3.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                      className="h-8 px-3.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
                     >
                       {copiedKeyId === livePublishableKey?.val ? (
                         <>
-                          <i className="ti ti-check text-[#C7F26B]"></i>
+                          <i className="ti ti-check text-[#C9B8FF]"></i>
                           <span>Copied</span>
                         </>
                       ) : (
@@ -581,7 +581,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       </span>
                       <div className="min-w-0">
                         <div className="font-mono text-[11px] uppercase tracking-wider text-[#71717A]">{t.label}</div>
-                        <div className="text-[15px] font-medium text-[#F5F3EC] mt-0.5">{t.value}</div>
+                        <div className="text-[15px] font-medium text-[#F4F2EC] mt-0.5">{t.value}</div>
                       </div>
                     </div>
                   ))}
@@ -589,8 +589,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                 {/* Get Connected Checklist */}
                 <div className="pt-2">
-                  <h2 className="text-[22px] font-medium tracking-tight text-[#F5F3EC]">Get connected</h2>
-                  <p className="text-[13.5px] text-[#A8A69E] mt-0.5">Four steps from a new app to live installs.</p>
+                  <h2 className="text-[22px] font-medium tracking-tight text-[#F4F2EC]">Get connected</h2>
+                  <p className="text-[13.5px] text-[#9C9A92] mt-0.5">Four steps from a new app to live installs.</p>
 
                   <div className="mt-4 space-y-3">
                     {[
@@ -605,19 +605,19 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       >
                         <span
                           className={`w-6 h-6 rounded-full inline-flex items-center justify-center text-[12px] font-semibold shrink-0 ${
-                            step.done ? 'bg-[#C7F26B] text-[#0B0B0B]' : 'border border-[#333333] text-[#9A9892]'
+                            step.done ? 'bg-[#C9B8FF] text-[#000000]' : 'border border-[#333333] text-[#9A9892]'
                           }`}
                         >
                           {step.done ? <i className="ti ti-check font-bold"></i> : idx + 1}
                         </span>
 
-                        <span className="flex-1 text-[14px] text-[#F5F3EC]">{step.title}</span>
+                        <span className="flex-1 text-[14px] text-[#F4F2EC]">{step.title}</span>
 
                         {!step.done && (
                           <button
                             type="button"
                             onClick={onNavigateDocs}
-                            className="h-8 px-3.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12px] cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                            className="h-8 px-3.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12px] cursor-pointer transition-colors inline-flex items-center gap-1.5"
                           >
                             <span>Open docs</span>
                             <i className="ti ti-arrow-right text-[11px]"></i>
@@ -633,10 +633,10 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
               <div className="space-y-7 animate-[fadeIn_0.12s_ease-out]">
                 {/* Header & Tabs */}
                 <div>
-                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F5F3EC]">API keys</h1>
-                  <p className="text-[13.5px] text-[#A8A69E] mt-1">Configure keys to control access to your app's data.</p>
+                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">API keys</h1>
+                  <p className="text-[13.5px] text-[#9C9A92] mt-1">Configure keys to control access to your app's data.</p>
 
-                  <div className="flex gap-6 border-b border-[#242424] mt-5">
+                  <div className="flex gap-6 border-b border-[#1B1B1B] mt-5">
                     <button
                       type="button"
                       onClick={() => {
@@ -646,8 +646,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       }}
                       className={`pb-3 text-[14px] font-medium border-b-2 transition-all cursor-pointer bg-transparent border-t-0 border-x-0 ${
                         tab === 'keys'
-                          ? 'border-[#F5F3EC] text-[#F5F3EC]'
-                          : 'border-transparent text-[#9A9892] hover:text-[#F5F3EC]'
+                          ? 'border-[#F4F2EC] text-[#F4F2EC]'
+                          : 'border-transparent text-[#9A9892] hover:text-[#F4F2EC]'
                       }`}
                     >
                       Publishable and secret keys
@@ -661,8 +661,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       }}
                       className={`pb-3 text-[14px] font-medium border-b-2 transition-all cursor-pointer bg-transparent border-t-0 border-x-0 ${
                         tab === 'tok'
-                          ? 'border-[#F5F3EC] text-[#F5F3EC]'
-                          : 'border-transparent text-[#9A9892] hover:text-[#F5F3EC]'
+                          ? 'border-[#F4F2EC] text-[#F4F2EC]'
+                          : 'border-transparent text-[#9A9892] hover:text-[#F4F2EC]'
                       }`}
                     >
                       Access tokens
@@ -677,15 +677,15 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     {showBanner1 && (
                       <div className="p-4.5 rounded-2xl bg-[#181818] border border-[#282828] flex items-start gap-3 relative">
                         <div className="flex-1 text-left">
-                          <div className="text-[14px] font-medium text-[#F5F3EC]">Keys belong to one app and one environment</div>
-                          <div className="text-[13px] text-[#A8A69E] mt-0.5 leading-relaxed">
+                          <div className="text-[14px] font-medium text-[#F4F2EC]">Keys belong to one app and one environment</div>
+                          <div className="text-[13px] text-[#9C9A92] mt-0.5 leading-relaxed">
                             Sandbox keys never create payable installs. Live keys count real installs and affect settlement.
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={() => setShowBanner1(false)}
-                          className="w-6 h-6 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F5F3EC] flex items-center justify-center bg-transparent cursor-pointer"
+                          className="w-6 h-6 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F4F2EC] flex items-center justify-center bg-transparent cursor-pointer"
                         >
                           <i className="ti ti-x text-[12px]"></i>
                         </button>
@@ -696,8 +696,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     <div>
                       <div className="flex items-end justify-between gap-3">
                         <div>
-                          <h2 className="text-[20px] font-medium text-[#F5F3EC]">Publishable key</h2>
-                          <p className="text-[13px] text-[#A8A69E] mt-0.5">
+                          <h2 className="text-[20px] font-medium text-[#F4F2EC]">Publishable key</h2>
+                          <p className="text-[13px] text-[#9C9A92] mt-0.5">
                             Ships inside your app. It can only send install and event data.
                           </p>
                         </div>
@@ -708,7 +708,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             setFormName('');
                             setFormError('');
                           }}
-                          className="h-8.5 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12.5px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                          className="h-8.5 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12.5px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
                         >
                           <i className="ti ti-plus text-[12px]"></i>
                           <span>New publishable key</span>
@@ -718,7 +718,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       {/* Creation form */}
                       {creationForm === 'pk' && (
                         <div className="mt-4 p-5 rounded-2xl bg-[#181818] border border-white/20 space-y-3.5 animate-[fadeIn_0.1s_ease-out]">
-                          <div className="text-[14.5px] font-medium text-[#F5F3EC]">New publishable key</div>
+                          <div className="text-[14.5px] font-medium text-[#F4F2EC]">New publishable key</div>
                           <div>
                             <label className="text-[11px] font-mono uppercase text-[#71717A] block mb-1">Name</label>
                             <input
@@ -726,7 +726,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                               value={formName}
                               onChange={(e) => setFormName(e.target.value)}
                               placeholder="e.g. ios app production"
-                              className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] outline-none"
+                              className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F4F2EC] outline-none"
                               autoFocus
                             />
                             {formError && <div className="text-[12px] text-[#FF8A80] mt-1">{formError}</div>}
@@ -735,14 +735,14 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             <button
                               type="button"
                               onClick={() => handleCreateKeyOrToken('pk')}
-                              className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12.5px] cursor-pointer hover:bg-white"
+                              className="h-8.5 px-4.5 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12.5px] cursor-pointer hover:bg-white"
                             >
                               Create key
                             </button>
                             <button
                               type="button"
                               onClick={() => setCreationForm(null)}
-                              className="h-8.5 px-4 rounded-full border border-white/20 text-[#A8A69E] hover:text-[#F5F3EC] text-[12.5px] bg-transparent cursor-pointer"
+                              className="h-8.5 px-4 rounded-full border border-white/20 text-[#9C9A92] hover:text-[#F4F2EC] text-[12.5px] bg-transparent cursor-pointer"
                             >
                               Cancel
                             </button>
@@ -752,7 +752,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                       {/* Publishable Keys Table */}
                       <div className="mt-3.5 rounded-2xl bg-[#181818] border border-[#262626] overflow-hidden">
-                        <div className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#242424] bg-[#141414]">
+                        <div className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#1B1B1B] bg-[#141414]">
                           <span>Name</span>
                           <span>API key</span>
                           <span></span>
@@ -762,20 +762,20 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           publishableKeys.map((k) => (
                             <div
                               key={k.id}
-                              className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3.5 border-t border-[#242424] first:border-t-0 relative"
+                              className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3.5 border-t border-[#1B1B1B] first:border-t-0 relative"
                             >
                               <div>
-                                <div className="text-[13.5px] font-medium text-[#F5F3EC]">{k.name}</div>
-                                <div className="text-[11.5px] text-[#A8A69E]">{k.desc}</div>
+                                <div className="text-[13.5px] font-medium text-[#F4F2EC]">{k.name}</div>
+                                <div className="text-[11.5px] text-[#9C9A92]">{k.desc}</div>
                               </div>
 
                               <div>
-                                <span className="font-mono text-[12.5px] bg-[#121212] border border-white/10 px-3 py-1 rounded-full text-[#F5F3EC] inline-flex items-center gap-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                                <span className="font-mono text-[12.5px] bg-[#121212] border border-white/10 px-3 py-1 rounded-full text-[#F4F2EC] inline-flex items-center gap-2 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
                                   <span>{k.val}</span>
                                   <button
                                     type="button"
                                     onClick={() => copyText(k.val, 'Copied publishable key')}
-                                    className="w-5 h-5 rounded-full border-0 bg-transparent text-[#9A9892] hover:text-[#F5F3EC] cursor-pointer inline-flex items-center justify-center"
+                                    className="w-5 h-5 rounded-full border-0 bg-transparent text-[#9A9892] hover:text-[#F4F2EC] cursor-pointer inline-flex items-center justify-center"
                                   >
                                     <i className="ti ti-copy text-[11px]"></i>
                                   </button>
@@ -786,7 +786,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => setActiveMenuId(activeMenuId === k.id ? null : k.id)}
-                                  className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F5F3EC] bg-transparent cursor-pointer flex items-center justify-center"
+                                  className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F4F2EC] bg-transparent cursor-pointer flex items-center justify-center"
                                 >
                                   <i className="ti ti-dots-vertical text-[13px]"></i>
                                 </button>
@@ -795,21 +795,21 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                   <div className="absolute right-0 top-8 z-30 w-52 bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl shadow-2xl p-2 animate-[fadeIn_0.1s_ease-out]">
                                     {confirmRevokeId === k.id ? (
                                       <div className="space-y-2 p-1">
-                                        <div className="text-[11.5px] text-[#A8A69E] leading-tight">
+                                        <div className="text-[11.5px] text-[#9C9A92] leading-tight">
                                           Apps using this key stop within a minute.
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                           <button
                                             type="button"
                                             onClick={() => handleRevoke(k.id)}
-                                            className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#0B0B0B] font-medium text-[11.5px] border-0 cursor-pointer"
+                                            className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#000000] font-medium text-[11.5px] border-0 cursor-pointer"
                                           >
                                             Revoke
                                           </button>
                                           <button
                                             type="button"
                                             onClick={() => setConfirmRevokeId(null)}
-                                            className="h-7 px-2.5 rounded-full border border-white/20 text-[#A8A69E] text-[11.5px] bg-transparent cursor-pointer"
+                                            className="h-7 px-2.5 rounded-full border border-white/20 text-[#9C9A92] text-[11.5px] bg-transparent cursor-pointer"
                                           >
                                             Cancel
                                           </button>
@@ -831,10 +831,10 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             </div>
                           ))
                         ) : (
-                          <div className="p-4 text-[13px] text-[#A8A69E]">No publishable key in this environment.</div>
+                          <div className="p-4 text-[13px] text-[#9C9A92]">No publishable key in this environment.</div>
                         )}
 
-                        <div className="p-3 px-4 border-t border-[#242424] text-[11.5px] text-[#71717A] bg-[#141414]">
+                        <div className="p-3 px-4 border-t border-[#1B1B1B] text-[11.5px] text-[#71717A] bg-[#141414]">
                           Publishable keys can be shared publicly.
                         </div>
                       </div>
@@ -844,8 +844,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     <div>
                       <div className="flex items-end justify-between gap-3">
                         <div>
-                          <h2 className="text-[20px] font-medium text-[#F5F3EC]">Secret keys</h2>
-                          <p className="text-[13px] text-[#A8A69E] mt-0.5">
+                          <h2 className="text-[20px] font-medium text-[#F4F2EC]">Secret keys</h2>
+                          <p className="text-[13px] text-[#9C9A92] mt-0.5">
                             For your servers only. They send events from your backend.
                           </p>
                         </div>
@@ -856,7 +856,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             setFormName('');
                             setFormError('');
                           }}
-                          className="h-8.5 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12.5px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
+                          className="h-8.5 px-4 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12.5px] font-medium cursor-pointer transition-colors inline-flex items-center gap-1.5"
                         >
                           <i className="ti ti-plus text-[12px]"></i>
                           <span>New secret key</span>
@@ -866,7 +866,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       {/* Secret key form */}
                       {creationForm === 'sk' && (
                         <div className="mt-4 p-5 rounded-2xl bg-[#181818] border border-white/20 space-y-3.5 animate-[fadeIn_0.1s_ease-out]">
-                          <div className="text-[14.5px] font-medium text-[#F5F3EC]">New secret key</div>
+                          <div className="text-[14.5px] font-medium text-[#F4F2EC]">New secret key</div>
                           <div>
                             <label className="text-[11px] font-mono uppercase text-[#71717A] block mb-1">Name</label>
                             <input
@@ -874,7 +874,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                               value={formName}
                               onChange={(e) => setFormName(e.target.value)}
                               placeholder="e.g. backend server"
-                              className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] outline-none"
+                              className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F4F2EC] outline-none"
                               autoFocus
                             />
                             {formError && <div className="text-[12px] text-[#FF8A80] mt-1">{formError}</div>}
@@ -883,14 +883,14 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             <button
                               type="button"
                               onClick={() => handleCreateKeyOrToken('sk')}
-                              className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12.5px] cursor-pointer hover:bg-white"
+                              className="h-8.5 px-4.5 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12.5px] cursor-pointer hover:bg-white"
                             >
                               Create key
                             </button>
                             <button
                               type="button"
                               onClick={() => setCreationForm(null)}
-                              className="h-8.5 px-4 rounded-full border border-white/20 text-[#A8A69E] hover:text-[#F5F3EC] text-[12.5px] bg-transparent cursor-pointer"
+                              className="h-8.5 px-4 rounded-full border border-white/20 text-[#9C9A92] hover:text-[#F4F2EC] text-[12.5px] bg-transparent cursor-pointer"
                             >
                               Cancel
                             </button>
@@ -900,19 +900,19 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                       {/* Reveal Card for Secret Key */}
                       {revealData && revealData.kind === 'sk' && (
-                        <div className="mt-4 p-5 rounded-2xl bg-[#181818] border border-[#F5F3EC] shadow-xl space-y-3 animate-[fadeIn_0.15s_ease-out]">
-                          <div className="text-[15px] font-medium text-[#F5F3EC]">Copy it now</div>
-                          <div className="text-[12.5px] text-[#A8A69E]">
+                        <div className="mt-4 p-5 rounded-2xl bg-[#181818] border border-[#F4F2EC] shadow-xl space-y-3 animate-[fadeIn_0.15s_ease-out]">
+                          <div className="text-[15px] font-medium text-[#F4F2EC]">Copy it now</div>
+                          <div className="text-[12.5px] text-[#9C9A92]">
                             This is the only time you will see this secret key. We cannot show it again.
                           </div>
                           <div className="flex items-center gap-3 flex-wrap">
-                            <span className="font-mono text-[13px] bg-[#121212] border border-white/20 px-3.5 py-1.5 rounded-full text-[#C7F26B] select-all">
+                            <span className="font-mono text-[13px] bg-[#121212] border border-white/20 px-3.5 py-1.5 rounded-full text-[#C9B8FF] select-all">
                               {revealData.val}
                             </span>
                             <button
                               type="button"
                               onClick={() => copyText(revealData.val, 'Secret key copied')}
-                              className="h-8.5 px-4 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12px] cursor-pointer hover:bg-white inline-flex items-center gap-1.5"
+                              className="h-8.5 px-4 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12px] cursor-pointer hover:bg-white inline-flex items-center gap-1.5"
                             >
                               <i className="ti ti-copy"></i>
                               <span>Copy</span>
@@ -921,7 +921,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           <button
                             type="button"
                             onClick={() => setRevealData(null)}
-                            className="text-[12px] text-[#A8A69E] hover:text-white bg-transparent border-0 cursor-pointer pt-1"
+                            className="text-[12px] text-[#9C9A92] hover:text-white bg-transparent border-0 cursor-pointer pt-1"
                           >
                             I have saved it
                           </button>
@@ -930,7 +930,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                       {/* Secret Keys Table */}
                       <div className="mt-3.5 rounded-2xl bg-[#181818] border border-[#262626] overflow-hidden">
-                        <div className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#242424] bg-[#141414]">
+                        <div className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#1B1B1B] bg-[#141414]">
                           <span>Name</span>
                           <span>API key</span>
                           <span></span>
@@ -940,15 +940,15 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           secretKeys.map((k) => (
                             <div
                               key={k.id}
-                              className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3.5 border-t border-[#242424] first:border-t-0 relative"
+                              className="grid grid-cols-[1fr_1.5fr_36px] items-center px-4 py-3.5 border-t border-[#1B1B1B] first:border-t-0 relative"
                             >
                               <div>
-                                <div className="text-[13.5px] font-medium text-[#F5F3EC]">{k.name}</div>
-                                <div className="text-[11.5px] text-[#A8A69E]">{k.desc}</div>
+                                <div className="text-[13.5px] font-medium text-[#F4F2EC]">{k.name}</div>
+                                <div className="text-[11.5px] text-[#9C9A92]">{k.desc}</div>
                               </div>
 
                               <div>
-                                <span className="font-mono text-[12.5px] bg-[#121212] border border-white/10 px-3 py-1 rounded-full text-[#A8A69E]">
+                                <span className="font-mono text-[12.5px] bg-[#121212] border border-white/10 px-3 py-1 rounded-full text-[#9C9A92]">
                                   {k.val}
                                 </span>
                               </div>
@@ -957,7 +957,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                 <button
                                   type="button"
                                   onClick={() => setActiveMenuId(activeMenuId === k.id ? null : k.id)}
-                                  className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F5F3EC] bg-transparent cursor-pointer flex items-center justify-center"
+                                  className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F4F2EC] bg-transparent cursor-pointer flex items-center justify-center"
                                 >
                                   <i className="ti ti-dots-vertical text-[13px]"></i>
                                 </button>
@@ -966,21 +966,21 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                   <div className="absolute right-0 top-8 z-30 w-52 bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl shadow-2xl p-2 animate-[fadeIn_0.1s_ease-out]">
                                     {confirmRevokeId === k.id ? (
                                       <div className="space-y-2 p-1">
-                                        <div className="text-[11.5px] text-[#A8A69E] leading-tight">
+                                        <div className="text-[11.5px] text-[#9C9A92] leading-tight">
                                           Apps using this key stop within a minute.
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                           <button
                                             type="button"
                                             onClick={() => handleRevoke(k.id)}
-                                            className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#0B0B0B] font-medium text-[11.5px] border-0 cursor-pointer"
+                                            className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#000000] font-medium text-[11.5px] border-0 cursor-pointer"
                                           >
                                             Revoke
                                           </button>
                                           <button
                                             type="button"
                                             onClick={() => setConfirmRevokeId(null)}
-                                            className="h-7 px-2.5 rounded-full border border-white/20 text-[#A8A69E] text-[11.5px] bg-transparent cursor-pointer"
+                                            className="h-7 px-2.5 rounded-full border border-white/20 text-[#9C9A92] text-[11.5px] bg-transparent cursor-pointer"
                                           >
                                             Cancel
                                           </button>
@@ -1002,10 +1002,10 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             </div>
                           ))
                         ) : (
-                          <div className="p-4 text-[13px] text-[#A8A69E]">No secret keys yet.</div>
+                          <div className="p-4 text-[13px] text-[#9C9A92]">No secret keys yet.</div>
                         )}
 
-                        <div className="p-3 px-4 border-t border-[#242424] text-[11.5px] text-[#71717A] bg-[#141414]">
+                        <div className="p-3 px-4 border-t border-[#1B1B1B] text-[11.5px] text-[#71717A] bg-[#141414]">
                           A secret key is shown once when you create it. We cannot show it again.
                         </div>
                       </div>
@@ -1018,14 +1018,14 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       <div className="p-4.5 rounded-2xl bg-[#181818] border border-[#282828] flex items-start gap-3">
                         <i className="ti ti-info-circle text-[20px] text-[#388BFD] shrink-0 mt-0.5"></i>
                         <div className="flex-1">
-                          <div className="text-[14px] font-medium text-[#F5F3EC]">Access tokens are scoped</div>
-                          <div className="text-[13px] text-[#A8A69E] mt-0.5">
+                          <div className="text-[14px] font-medium text-[#F4F2EC]">Access tokens are scoped</div>
+                          <div className="text-[13px] text-[#9C9A92] mt-0.5">
                             Grant only what each integration needs. Every token expires, and you see it once when it is created.
                           </div>
                           <button
                             type="button"
                             onClick={() => setShowBanner2(false)}
-                            className="mt-2 text-[12px] text-[#A8A69E] hover:text-[#F5F3EC] bg-transparent border-0 cursor-pointer"
+                            className="mt-2 text-[12px] text-[#9C9A92] hover:text-[#F4F2EC] bg-transparent border-0 cursor-pointer"
                           >
                             Dismiss
                           </button>
@@ -1042,13 +1042,13 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           value={tokenFilter}
                           onChange={(e) => setTokenFilter(e.target.value)}
                           placeholder="Filter tokens"
-                          className="bg-transparent border-0 outline-none text-[#F5F3EC] text-[13px] w-full"
+                          className="bg-transparent border-0 outline-none text-[#F4F2EC] text-[13px] w-full"
                         />
                       </div>
                       <button
                         type="button"
                         onClick={onNavigateDocs}
-                        className="h-9.5 px-4.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F5F3EC] text-[12.5px] font-medium cursor-pointer transition-colors"
+                        className="h-9.5 px-4.5 rounded-full border border-white/20 hover:border-white/40 bg-transparent text-[#F4F2EC] text-[12.5px] font-medium cursor-pointer transition-colors"
                       >
                         API docs
                       </button>
@@ -1059,7 +1059,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           setFormName('');
                           setFormError('');
                         }}
-                        className="h-9.5 px-5 rounded-full bg-[#F5F3EC] hover:bg-white text-[#0B0B0B] text-[12.5px] font-medium cursor-pointer transition-all"
+                        className="h-9.5 px-5 rounded-full bg-[#F4F2EC] hover:bg-white text-[#000000] text-[12.5px] font-medium cursor-pointer transition-all"
                       >
                         Generate new token
                       </button>
@@ -1068,7 +1068,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     {/* Token Creation Form */}
                     {creationForm === 'tk' && (
                       <div className="p-5 rounded-2xl bg-[#181818] border border-white/20 space-y-4 animate-[fadeIn_0.1s_ease-out]">
-                        <div className="text-[15px] font-medium text-[#F5F3EC]">Generate a token</div>
+                        <div className="text-[15px] font-medium text-[#F4F2EC]">Generate a token</div>
 
                         <div>
                           <label className="text-[11px] font-mono uppercase text-[#71717A] block mb-1">Name</label>
@@ -1077,7 +1077,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
                             placeholder="e.g. analytics export"
-                            className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F5F3EC] outline-none"
+                            className="w-full h-10 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2E2E2E] focus:border-white text-[13.5px] text-[#F4F2EC] outline-none"
                             autoFocus
                           />
                         </div>
@@ -1092,8 +1092,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                 onClick={() => setFormScopes((prev) => ({ ...prev, [s]: !prev[s] }))}
                                 className={`h-7 px-3 rounded-full text-[12px] font-mono border cursor-pointer transition-colors ${
                                   formScopes[s]
-                                    ? 'bg-[#F5F3EC] text-[#0B0B0B] border-transparent font-medium'
-                                    : 'bg-[#222222] text-[#A8A69E] border-white/10 hover:border-white/30'
+                                    ? 'bg-[#F4F2EC] text-[#000000] border-transparent font-medium'
+                                    : 'bg-[#222222] text-[#9C9A92] border-white/10 hover:border-white/30'
                                 }`}
                               >
                                 {s}
@@ -1112,8 +1112,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                 onClick={() => setFormExp(exp)}
                                 className={`h-7 px-3 rounded-full text-[12px] border cursor-pointer transition-colors ${
                                   formExp === exp
-                                    ? 'bg-[#F5F3EC] text-[#0B0B0B] border-transparent font-medium'
-                                    : 'bg-[#222222] text-[#A8A69E] border-white/10 hover:border-white/30'
+                                    ? 'bg-[#F4F2EC] text-[#000000] border-transparent font-medium'
+                                    : 'bg-[#222222] text-[#9C9A92] border-white/10 hover:border-white/30'
                                 }`}
                               >
                                 {exp}
@@ -1128,14 +1128,14 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           <button
                             type="button"
                             onClick={() => handleCreateKeyOrToken('tk')}
-                            className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12.5px] cursor-pointer hover:bg-white"
+                            className="h-8.5 px-4.5 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12.5px] cursor-pointer hover:bg-white"
                           >
                             Create
                           </button>
                           <button
                             type="button"
                             onClick={() => setCreationForm(null)}
-                            className="h-8.5 px-4 rounded-full border border-white/20 text-[#A8A69E] hover:text-[#F5F3EC] text-[12.5px] bg-transparent cursor-pointer"
+                            className="h-8.5 px-4 rounded-full border border-white/20 text-[#9C9A92] hover:text-[#F4F2EC] text-[12.5px] bg-transparent cursor-pointer"
                           >
                             Cancel
                           </button>
@@ -1145,19 +1145,19 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                     {/* Token Reveal Card */}
                     {revealData && revealData.kind === 'tk' && (
-                      <div className="p-5 rounded-2xl bg-[#181818] border border-[#F5F3EC] shadow-xl space-y-3 animate-[fadeIn_0.15s_ease-out]">
-                        <div className="text-[15px] font-medium text-[#F5F3EC]">Copy it now</div>
-                        <div className="text-[12.5px] text-[#A8A69E]">
+                      <div className="p-5 rounded-2xl bg-[#181818] border border-[#F4F2EC] shadow-xl space-y-3 animate-[fadeIn_0.15s_ease-out]">
+                        <div className="text-[15px] font-medium text-[#F4F2EC]">Copy it now</div>
+                        <div className="text-[12.5px] text-[#9C9A92]">
                           This is the only time you will see this token. We cannot show it again.
                         </div>
                         <div className="flex items-center gap-3 flex-wrap">
-                          <span className="font-mono text-[13px] bg-[#121212] border border-white/20 px-3.5 py-1.5 rounded-full text-[#C7F26B] select-all">
+                          <span className="font-mono text-[13px] bg-[#121212] border border-white/20 px-3.5 py-1.5 rounded-full text-[#C9B8FF] select-all">
                             {revealData.val}
                           </span>
                           <button
                             type="button"
                             onClick={() => copyText(revealData.val, 'Token copied')}
-                            className="h-8.5 px-4 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12px] cursor-pointer hover:bg-white inline-flex items-center gap-1.5"
+                            className="h-8.5 px-4 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12px] cursor-pointer hover:bg-white inline-flex items-center gap-1.5"
                           >
                             <i className="ti ti-copy"></i>
                             <span>Copy</span>
@@ -1166,7 +1166,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         <button
                           type="button"
                           onClick={() => setRevealData(null)}
-                          className="text-[12px] text-[#A8A69E] hover:text-white bg-transparent border-0 cursor-pointer pt-1"
+                          className="text-[12px] text-[#9C9A92] hover:text-white bg-transparent border-0 cursor-pointer pt-1"
                         >
                           I have saved it
                         </button>
@@ -1175,7 +1175,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
                     {/* Tokens Table */}
                     <div className="rounded-2xl bg-[#181818] border border-[#262626] overflow-hidden">
-                      <div className="grid grid-cols-[1.6fr_0.9fr_0.9fr_34px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#242424] bg-[#141414]">
+                      <div className="grid grid-cols-[1.6fr_0.9fr_0.9fr_34px] items-center px-4 py-3 font-mono text-[11px] uppercase tracking-wider text-[#71717A] border-b border-[#1B1B1B] bg-[#141414]">
                         <span>Token</span>
                         <span>Last used</span>
                         <span>Expires</span>
@@ -1186,15 +1186,15 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         filteredTokens.map((t) => (
                           <div
                             key={t.id}
-                            className="grid grid-cols-[1.6fr_0.9fr_0.9fr_34px] items-center px-4 py-3.5 border-t border-[#242424] first:border-t-0 relative"
+                            className="grid grid-cols-[1.6fr_0.9fr_0.9fr_34px] items-center px-4 py-3.5 border-t border-[#1B1B1B] first:border-t-0 relative"
                           >
                             <div>
-                              <div className="text-[13.5px] font-medium text-[#F5F3EC]">{t.name}</div>
+                              <div className="text-[13.5px] font-medium text-[#F4F2EC]">{t.name}</div>
                               <div className="flex gap-1.5 flex-wrap mt-1">
                                 {t.scopes.map((s) => (
                                   <span
                                     key={s}
-                                    className="font-mono text-[10.5px] px-2.5 py-0.5 rounded-full border border-[#333333] text-[#A8A69E]"
+                                    className="font-mono text-[10.5px] px-2.5 py-0.5 rounded-full border border-[#333333] text-[#9C9A92]"
                                   >
                                     {s}
                                   </span>
@@ -1203,11 +1203,11 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                               <div className="font-mono text-[11px] text-[#71717A] mt-1.5">{t.val}</div>
                             </div>
 
-                            <div className="text-[12.5px] text-[#F5F3EC]">{t.last}</div>
+                            <div className="text-[12.5px] text-[#F4F2EC]">{t.last}</div>
 
                             <div
                               className={`text-[12.5px] ${
-                                t.exp === 'Expired' ? 'text-[#FF8A80] font-medium' : 'text-[#F5F3EC]'
+                                t.exp === 'Expired' ? 'text-[#FF8A80] font-medium' : 'text-[#F4F2EC]'
                               }`}
                             >
                               {t.exp}
@@ -1217,7 +1217,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setActiveMenuId(activeMenuId === `t${t.id}` ? null : `t${t.id}`)}
-                                className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F5F3EC] bg-transparent cursor-pointer flex items-center justify-center"
+                                className="w-7 h-7 rounded-full border border-white/10 hover:border-white/30 text-[#9A9892] hover:text-[#F4F2EC] bg-transparent cursor-pointer flex items-center justify-center"
                               >
                                 <i className="ti ti-dots-vertical text-[13px]"></i>
                               </button>
@@ -1226,21 +1226,21 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                                 <div className="absolute right-0 top-8 z-30 w-52 bg-[#1A1A1A] border border-[#2E2E2E] rounded-xl shadow-2xl p-2 animate-[fadeIn_0.1s_ease-out]">
                                   {confirmRevokeId === `t${t.id}` ? (
                                     <div className="space-y-2 p-1">
-                                      <div className="text-[11.5px] text-[#A8A69E] leading-tight">
+                                      <div className="text-[11.5px] text-[#9C9A92] leading-tight">
                                         The token stops working right away.
                                       </div>
                                       <div className="flex items-center gap-1.5">
                                         <button
                                           type="button"
                                           onClick={() => handleRevoke(`t${t.id}`)}
-                                          className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#0B0B0B] font-medium text-[11.5px] border-0 cursor-pointer"
+                                          className="h-7 px-3 rounded-full bg-[#FF8A80] text-[#000000] font-medium text-[11.5px] border-0 cursor-pointer"
                                         >
                                           Revoke
                                         </button>
                                         <button
                                           type="button"
                                           onClick={() => setConfirmRevokeId(null)}
-                                          className="h-7 px-2.5 rounded-full border border-white/20 text-[#A8A69E] text-[11.5px] bg-transparent cursor-pointer"
+                                          className="h-7 px-2.5 rounded-full border border-white/20 text-[#9C9A92] text-[11.5px] bg-transparent cursor-pointer"
                                         >
                                           Cancel
                                         </button>
@@ -1262,7 +1262,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                           </div>
                         ))
                       ) : (
-                        <div className="p-4 text-[13px] text-[#A8A69E]">No tokens match filter.</div>
+                        <div className="p-4 text-[13px] text-[#9C9A92]">No tokens match filter.</div>
                       )}
                     </div>
                   </div>
@@ -1272,8 +1272,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
               /* General Configuration Screen */
               <div className="space-y-7 animate-[fadeIn_0.12s_ease-out]">
                 <div>
-                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F5F3EC]">App General Settings</h1>
-                  <p className="text-[13.5px] text-[#A8A69E] mt-1">Identifiers and platform configuration for {activeApp.name}.</p>
+                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">App General Settings</h1>
+                  <p className="text-[13.5px] text-[#9C9A92] mt-1">Identifiers and platform configuration for {activeApp.name}.</p>
                 </div>
 
                 <div className="p-6 rounded-2xl bg-[#181818] border border-[#262626] space-y-5">
@@ -1284,7 +1284,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value={activeApp.bundleId}
-                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                     </div>
                     <div>
@@ -1293,7 +1293,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value="id1598234120"
-                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                     </div>
                   </div>
@@ -1305,7 +1305,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value="9Y82KA923B"
-                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                     </div>
                     <div>
@@ -1314,17 +1314,17 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value={activeApp.bundleId}
-                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="w-full h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                     </div>
                   </div>
 
-                  <div className="pt-3 flex items-center justify-between border-t border-[#242424]">
-                    <div className="text-[12.5px] text-[#A8A69E]">Universal Links / AASA Verification: Verified</div>
+                  <div className="pt-3 flex items-center justify-between border-t border-[#1B1B1B]">
+                    <div className="text-[12.5px] text-[#9C9A92]">Universal Links / AASA Verification: Verified</div>
                     <button
                       type="button"
                       onClick={() => showToast('App site association verified')}
-                      className="h-8.5 px-4 rounded-full border border-white/20 text-[#F5F3EC] hover:border-white/40 text-[12px] bg-transparent cursor-pointer"
+                      className="h-8.5 px-4 rounded-full border border-white/20 text-[#F4F2EC] hover:border-white/40 text-[12px] bg-transparent cursor-pointer"
                     >
                       Re-verify AASA
                     </button>
@@ -1335,8 +1335,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
               /* Webhooks Screen */
               <div className="space-y-7 animate-[fadeIn_0.12s_ease-out]">
                 <div>
-                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F5F3EC]">Webhooks</h1>
-                  <p className="text-[13.5px] text-[#A8A69E] mt-1">Receive cryptographically verified HTTP POST event streams on every install.</p>
+                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">Webhooks</h1>
+                  <p className="text-[13.5px] text-[#9C9A92] mt-1">Receive cryptographically verified HTTP POST event streams on every install.</p>
                 </div>
 
                 <div className="p-6 rounded-2xl bg-[#181818] border border-[#262626] space-y-5">
@@ -1347,12 +1347,12 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value="https://api.umi.so/v1/attribution/events"
-                        className="flex-1 h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="flex-1 h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                       <button
                         type="button"
                         onClick={() => copyText('https://api.umi.so/v1/attribution/events')}
-                        className="h-10.5 px-4 rounded-xl border border-white/20 text-[#F5F3EC] hover:bg-[#222222] text-[12.5px] cursor-pointer"
+                        className="h-10.5 px-4 rounded-xl border border-white/20 text-[#F4F2EC] hover:bg-[#222222] text-[12.5px] cursor-pointer"
                       >
                         Copy
                       </button>
@@ -1366,24 +1366,24 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         type="text"
                         readOnly
                         value="whsec_99af28c11e7492b49e18b"
-                        className="flex-1 h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#2A2A2A] text-[13px] text-[#F5F3EC] font-mono outline-none"
+                        className="flex-1 h-10.5 px-3.5 rounded-xl bg-[#0F0F0F] border border-[#222222] text-[13px] text-[#F4F2EC] font-mono outline-none"
                       />
                       <button
                         type="button"
                         onClick={() => copyText('whsec_99af28c11e7492b49e18b')}
-                        className="h-10.5 px-4 rounded-xl border border-white/20 text-[#F5F3EC] hover:bg-[#222222] text-[12.5px] cursor-pointer"
+                        className="h-10.5 px-4 rounded-xl border border-white/20 text-[#F4F2EC] hover:bg-[#222222] text-[12.5px] cursor-pointer"
                       >
                         Copy
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-[#242424]">
-                    <div className="text-[12.5px] text-[#A8A69E]">Events dispatched: install.verified, dispute.raised, escrow.funded</div>
+                  <div className="flex items-center justify-between pt-3 border-t border-[#1B1B1B]">
+                    <div className="text-[12.5px] text-[#9C9A92]">Events dispatched: install.verified, dispute.raised, escrow.funded</div>
                     <button
                       type="button"
                       onClick={() => showToast('Simulated test webhook ping sent (200 OK)')}
-                      className="h-8.5 px-4.5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] text-[12px] font-medium cursor-pointer"
+                      className="h-8.5 px-4.5 rounded-full bg-[#F4F2EC] text-[#000000] text-[12px] font-medium cursor-pointer"
                     >
                       Send test ping
                     </button>
@@ -1393,10 +1393,10 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
             ) : (
               /* Integrations & Billing Placeholders */
               <div className="p-7 rounded-2xl bg-[#181818] border border-[#262626] space-y-4 animate-[fadeIn_0.12s_ease-out]">
-                <div className="text-[20px] font-medium text-[#F5F3EC]">
+                <div className="text-[20px] font-medium text-[#F4F2EC]">
                   {page === 'rc' ? 'RevenueCat Integration' : page === 'whop' ? 'Whop Payments Integration' : page === 'fund' ? 'Funding & Receipts' : 'Usage & Telemetry'}
                 </div>
-                <p className="text-[13.5px] text-[#A8A69E]">
+                <p className="text-[13.5px] text-[#9C9A92]">
                   {page === 'rc'
                     ? 'Connect in-app purchases and subscription renewals to creator attribution automatically.'
                     : page === 'whop'
@@ -1410,7 +1410,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                       if (page === 'fund' && onNavigateBilling) onNavigateBilling();
                       else showToast(`${page.toUpperCase()} configuration updated`);
                     }}
-                    className="h-8.5 px-5 rounded-full bg-[#F5F3EC] text-[#0B0B0B] font-medium text-[12.5px] cursor-pointer"
+                    className="h-8.5 px-5 rounded-full bg-[#F4F2EC] text-[#000000] font-medium text-[12.5px] cursor-pointer"
                   >
                     {page === 'fund' ? 'Open billing view' : 'Configure integration'}
                   </button>
@@ -1420,7 +1420,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
 
             {/* Notification Toast Bar */}
             {toast && (
-              <div className="min-h-[20px] mt-5 text-[12.5px] text-[#C7F26B] font-mono animate-[fadeIn_0.15s_ease-out]">
+              <div className="min-h-[20px] mt-5 text-[12.5px] text-[#C9B8FF] font-mono animate-[fadeIn_0.15s_ease-out]">
                 {toast}
               </div>
             )}

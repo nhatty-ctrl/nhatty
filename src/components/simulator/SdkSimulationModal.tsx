@@ -87,14 +87,14 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#262626]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#202020] text-[#C7F26B] flex items-center justify-center text-[20px]">
+            <div className="w-10 h-10 rounded-xl bg-[#202020] text-[#C9B8FF] flex items-center justify-center text-[20px]">
               <i className="ti ti-player-play"></i>
             </div>
             <div>
-              <h2 className="text-[17px] font-semibold text-[#F5F3EC]">
+              <h2 className="text-[17px] font-semibold text-[#F4F2EC]">
                 Interactive Umi Verification & Ledger Simulator
               </h2>
-              <p className="text-[12px] text-[#A8A69E]">
+              <p className="text-[12px] text-[#9C9A92]">
                 Test the end-to-end attribution lifecycle: Edge click → iOS SDK → Convex Ledger → Whop
               </p>
             </div>
@@ -102,7 +102,7 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-[#1F1F1F] hover:bg-[#2A2A2A] text-[#A8A69E] hover:text-[#F5F3EC] flex items-center justify-center transition-colors border-0 cursor-pointer"
+            className="w-8 h-8 rounded-lg bg-[#1F1F1F] hover:bg-[#222222] text-[#9C9A92] hover:text-[#F4F2EC] flex items-center justify-center transition-colors border-0 cursor-pointer"
           >
             <i className="ti ti-x text-[16px]"></i>
           </button>
@@ -114,13 +114,13 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-[#181818] border border-[#262626]">
             <div>
               <span className="text-[11px] text-[#777] uppercase tracking-wider block">Target App:</span>
-              <span className="text-[14px] font-medium text-[#F5F3EC]">{campaign.appName} (${(campaign.rewardMinor / 100).toFixed(2)} bounty)</span>
+              <span className="text-[14px] font-medium text-[#F4F2EC]">{campaign.appName} (${(campaign.rewardMinor / 100).toFixed(2)} bounty)</span>
             </div>
             <select
               value={selectedCampId}
               onChange={(e) => setSelectedCampId(e.target.value)}
               disabled={isRunning}
-              className="px-3 py-1.5 rounded-lg bg-[#222] border border-[#333] text-[#F5F3EC] text-[12.5px] outline-none cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-[#222] border border-[#333] text-[#F4F2EC] text-[12.5px] outline-none cursor-pointer"
             >
               {campaigns.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -143,9 +143,9 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
                 key={s.num}
                 className={`p-2 rounded-xl border transition-all ${
                   step === s.num && isRunning
-                    ? 'bg-[#C7F26B]/15 border-[#C7F26B] text-[#C7F26B] font-semibold animate-pulse'
+                    ? 'bg-[#C9B8FF]/15 border-[#C9B8FF] text-[#C9B8FF] font-semibold animate-pulse'
                     : step >= s.num
-                    ? 'bg-[#181818] border-[#333] text-[#F5F3EC]'
+                    ? 'bg-[#181818] border-[#333] text-[#F4F2EC]'
                     : 'bg-[#121212] border-[#202020] text-[#555]'
                 }`}
               >
@@ -161,7 +161,7 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
               type="button"
               onClick={handleRunFullSimulation}
               disabled={isRunning}
-              className="flex-1 py-3 rounded-xl bg-[#C7F26B] hover:bg-[#baf055] text-[#0B0B0B] text-[13px] font-semibold transition-all shadow-md cursor-pointer border-0 flex items-center justify-center gap-2 disabled:opacity-60"
+              className="flex-1 py-3 rounded-xl bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] text-[13px] font-semibold transition-all shadow-md cursor-pointer border-0 flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <i className={`ti ti-bolt ${isRunning ? 'animate-spin' : ''}`}></i>
               <span>{isRunning ? 'Running Simulation Pipeline...' : 'Run 1-Click Verification Flow'}</span>
@@ -169,13 +169,13 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
           </div>
 
           {/* Terminal Console Output */}
-          <div className="p-4 rounded-xl bg-[#0B0B0B] border border-[#222] font-mono text-[12px] text-[#DDD] space-y-1.5 max-h-48 overflow-y-auto">
+          <div className="p-4 rounded-xl bg-[#000000] border border-[#222] font-mono text-[12px] text-[#DDD] space-y-1.5 max-h-48 overflow-y-auto">
             <div className="text-[#777] text-[11px] uppercase tracking-wider pb-1 border-b border-[#1A1A1A]">
               Telemetry & Convex Mutation Log
             </div>
             {logMessages.length > 0 ? (
               logMessages.map((msg, i) => (
-                <div key={i} className="text-[#C7F26B]/90 leading-relaxed">
+                <div key={i} className="text-[#C9B8FF]/90 leading-relaxed">
                   {msg}
                 </div>
               ))
@@ -186,14 +186,14 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
 
           {/* Post-Simulation Actions: Hold Fast-Forward & Payout */}
           {simulationResult && (
-            <div className="p-4 rounded-xl bg-[#181818] border border-[#C7F26B]/30 space-y-3 animate-[fadeIn_0.15s_ease-out]">
+            <div className="p-4 rounded-xl bg-[#181818] border border-[#C9B8FF]/30 space-y-3 animate-[fadeIn_0.15s_ease-out]">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[13px] font-semibold text-[#F5F3EC]">
+                  <div className="text-[13px] font-semibold text-[#F4F2EC]">
                     Reward Entitlement Created: {simulationResult.reward.id}
                   </div>
-                  <div className="text-[12px] text-[#A8A69E]">
-                    Current Status: <span className="text-[#C7F26B] font-mono uppercase font-bold">{simulationResult.reward.status}</span> (${(simulationResult.reward.amountMinor / 100).toFixed(2)})
+                  <div className="text-[12px] text-[#9C9A92]">
+                    Current Status: <span className="text-[#C9B8FF] font-mono uppercase font-bold">{simulationResult.reward.status}</span> (${(simulationResult.reward.amountMinor / 100).toFixed(2)})
                   </div>
                 </div>
 
@@ -202,7 +202,7 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
                     <button
                       type="button"
                       onClick={handleFastForwardHold}
-                      className="px-3.5 py-1.5 rounded-lg bg-[#C7F26B] hover:bg-[#baf055] text-[#0B0B0B] text-[12px] font-semibold transition-colors border-0 cursor-pointer flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 rounded-lg bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] text-[12px] font-semibold transition-colors border-0 cursor-pointer flex items-center gap-1.5"
                     >
                       <i className="ti ti-player-track-next"></i>
                       <span>Fast-Forward 7-Day Hold</span>
@@ -230,7 +230,7 @@ export const SdkSimulationModal: React.FC<SdkSimulationModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-[#222] hover:bg-[#2A2A2A] text-[#F5F3EC] text-[13px] font-medium transition-colors border-0 cursor-pointer"
+            className="px-5 py-2 rounded-xl bg-[#222] hover:bg-[#222222] text-[#F4F2EC] text-[13px] font-medium transition-colors border-0 cursor-pointer"
           >
             Done
           </button>

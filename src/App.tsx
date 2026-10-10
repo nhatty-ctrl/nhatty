@@ -16,6 +16,7 @@ import { SettingsView } from './components/SettingsView';
 import { DocumentationView } from './components/DocumentationView';
 import { AppSettingsSdkView } from './components/sdk/AppSettingsSdkView';
 import { UmiDocsView } from './components/docs/UmiDocsView';
+import { StatesGalleryView } from './components/ui/StatesGalleryView';
 import { QrCodeModal } from './components/QrCodeModal';
 import { JoinedSuccessModal } from './components/JoinedSuccessModal';
 import { Toast } from './components/Toast';
@@ -103,7 +104,7 @@ export default function App() {
 
   // Navigation tab states
   const [currentTab, setCurrentTab] = useState<
-    'sdk' | 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
+    'sdk' | 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings' | 'states-gallery'
   >(() => {
     const hash = window.location.hash || '';
     if (hash.startsWith('#/sdk') || hash.startsWith('#/keys') || hash.startsWith('#/settings/sdk') || hash.startsWith('#/settings/api-keys')) return 'sdk';
@@ -111,6 +112,7 @@ export default function App() {
     if (hash.startsWith('#/discover')) return 'discover';
     if (hash.startsWith('#/earnings')) return 'earnings';
     if (hash.startsWith('#/create')) return 'create';
+    if (hash.startsWith('#/states') || hash.startsWith('#/gallery')) return 'states-gallery';
     return 'campaigns';
   });
   const [filterTab, setFilterTab] = useState<'open' | 'joined'>('open');
@@ -216,6 +218,10 @@ export default function App() {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
       setCurrentTab('settings');
+    } else if (hash.startsWith('#/states') || hash.startsWith('#/gallery')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCurrentTab('states-gallery');
     } else if (hash.startsWith('#/profile')) {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
@@ -531,6 +537,12 @@ export default function App() {
             avatarMood={avatarMood}
             onSelectPalette={handleSelectPalette}
             onSelectMood={handleSelectMood}
+          />
+        ) : currentTab === 'states-gallery' ? (
+          /* Enterprise States Gallery */
+          <StatesGalleryView
+            onBack={() => handleNavigateTab('campaigns')}
+            onNavigateTab={handleNavigateTab}
           />
         ) : (
           /* Campaigns Marketplace List */

@@ -200,7 +200,7 @@ export const FounderDashboardView: React.FC<FounderDashboardViewProps> = ({
               : 'bg-[#141414] text-[#9C9A92] hover:text-[#F4F2EC] border-[#222222]'
           }`}
         >
-          <span>Campaigns & Controls ({campaigns.length})</span>
+          <span>Campaigns & Controls</span>
         </button>
 
         <button
@@ -513,7 +513,6 @@ export const FounderDashboardView: React.FC<FounderDashboardViewProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <h2 className="text-[16px] font-semibold text-[#F4F2EC]">Active Campaigns & Controls</h2>
-                <span className="text-[12px] text-[#888] font-mono">({campaigns.length})</span>
               </div>
 
               {/* Category Filter */}

@@ -469,7 +469,6 @@ export const StatesGalleryView: React.FC<StatesGalleryViewProps> = ({
                 className={`pill ${isActive ? 'on font-semibold' : 'out hover:bg-[#1B1B1B]'}`}
               >
                 <span>{g}</span>
-                <span className="text-[11px] opacity-75 font-mono">({count})</span>
               </button>
             );
           })}

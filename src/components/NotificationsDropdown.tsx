@@ -189,14 +189,14 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
           onClick={() => setFilter('all')}
           className={`chip text-[11.5px] py-1 px-3 cursor-pointer ${filter === 'all' ? 'sel font-medium' : ''}`}
         >
-          All ({INITIAL_NOTIFICATIONS.length})
+          All
         </button>
         <button
           type="button"
           onClick={() => setFilter('unread')}
           className={`chip text-[11.5px] py-1 px-3 cursor-pointer ${filter === 'unread' ? 'sel font-medium' : ''}`}
         >
-          Unread ({unreadCount})
+          Unread
         </button>
       </div>
 

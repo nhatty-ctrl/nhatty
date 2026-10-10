@@ -146,21 +146,11 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                 {priceDisplay} per verified install
               </span>
               <span
-                className="chip rounded-full text-[11.5px] font-medium bg-[#141414] text-[#C9B8FF] border border-[#C9B8FF]/30 flex items-center gap-1"
+                className="chip rounded-full text-[11.5px] font-medium bg-[#141414] text-[#F4F2EC] border border-[#222222]"
                 style={{ padding: '3px 9px' }}
-                title="100% prefunded in Stripe escrow with 0% platform fee on creator pay"
               >
-                <i className="ti ti-lock text-[11px]" aria-hidden="true"></i>
-                <span>Prefunded Escrow</span>
+                <span>{campaign.cat}</span>
               </span>
-              {campaign.maxVideosPerCreator && (
-                <span
-                  className="chip rounded-full text-[11px] bg-[#1B1B1B] text-[#9C9A92]"
-                  style={{ padding: '3px 8px' }}
-                >
-                  Max {campaign.maxVideosPerCreator} vids
-                </span>
-              )}
               <span
                 className="chip rounded-full"
                 style={{ backgroundColor: '#1B1B1B', color: '#F4F2EC', padding: '4px 8px' }}
@@ -283,61 +273,109 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
 
         {/* EXPANDABLE SECTION */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-[#222222] space-y-3.5 animate-[fade-in_0.2s_ease-out]">
-            {/* Description */}
-            <div>
-              <div className="text-[11px] text-[#9C9A92] uppercase font-mono tracking-wider mb-1">
-                About campaign
+          <div className="mt-4 pt-4 border-t border-[#222222] space-y-4 animate-[fade-in_0.2s_ease-out]">
+            {/* Description & Store Badges */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div className="flex-1">
+                <div className="text-[11px] text-[#9C9A92] uppercase font-mono tracking-wider mb-1">
+                  About campaign
+                </div>
+                <p className="text-[13.5px] text-[#B8B6AE] leading-relaxed">
+                  {campaign.desc}
+                </p>
               </div>
-              <p className="text-[13.5px] text-[#B8B6AE] leading-relaxed">
-                {campaign.desc}
-              </p>
+
+              {/* Store Links */}
+              <div className="flex items-center gap-1.5 shrink-0 self-start">
+                {campaign.appleUrl && (
+                  <a
+                    href={campaign.appleUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1.5 text-[11.5px] font-medium py-1 px-3 rounded-full bg-[#1B1B1B] hover:bg-[#242424] text-[#F4F2EC] border border-[#2A2A2A] transition-colors"
+                  >
+                    <i className="ti ti-brand-apple text-[13px]"></i>
+                    <span>App Store</span>
+                  </a>
+                )}
+                {campaign.playUrl && (
+                  <a
+                    href={campaign.playUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1.5 text-[11.5px] font-medium py-1 px-3 rounded-full bg-[#1B1B1B] hover:bg-[#242424] text-[#F4F2EC] border border-[#2A2A2A] transition-colors"
+                  >
+                    <i className="ti ti-player-play text-[13px]"></i>
+                    <span>Google Play</span>
+                  </a>
+                )}
+              </div>
             </div>
 
-            {/* Campaign specs grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#141414] rounded-[16px] p-3 border border-[#222222]/60 text-left">
+            {/* Campaign specs grid: 4 Enterprise Columns */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 bg-[#141414] rounded-[18px] p-3.5 border border-[#222222] text-left">
               <div>
-                <span className="block text-[11px] text-[#9C9A92]">Bounty</span>
-                <span className="block text-[13px] font-medium text-[#F4F2EC]">
+                <span className="block text-[11px] text-[#9C9A92]">Bounty Rate</span>
+                <span className="block text-[13.5px] font-semibold text-[#F4F2EC] mt-0.5">
                   ${campaign.price} / install
+                </span>
+                <span className="block text-[10.5px] text-[#C9B8FF] mt-0.5 font-medium">
+                  0% creator fee
+                </span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-[#9C9A92]">Attestation</span>
+                <span className="block text-[13.5px] font-semibold text-[#F4F2EC] mt-0.5">
+                  SDK Verified
+                </span>
+                <span className="block text-[10.5px] text-[#9C9A92] mt-0.5">
+                  Real device installs
                 </span>
               </div>
               <div>
                 <span className="block text-[11px] text-[#9C9A92]">Settlement</span>
-                <span className="block text-[13px] font-medium text-[#F4F2EC]">
-                  Weekly (Fridays)
+                <span className="block text-[13.5px] font-semibold text-[#F4F2EC] mt-0.5">
+                  Weekly
+                </span>
+                <span className="block text-[10.5px] text-[#9C9A92] mt-0.5">
+                  Fridays, automated
                 </span>
               </div>
               <div>
-                <span className="block text-[11px] text-[#9C9A92]">Attribution hold</span>
-                <span className="block text-[13px] font-medium text-[#C9B8FF]">
+                <span className="block text-[11px] text-[#9C9A92]">Attribution Hold</span>
+                <span className="block text-[13.5px] font-semibold text-[#C9B8FF] mt-0.5">
                   14 days
                 </span>
-              </div>
-              <div>
-                <span className="block text-[11px] text-[#9C9A92]">Rating</span>
-                <span className="block text-[13px] font-medium text-[#F4F2EC]">
-                  ★ {campaign.rating} ({campaign.installsVerified || '12.4k'})
+                <span className="block text-[10.5px] text-[#9C9A92] mt-0.5">
+                  Deferred deep link
                 </span>
               </div>
             </div>
 
-            {/* If Joined: Tracking link & Image 1 Analytics Graph */}
-            {campaign.joined && (
-              <div className="space-y-3 pt-1">
-                <div className="bg-[#141414] rounded-[16px] p-3 border border-[#222222]/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            {/* If Joined: Tracking link & QR Code command strip */}
+            {campaign.joined ? (
+              <div className="space-y-2 pt-1">
+                <div className="bg-[#141414] rounded-[16px] p-3.5 border border-[#C9B8FF]/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                   <div className="min-w-0 flex-1">
-                    <div className="text-[11px] text-[#9C9A92]">Your attribution link</div>
-                    <div className="font-mono text-[12px] text-[#F4F2EC] truncate select-all">
-                      kred.link/{slug}/{localStorage.getItem(`kred_handle_${slug}`) || 'you'}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[11px] uppercase font-mono tracking-wider text-[#9C9A92]">Your Attribution Link</span>
+                      <span className="inline-flex items-center gap-1 text-[10.5px] text-[#C9B8FF] font-medium bg-[#C9B8FF]/10 px-2 py-0.2 rounded-full">
+                        <i className="ti ti-circle-check text-[10px]"></i>
+                        <span>Tracking active</span>
+                      </span>
+                    </div>
+                    <div className="font-mono text-[12.5px] text-[#F4F2EC] truncate select-all bg-[#0A0A0A] px-2.5 py-1.5 rounded-[10px] border border-[#222222]">
+                      https://kred.link/{slug}/{localStorage.getItem(`kred_handle_${slug}`) || 'you'}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                     {onOpenQr && (
                       <button
                         type="button"
                         onClick={handleOpenQrClick}
-                        className="inline-flex items-center gap-1.5 text-[12px] font-medium py-1.5 px-3.5 rounded-full bg-[#1B1B1B] hover:bg-[#222222] text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors shadow-xs"
+                        className="inline-flex items-center gap-1.5 text-[12.5px] font-medium py-2 px-3.5 rounded-full bg-[#1B1B1B] hover:bg-[#222222] text-[#F4F2EC] border border-[#262626] cursor-pointer transition-colors shadow-xs"
                       >
                         <i className="ti ti-qrcode text-[#C9B8FF]"></i>
                         <span>QR Code</span>
@@ -346,7 +384,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                     <button
                       type="button"
                       onClick={handleCopy}
-                      className="inline-flex items-center gap-1.5 text-[12px] font-semibold py-1.5 px-4 rounded-full bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] cursor-pointer transition-all shadow-xs active:scale-95"
+                      className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-2 px-4 rounded-full bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] cursor-pointer transition-all shadow-xs active:scale-95"
                     >
                       <i className={copied ? "ti ti-check font-bold" : "ti ti-copy"}></i>
                       <span>{copied ? 'Copied' : 'Copy link'}</span>
@@ -354,18 +392,49 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                   </div>
                 </div>
               </div>
-            )}
+            ) : !isEnded && !isPaused ? (
+              /* If Not Joined: Quick In-Card Join Prompt */
+              <div className="bg-[#141414] rounded-[16px] p-3.5 border border-[#222222] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="text-[13px] text-[#9C9A92]">
+                  Join this campaign to generate your personal tracked link and access in-app install bounties.
+                </div>
+                <button
+                  type="button"
+                  onClick={handleJoinClick}
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-1.5 px-4 rounded-full bg-[#F4F2EC] hover:bg-white text-[#000000] cursor-pointer transition-all shadow-sm shrink-0"
+                >
+                  <i className="ti ti-plus text-[12px] stroke-[2.5]" aria-hidden="true"></i>
+                  <span>Join now</span>
+                </button>
+              </div>
+            ) : null}
 
             {/* Bottom expanded buttons */}
             <div className="flex items-center justify-between gap-2 pt-1 flex-wrap">
-              <button
-                type="button"
-                onClick={handleViewDetailPage}
-                className="inline-flex items-center gap-1.5 text-[12.5px] font-medium py-1.5 px-4 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors"
-              >
-                <span>View full campaign page</span>
-                <i className="ti ti-arrow-right text-[12px]" aria-hidden="true"></i>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleViewDetailPage}
+                  className="inline-flex items-center gap-1.5 text-[12.5px] font-medium py-1.5 px-4 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors"
+                >
+                  <span>View full campaign details</span>
+                  <i className="ti ti-arrow-right text-[12px]" aria-hidden="true"></i>
+                </button>
+
+                {onNavigateAnalytics && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onNavigateAnalytics(campaign.id);
+                    }}
+                    className="hidden sm:inline-flex items-center gap-1.5 text-[12.5px] font-medium py-1.5 px-3.5 rounded-full bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border border-[#222222] cursor-pointer transition-colors"
+                  >
+                    <i className="ti ti-chart-bar text-[13px]"></i>
+                    <span>Telemetry</span>
+                  </button>
+                )}
+              </div>
 
               <button
                 type="button"

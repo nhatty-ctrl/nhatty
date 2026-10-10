@@ -931,34 +931,6 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </div>
 
                 <div className="edge rounded-[18px] p-4 bg-[#0A0A0A] space-y-4">
-                  {/* Per-Creator Video Cap */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#1F1F1F]">
-                    <div>
-                      <div className="text-[13.5px] font-medium text-[#F4F2EC]">
-                        Per-creator video cap
-                      </div>
-                      <div className="sub text-[11.5px] text-[#9A9892]">
-                        Limits how many videos a single creator can monetize
-                      </div>
-                    </div>
-                    <div className="flex gap-1.5">
-                      {[1, 3, 5, 10].map((capNum) => (
-                        <button
-                          key={capNum}
-                          type="button"
-                          onClick={() => setMaxVideos(capNum)}
-                          className={`px-3 py-1 rounded-full text-[12px] font-medium cursor-pointer border transition-colors ${
-                            maxVideos === capNum
-                              ? 'bg-[#F4F2EC] text-[#000000] border-transparent'
-                              : 'bg-[#141414] text-[#9A9892] border-[#222222] hover:text-[#F4F2EC]'
-                          }`}
-                        >
-                          {capNum} {capNum === 1 ? 'video' : 'vids'}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Daily Budget Cap */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#1F1F1F]">
                     <div>

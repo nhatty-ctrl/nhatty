@@ -162,6 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onNavigateSettings={() => onNavigate('settings')}
                 onNavigateDocs={() => onNavigate('docs')}
                 onNavigateSdk={() => onNavigate('sdk')}
+                onNavigateStatesGallery={() => onNavigate('states-gallery')}
               />
             )}
           </div>

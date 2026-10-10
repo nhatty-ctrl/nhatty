@@ -279,10 +279,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           }`}
         >
           <i className="ti ti-device-mobile"></i>
-          <span>Created (Founder Analytics)</span>
-          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#0E0E0E]">
-            {createdCampaigns.length}
-          </span>
+          <span>Created</span>
         </button>
 
         <button
@@ -293,10 +290,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           }`}
         >
           <i className="ti ti-link"></i>
-          <span>Joined (Creator Performance)</span>
-          <span className="text-[11px] px-1.5 py-0.2 rounded-full font-mono bg-[#0E0E0E]">
-            {joinedCampaigns.length}
-          </span>
+          <span>Joined</span>
         </button>
 
         <button

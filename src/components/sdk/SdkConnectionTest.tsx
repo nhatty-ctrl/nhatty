@@ -200,9 +200,9 @@ export const SdkConnectionTest: React.FC<SdkConnectionTestProps> = ({
     cancelRef.current = false;
     startTimeRef.current = Date.now();
 
-    const initial = getInitialChecks(normPlatform).map((c) => ({
+    const initial: CheckItem[] = getInitialChecks(normPlatform).map((c) => ({
       ...c,
-      state: 'pending' as const,
+      state: 'pending',
     }));
     setChecks(initial);
     setPhase('running');
@@ -344,7 +344,7 @@ export const SdkConnectionTest: React.FC<SdkConnectionTestProps> = ({
             aria-expanded={showHistory}
           >
             <i className="ti ti-history text-[13px]" aria-hidden="true"></i>
-            <span>Test runs{runHistory.length ? ` (${runHistory.length})` : ''}</span>
+            <span>Test runs</span>
           </button>
         </div>
       </div>

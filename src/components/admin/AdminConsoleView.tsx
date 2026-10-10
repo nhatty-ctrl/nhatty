@@ -123,11 +123,11 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({
       <div className="flex items-center gap-1 p-1 bg-[#141414] rounded-xl border border-[#262626] overflow-x-auto">
         {[
           { id: 'operations', label: 'Operations Health', icon: 'ti-activity' },
-          { id: 'attribution', label: `Attribution Explorer (${attributions.length})`, icon: 'ti-zoom-question' },
+          { id: 'attribution', label: 'Attribution Explorer', icon: 'ti-zoom-question' },
           { id: 'ledger', label: 'Double-Entry Ledger', icon: 'ti-book' },
-          { id: 'providers', label: `Provider Inboxes (${providerInbox.length})`, icon: 'ti-inbox' },
-          { id: 'risk', label: `Risk & Freezes (${frozenRewards.length})`, icon: 'ti-shield-alert' },
-          { id: 'audit', label: `Audit Log (${auditLogs.length})`, icon: 'ti-history' },
+          { id: 'providers', label: 'Provider Inboxes', icon: 'ti-inbox' },
+          { id: 'risk', label: 'Risk & Freezes', icon: 'ti-shield-alert' },
+          { id: 'audit', label: 'Audit Log', icon: 'ti-history' },
         ].map((t) => (
           <button
             key={t.id}

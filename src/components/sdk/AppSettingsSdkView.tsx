@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SdkConnectionTest } from './SdkConnectionTest';
 
 export interface KeyItem {
   id: number;
@@ -48,7 +49,7 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
   onNavigateBilling,
 }) => {
   // Navigation within App Settings
-  const [page, setPage] = useState<'overview' | 'general' | 'keys' | 'hooks' | 'rc' | 'whop' | 'fund' | 'usage'>('overview');
+  const [page, setPage] = useState<'overview' | 'general' | 'keys' | 'hooks' | 'rc' | 'whop' | 'fund' | 'usage' | 'test'>('overview');
   const [tab, setTab] = useState<'keys' | 'tok'>('keys');
   const [env, setEnv] = useState<'live' | 'test'>('live');
 
@@ -464,6 +465,21 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
               >
                 <span>Webhooks</span>
               </button>
+
+              <button
+                type="button"
+                onClick={() => setPage('test')}
+                className={`w-full text-left px-3 py-2 text-[13px] rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                  page === 'test'
+                    ? 'border-white/30 bg-[#1E1E1E] text-[#F4F2EC] font-medium shadow-sm'
+                    : 'border-transparent bg-transparent text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#0E0E0E]'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <i className="ti ti-plug-connected text-[14px] text-[#C9B8FF]"></i>
+                  <span>Connection test</span>
+                </div>
+              </button>
             </div>
 
             <div className="font-mono text-[11px] uppercase tracking-wider text-[#71717A] px-2.5 mt-5 mb-1.5">
@@ -625,6 +641,24 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                         )}
                       </div>
                     ))}
+                  </div>
+
+                  {/* Quick Connection Test CTA */}
+                  <div className="mt-5 p-4.5 rounded-2xl bg-[#141414] border border-[#262626] flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-[14.5px] font-medium text-[#F4F2EC]">Test Mobile SDK Connectivity</div>
+                      <div className="text-[12.5px] text-[#9C9A92] mt-0.5">
+                        Run simulated or live handshake diagnostics for {activeApp.name} before publishing.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPage('test')}
+                      className="pill on text-[12px] py-1.5 px-4 font-semibold shrink-0 cursor-pointer"
+                    >
+                      <i className="ti ti-plug-connected text-[13px]"></i>
+                      <span>Launch test</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1389,6 +1423,25 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
                     </button>
                   </div>
                 </div>
+              </div>
+            ) : page === 'test' ? (
+              /* SDK Connection Test Screen */
+              <div className="space-y-6 animate-[fadeIn_0.12s_ease-out]">
+                <div>
+                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">SDK Connection Test</h1>
+                  <p className="text-[13.5px] text-[#9C9A92] mt-1">
+                    Verify that your mobile client communicates with the Umi attribution network before publishing campaigns.
+                  </p>
+                </div>
+
+                <SdkConnectionTest
+                  platform="ios"
+                  appKey={livePublishableKey?.val || 'umi_pk_live_default_key'}
+                  appName={activeApp.name}
+                  status="idle"
+                  onStatus={(s) => showToast(`SDK Test status: ${s}`)}
+                  simulate={true}
+                />
               </div>
             ) : (
               /* Integrations & Billing Placeholders */

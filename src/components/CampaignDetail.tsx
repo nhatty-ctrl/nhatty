@@ -294,7 +294,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-0.5 rounded-full border border-[#C9B8FF]/20">
                           <i className="ti ti-shield-check"></i>
-                          <span>Prefunded Escrow Backed</span>
+                          <span>Verified Attribution</span>
                         </span>
                         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#F4F2EC] bg-[#141414] px-2.5 py-0.5 rounded-full border border-[#222222]">
                           <span>0% Creator Fee</span>
@@ -316,8 +316,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                     </div>
 
                     <div className="sub text-[13px] text-[#9C9A92] leading-relaxed">
-                      100% of payout funds are prefunded in Stripe escrow before you post. Payouts verify via in-app SDK attestation (not unverified video views).
-                      {campaign.maxVideosPerCreator ? ` Max ${campaign.maxVideosPerCreator} videos per creator.` : ''}
+                      Payouts verify via in-app SDK attestation on real devices (not unverified video views).
                     </div>
 
                     <button
@@ -340,7 +339,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#C9B8FF] bg-[#C9B8FF]/10 px-2.5 py-0.5 rounded-full border border-[#C9B8FF]/20">
                               <i className="ti ti-shield-check"></i>
-                              <span>Prefunded Escrow Backed</span>
+                              <span>Verified Attribution</span>
                             </span>
                             <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#F4F2EC] bg-[#141414] px-2.5 py-0.5 rounded-full border border-[#222222]">
                               <span>0% Creator Fee</span>
@@ -597,19 +596,15 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
                 <span className="font-medium text-[#C9B8FF]">0% (You keep 100% of bounty)</span>
               </div>
               <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9C9A92]">Trust backing</span>
+                <span className="text-[#9C9A92]">Payment verification</span>
                 <span className="text-[#F4F2EC] flex items-center gap-1.5">
-                  <i className="ti ti-lock text-[#C9B8FF] text-[13px]"></i>
-                  <span>100% Prefunded in Stripe Escrow</span>
+                  <i className="ti ti-shield-check text-[#C9B8FF] text-[13px]"></i>
+                  <span>Cryptographic SDK Attestation</span>
                 </span>
               </div>
               <div className="tr flex justify-between py-2.5">
                 <span className="text-[#9C9A92]">Attribution standard</span>
                 <span className="text-[#F4F2EC]">SDK in-app verified install (not vanity views)</span>
-              </div>
-              <div className="tr flex justify-between py-2.5">
-                <span className="text-[#9C9A92]">Per-creator content cap</span>
-                <span className="text-[#F4F2EC]">Max {campaign.maxVideosPerCreator || 3} videos / creator</span>
               </div>
               <div className="tr flex justify-between py-2.5">
                 <span className="text-[#9C9A92]">Subscription share</span>

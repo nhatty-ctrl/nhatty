@@ -611,7 +611,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                 filterInvoice === 'all' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
-              All ({invoices.length})
+              All
             </button>
             <button
               type="button"
@@ -620,7 +620,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                 filterInvoice === 'paid' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
-              Paid ({paidCount})
+              Paid
             </button>
             <button
               type="button"
@@ -629,7 +629,7 @@ export const BillingView: React.FC<BillingViewProps> = ({
                 filterInvoice === 'processing' ? 'on font-medium' : 'bg-[#141414] text-[#9C9A92]'
               }`}
             >
-              Processing ({processingCount})
+              Processing
             </button>
           </div>
         </div>

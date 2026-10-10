@@ -11,6 +11,7 @@ interface ProfileDropdownProps {
   onNavigateSettings: () => void;
   onNavigateDocs?: () => void;
   onNavigateSdk?: () => void;
+  onNavigateStatesGallery?: () => void;
 }
 
 export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
@@ -24,6 +25,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   onNavigateSettings,
   onNavigateDocs,
   onNavigateSdk,
+  onNavigateStatesGallery,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -178,6 +180,21 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
           <span className="flex-1">Documentation</span>
           <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
         </button>
+
+        {onNavigateStatesGallery && (
+          <button
+            type="button"
+            onClick={() => {
+              onNavigateStatesGallery();
+              onClose();
+            }}
+            className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
+          >
+            <i className="ti ti-cube text-[17px] text-[#9FE1CB]" aria-hidden="true"></i>
+            <span className="flex-1 font-medium">Enterprise states gallery</span>
+            <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
+          </button>
+        )}
 
         {/* Dedicated Settings with Gear icon (as specifically requested) */}
         <button

@@ -12,6 +12,7 @@ interface ProfileDropdownProps {
   onNavigateDocs?: () => void;
   onNavigateSdk?: () => void;
   onNavigateStatesGallery?: () => void;
+  onNavigateShareOverlay?: () => void;
 }
 
 export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
@@ -26,6 +27,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   onNavigateDocs,
   onNavigateSdk,
   onNavigateStatesGallery,
+  onNavigateShareOverlay,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -192,6 +194,21 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
           >
             <i className="ti ti-cube text-[17px] text-[#9FE1CB]" aria-hidden="true"></i>
             <span className="flex-1 font-medium">Enterprise states gallery</span>
+            <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
+          </button>
+        )}
+
+        {onNavigateShareOverlay && (
+          <button
+            type="button"
+            onClick={() => {
+              onNavigateShareOverlay();
+              onClose();
+            }}
+            className="w-full border-0 bg-transparent text-[#F4F2EC] flex items-center gap-3 text-left p-2.5 px-3 rounded-[14px] text-[13px] hover:bg-[#141414] transition-colors cursor-pointer group"
+          >
+            <i className="ti ti-share text-[17px] text-[#C9B8FF]" aria-hidden="true"></i>
+            <span className="flex-1 font-medium">Share overlay (Web & Mobile)</span>
             <i className="ti ti-arrow-right text-[13px] text-[#5F5E5A] group-hover:text-[#B8B6AE]"></i>
           </button>
         )}

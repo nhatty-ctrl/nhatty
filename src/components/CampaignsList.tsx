@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { CampaignCard } from './CampaignCard';
 import { CampaignCardSkeleton } from './SkeletonLoader';
-import { EmptyStateCard } from './ui/EnterpriseStates';
 
 interface CampaignsListProps {
   campaigns: Campaign[];
@@ -32,8 +31,6 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onNavigateAnalytics,
   onManage,
   isFounder = false,
-  onNavigateSdk,
-  onNavigateDocs,
 }) => {
   const [isLoading] = useState(false);
 
@@ -44,7 +41,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   return (
     <div className="w-full flex justify-center py-6 sm:py-8 px-4 sm:px-6">
       <div className="w-full max-w-[836px] space-y-6">
-        {/* Title & Filter bar: symmetrically flush with right edge of 720px card */}
+        {/* Title & Filter bar */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
@@ -55,7 +52,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
             </p>
           </div>
 
-          {/* Filter Capsule: [ Open | Joined ] (sleek pill track) */}
+          {/* Filter Capsule: [ Open | Joined ] */}
           <div className="inline-flex bg-[#141414] rounded-full p-1 self-start sm:self-auto shrink-0 border border-[#222222] gap-1 shadow-inner">
             <button
               type="button"
@@ -66,7 +63,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
                   : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
               }`}
             >
-              Open
+              Open ({openCampaigns.length})
             </button>
             <button
               type="button"
@@ -77,59 +74,64 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
                   : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
               }`}
             >
-              Joined
+              Joined ({joinedCampaigns.length})
             </button>
           </div>
         </div>
 
-      {/* Campaigns list */}
-      <div className="space-y-4 pt-2">
-        {isLoading ? (
-          <>
-            <CampaignCardSkeleton />
-            <CampaignCardSkeleton />
-            <CampaignCardSkeleton />
-          </>
-        ) : visibleCampaigns.length > 0 ? (
-          visibleCampaigns.map((campaign) => (
-            <CampaignCard
-              key={campaign.id}
-              campaign={campaign}
-              onJoin={onJoin}
-              onOpenQr={onOpenQr}
-              onCopyLink={onCopyLink}
-              onShare={onShare}
-              onNavigateDetail={onNavigateDetail}
-              onNavigateAnalytics={onNavigateAnalytics}
-              onManage={onManage}
-              isFounder={isFounder}
-            />
-          ))
-        ) : (
-          /* Enterprise Empty States */
-          filterTab === 'joined' ? (
-            <EmptyStateCard
-              icon="ti-link"
-              tone="neutral"
-              title="No joined campaigns yet"
-              body="Join a campaign to get your tracked shortlink and personal attribution QR code."
-              primary={{
-                label: 'Browse open campaigns',
-                icon: 'ti-speakerphone',
-                onClick: () => setFilterTab('open'),
-              }}
-            />
+        {/* Campaigns list */}
+        <div className="space-y-4 pt-2">
+          {isLoading ? (
+            <>
+              <CampaignCardSkeleton />
+              <CampaignCardSkeleton />
+              <CampaignCardSkeleton />
+            </>
+          ) : visibleCampaigns.length > 0 ? (
+            visibleCampaigns.map((campaign) => (
+              <CampaignCard
+                key={campaign.id}
+                campaign={campaign}
+                onJoin={onJoin}
+                onOpenQr={onOpenQr}
+                onCopyLink={onCopyLink}
+                onShare={onShare}
+                onNavigateDetail={onNavigateDetail}
+                onNavigateAnalytics={onNavigateAnalytics}
+                onManage={onManage}
+                isFounder={isFounder}
+              />
+            ))
           ) : (
-            <EmptyStateCard
-              icon="ti-speakerphone"
-              tone="neutral"
-              title="No open campaigns"
-              body="All campaigns are currently filled. New mobile apps enter the performance marketplace weekly."
-            />
-          )
-        )}
+            <div className="card text-center py-14 px-6 space-y-3 bg-[#0E0E0E] border border-[#222222] rounded-[24px]">
+              <div className="w-12 h-12 rounded-full bg-[#141414] text-[#9C9A92] flex items-center justify-center text-[22px] mx-auto">
+                <i className={`ti ${filterTab === 'joined' ? 'ti-link' : 'ti-speakerphone'}`}></i>
+              </div>
+              <div>
+                <div className="text-[16px] font-medium text-[#F4F2EC]">
+                  {filterTab === 'joined' ? 'No joined campaigns yet' : 'No open campaigns'}
+                </div>
+                <div className="text-[13px] text-[#9C9A92] mt-1 max-w-[420px] mx-auto leading-relaxed">
+                  {filterTab === 'joined'
+                    ? 'Join a campaign to generate your personal creator tracking link and start earning per verified install.'
+                    : 'All campaigns are currently filled. New mobile apps enter the marketplace weekly.'}
+                </div>
+              </div>
+              {filterTab === 'joined' && (
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setFilterTab('open')}
+                    className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+                  >
+                    Browse open campaigns
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 };

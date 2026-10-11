@@ -163,6 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onNavigateDocs={() => onNavigate('docs')}
                 onNavigateSdk={() => onNavigate('sdk')}
                 onNavigateStatesGallery={() => onNavigate('states-gallery')}
+                onNavigateShareOverlay={() => onNavigate('share-overlay')}
               />
             )}
           </div>

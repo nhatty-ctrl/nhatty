@@ -478,3 +478,38 @@ button.ol:hover {
 .cd.td {
   box-shadow: inset 0 0 0 1px #6E6D66;
 }
+
+/* Print Styles for QR Code Flyer */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #qr-printable-flyer,
+  #qr-printable-flyer * {
+    visibility: visible;
+  }
+
+  #qr-printable-flyer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 40px;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}

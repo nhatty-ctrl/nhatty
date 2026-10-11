@@ -414,6 +414,20 @@ export const StatesGalleryView: React.FC<StatesGalleryViewProps> = ({
         },
       },
     },
+    {
+      group: 'System',
+      where: 'Creator · Share Overlay',
+      card: {
+        icon: 'ti-share',
+        title: 'Share overlay (Web & Mobile views)',
+        body: 'Responsive desktop modal and mobile bottom sheet with live attribution link, scannable QR code, and FTC disclosure compliance checker.',
+        primary: {
+          label: 'Open share showcase',
+          icon: 'ti-arrow-right',
+          onClick: () => (onNavigateTab ? onNavigateTab('share-overlay') : showToast('Opening Share Overlay')),
+        },
+      },
+    },
   ];
 
   const GROUPS: Array<'Empty' | 'Loading' | 'Errors' | 'System'> = ['Empty', 'Loading', 'Errors', 'System'];

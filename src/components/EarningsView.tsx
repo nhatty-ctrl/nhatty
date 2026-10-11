@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Campaign, WithdrawalReceipt, SettlementReceipt } from '../types/campaign';
 import { Breadcrumbs } from './Breadcrumbs';
 import { ReceiptModal } from './ReceiptModal';
+import { getNicheMeta } from '../data/campaigns';
 
 interface EarningsViewProps {
   campaigns?: Campaign[];
@@ -740,7 +741,20 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
                             <span className="text-[14px] font-mono font-medium text-[#F4F2EC]">{money(e)}</span>
                           </div>
                           <div className="flex items-center justify-between text-[12px] text-[#9C9A92] mt-0.5">
-                            <span>{num(inst)} installs · {c.cat}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span>{num(inst)} installs</span>
+                              <span
+                                className="w-5 h-5 rounded-[5px] inline-flex items-center justify-center transition-transform hover:scale-110 shadow-2xs border border-[#262626]"
+                                style={{
+                                  backgroundColor: getNicheMeta(c.cat).bg,
+                                  color: getNicheMeta(c.cat).fg,
+                                }}
+                                title={`Niche: ${c.cat}`}
+                                aria-label={`Niche: ${c.cat}`}
+                              >
+                                <i className={`ti ${getNicheMeta(c.cat).icon} text-[10.5px]`} aria-hidden="true" />
+                              </span>
+                            </div>
                             <span>${c.pay.toFixed(2)}/install</span>
                           </div>
                           <div className="h-[4px] rounded-full bg-[#1B1B1B] overflow-hidden mt-2 w-full">

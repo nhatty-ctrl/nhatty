@@ -7,6 +7,8 @@ interface CreateCampaignViewProps {
   onBack: () => void;
   onCreate: (campaign: Campaign) => void;
   onNavigateDocs?: () => void;
+  initialStep?: 0 | 1 | 2;
+  simulateSdk?: boolean;
 }
 
 const TH: Record<string, [string, string, string]> = {
@@ -86,8 +88,10 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
   onBack,
   onCreate,
   onNavigateDocs,
+  initialStep = 0,
+  simulateSdk = true,
 }) => {
-  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [step, setStep] = useState<0 | 1 | 2>(initialStep);
   const [apple, setApple] = useState('');
   const [play, setPlay] = useState('');
   const [ex, setEx] = useState<'idle' | 'loading' | 'done'>('idle');
@@ -1156,7 +1160,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                     if (st === 'ok') setErr('');
                   }}
                   onSkip={() => setSdkStatus('later')}
-                  simulate={true}
+                  simulate={simulateSdk}
                 />
               </div>
             </div>

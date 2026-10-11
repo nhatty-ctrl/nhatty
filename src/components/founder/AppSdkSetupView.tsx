@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { umiStore } from '../../services/umiStore';
 import { FounderApp, AppKey } from '../../types/umi';
+import { SdkConnectionTest } from '../sdk/SdkConnectionTest';
 
 interface AppSdkSetupViewProps {
   apps: FounderApp[];
@@ -15,6 +16,8 @@ export const AppSdkSetupView: React.FC<AppSdkSetupViewProps> = ({ apps, appKeys,
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simLog, setSimLog] = useState<string | null>(null);
+  const [showConnectionTest, setShowConnectionTest] = useState(false);
+  const [sdkTestStatus, setSdkTestStatus] = useState<'idle' | 'testing' | 'ok'>('idle');
 
   const selectedApp = apps.find((a) => a.id === selectedAppId) || apps[0];
   const activeKey = appKeys.find((k) => k.appId === selectedApp?.id && k.status === 'active');
@@ -274,6 +277,39 @@ Umi.logEvent("${selectedApp?.category === 'Games' ? 'level_3_completed' : 'first
                     <span>Console Output</span>
                   </div>
                   {simLog}
+                </div>
+              )}
+            </div>
+
+            {/* 8-Step Full Sandbox Diagnostics Suite */}
+            <div className="bg-[#141414] border border-[#262626] rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <i className="ti ti-plug-connected text-[17px] text-[#C9B8FF]"></i>
+                  <h3 className="text-[14px] font-medium text-[#F4F2EC]">Sandbox Connection Test</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowConnectionTest(!showConnectionTest)}
+                  className="text-[12px] text-[#C9B8FF] hover:underline bg-transparent border-0 cursor-pointer font-medium"
+                >
+                  {showConnectionTest ? 'Hide test suite' : 'Run 8-step test'}
+                </button>
+              </div>
+              <p className="text-[12px] text-[#9C9A92] mb-3 leading-relaxed">
+                Full 8-check sandbox attestation: verifies SDK detection, bundle key parity, consent lifecycle, install session, attribution source sheet, and server confirmations.
+              </p>
+
+              {showConnectionTest && (
+                <div className="mt-4">
+                  <SdkConnectionTest
+                    platform="ios"
+                    appKey={activeKey?.publicPrefix || 'umi_live_pxp_9f82b'}
+                    appName={selectedApp?.name}
+                    status={sdkTestStatus}
+                    onStatus={setSdkTestStatus}
+                    simulate={true}
+                  />
                 </div>
               )}
             </div>

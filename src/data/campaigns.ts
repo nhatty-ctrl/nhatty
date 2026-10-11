@@ -10,7 +10,66 @@ export const CATS: Record<string, { bg: string; fg: string; icon: string }> = {
   Lifestyle: { bg: '#9FE1CB', fg: '#04342C', icon: 'ti-leaf' },
   Tools: { bg: '#D3D1C7', fg: '#2C2C2A', icon: 'ti-tool' },
   'Art and design': { bg: '#CECBF6', fg: '#26215C', icon: 'ti-brush' },
+  'Art & Design': { bg: '#CECBF6', fg: '#26215C', icon: 'ti-brush' },
+  Photography: { bg: '#FAC775', fg: '#412402', icon: 'ti-camera' },
 };
+
+export interface NicheMeta {
+  icon: string;
+  bg: string;
+  fg: string;
+  name: string;
+}
+
+export function getNicheMeta(category?: string): NicheMeta {
+  if (!category) {
+    return { icon: 'ti-cube', bg: '#CECBF6', fg: '#26215C', name: 'App' };
+  }
+  const c = category.toLowerCase().trim();
+
+  // Art, Design & Creative
+  if (c.includes('art') || c.includes('design') || c.includes('craft') || c.includes('draw') || c.includes('sketch')) {
+    return { icon: 'ti-brush', bg: '#CECBF6', fg: '#26215C', name: category };
+  }
+  // Photography & Camera
+  if (c.includes('photo') || c.includes('camera') || c.includes('lens') || c.includes('image')) {
+    return { icon: 'ti-camera', bg: '#FAC775', fg: '#412402', name: category };
+  }
+  // Games & Entertainment
+  if (c.includes('game') || c.includes('play') || c.includes('puzzle') || c.includes('arcade')) {
+    return { icon: 'ti-device-gamepad-2', bg: '#CECBF6', fg: '#26215C', name: category };
+  }
+  // Health, Fitness & Wellness
+  if (c.includes('health') || c.includes('fit') || c.includes('step') || c.includes('walk') || c.includes('run')) {
+    return { icon: 'ti-heart', bg: '#F5C4B3', fg: '#4A1B0C', name: category };
+  }
+  // Productivity, Work & Focus
+  if (c.includes('productiv') || c.includes('focus') || c.includes('task') || c.includes('work') || c.includes('note')) {
+    return { icon: 'ti-bolt', bg: '#B5D4F4', fg: '#042C53', name: category };
+  }
+  // Finance, Crypto & Money
+  if (c.includes('financ') || c.includes('money') || c.includes('bank') || c.includes('crypto') || c.includes('budget') || c.includes('coin')) {
+    return { icon: 'ti-coin', bg: '#C0DD97', fg: '#173404', name: category };
+  }
+  // Education & Learning
+  if (c.includes('educat') || c.includes('learn') || c.includes('read') || c.includes('book') || c.includes('study')) {
+    return { icon: 'ti-book', bg: '#FAC775', fg: '#412402', name: category };
+  }
+  // Lifestyle, Audio & Sound
+  if (c.includes('life') || c.includes('sound') || c.includes('sleep') || c.includes('meditat') || c.includes('relax')) {
+    return { icon: 'ti-leaf', bg: '#9FE1CB', fg: '#04342C', name: category };
+  }
+  // Social & Community
+  if (c.includes('social') || c.includes('chat') || c.includes('message') || c.includes('friend') || c.includes('communit')) {
+    return { icon: 'ti-messages', bg: '#F4C0D1', fg: '#4B1528', name: category };
+  }
+  // Tools & Utilities
+  if (c.includes('tool') || c.includes('util') || c.includes('develop')) {
+    return { icon: 'ti-tool', bg: '#D3D1C7', fg: '#2C2C2A', name: category };
+  }
+
+  return { icon: 'ti-cube', bg: '#CECBF6', fg: '#26215C', name: category };
+}
 
 export const INITIAL_CAMPAIGNS: Campaign[] = [
   {

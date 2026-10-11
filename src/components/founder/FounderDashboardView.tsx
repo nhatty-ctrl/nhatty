@@ -3,6 +3,7 @@ import { umiStore } from '../../services/umiStore';
 import { Campaign, FounderApp, AppKey } from '../../types/umi';
 import { CampaignCreateWizard } from './CampaignCreateWizard';
 import { AppSdkSetupView } from './AppSdkSetupView';
+import { getNicheMeta } from '../../data/campaigns';
 
 interface FounderDashboardViewProps {
   campaigns: Campaign[];
@@ -555,7 +556,20 @@ export const FounderDashboardView: React.FC<FounderDashboardViewProps> = ({
                           </div>
                           <div>
                             <h3 className="text-[15px] font-medium text-[#F4F2EC] leading-snug">{camp.name}</h3>
-                            <div className="text-[12px] text-[#9C9A92]">{camp.appName} · {camp.category}</div>
+                            <div className="flex items-center gap-1.5 text-[12px] text-[#9C9A92] mt-0.5">
+                              <span>{camp.appName}</span>
+                              <span
+                                className="w-5 h-5 rounded-[6px] inline-flex items-center justify-center transition-transform hover:scale-110 shadow-2xs border border-[#262626]"
+                                style={{
+                                  backgroundColor: getNicheMeta(camp.category).bg,
+                                  color: getNicheMeta(camp.category).fg,
+                                }}
+                                title={`Niche: ${camp.category}`}
+                                aria-label={`Niche: ${camp.category}`}
+                              >
+                                <i className={`ti ${getNicheMeta(camp.category).icon} text-[11px]`} aria-hidden="true" />
+                              </span>
+                            </div>
                           </div>
                         </div>
 

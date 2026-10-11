@@ -9,6 +9,7 @@ import {
   DEFAULT_AVATAR_MOOD,
 } from './SmileyAvatar';
 import { KredAnalyticsEngine } from './KredAnalyticsEngine';
+import { getNicheMeta } from '../data/campaigns';
 
 interface ProfileViewProps {
   onBack: () => void;
@@ -391,7 +392,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     <div>
                       <div className="text-[16px] font-semibold text-[#F4F2EC]">{camp.name}</div>
                       <div className="text-[12px] text-[#9C9A92] flex items-center gap-2 mt-0.5">
-                        <span>{camp.cat}</span>
+                        <span
+                          className="w-5.5 h-5.5 rounded-[6px] inline-flex items-center justify-center transition-transform hover:scale-110 shadow-2xs border border-[#262626]"
+                          style={{
+                            backgroundColor: getNicheMeta(camp.cat).bg,
+                            color: getNicheMeta(camp.cat).fg,
+                          }}
+                          title={`Niche: ${camp.cat}`}
+                          aria-label={`Niche: ${camp.cat}`}
+                        >
+                          <i className={`ti ${getNicheMeta(camp.cat).icon} text-[11px]`} aria-hidden="true" />
+                        </span>
                         <span>·</span>
                         <span className="font-mono text-[#C9B8FF]">${camp.price} / verified install</span>
                       </div>

@@ -52,6 +52,8 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
   const [page, setPage] = useState<'overview' | 'general' | 'keys' | 'hooks' | 'rc' | 'whop' | 'fund' | 'usage' | 'test'>('overview');
   const [tab, setTab] = useState<'keys' | 'tok'>('keys');
   const [env, setEnv] = useState<'live' | 'test'>('live');
+  const [testPlat, setTestPlat] = useState<'ios' | 'and'>('ios');
+  const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'ok' | 'later'>('idle');
 
   // App Selection
   const [selectedAppId, setSelectedAppId] = useState('pixelpop');
@@ -1427,19 +1429,41 @@ export const AppSettingsSdkView: React.FC<AppSettingsSdkViewProps> = ({
             ) : page === 'test' ? (
               /* SDK Connection Test Screen */
               <div className="space-y-6 animate-[fadeIn_0.12s_ease-out]">
-                <div>
-                  <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">SDK Connection Test</h1>
-                  <p className="text-[13.5px] text-[#9C9A92] mt-1">
-                    Verify that your mobile client communicates with the Umi attribution network before publishing campaigns.
-                  </p>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h1 className="text-[28px] sm:text-[32px] font-semibold tracking-tight text-[#F4F2EC]">SDK Connection Test</h1>
+                    <p className="text-[13.5px] text-[#9C9A92] mt-1">
+                      Verify that your mobile client communicates with the Umi attribution network before publishing campaigns.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {(['ios', 'and'] as const).map((k) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setTestPlat(k)}
+                        className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold transition-all cursor-pointer border ${
+                          testPlat === k
+                            ? 'bg-[#F4F2EC] text-[#000000] border-transparent shadow-xs'
+                            : 'bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC] border-[#222222]'
+                        }`}
+                      >
+                        {k === 'ios' ? 'iOS' : 'Android'}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <SdkConnectionTest
-                  platform="ios"
+                  platform={testPlat}
                   appKey={livePublishableKey?.val || 'umi_pk_live_default_key'}
                   appName={activeApp.name}
-                  status="idle"
-                  onStatus={(s) => showToast(`SDK Test status: ${s}`)}
+                  status={testStatus}
+                  onStatus={(s) => {
+                    setTestStatus(s);
+                    showToast(`SDK Test status: ${s}`);
+                  }}
+                  onSkip={() => setTestStatus('later')}
                   simulate={true}
                 />
               </div>

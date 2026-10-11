@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
+import { getNicheMeta } from '../data/campaigns';
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -62,12 +63,13 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
     }
   };
 
-  // Pastel styling
+  // Pastel styling & niche metadata
   const bg = campaign.bg || '#CECBF6';
   const fg = campaign.fg || '#26215C';
   const icon = campaign.icon || 'ti-device-gamepad-2';
   const priceDisplay = campaign.price ? `$${campaign.price}` : campaign.pay;
   const slug = campaign.slug || campaign.id;
+  const nicheMeta = getNicheMeta(campaign.cat);
 
   // Status Edge Cases
   const isEnded = campaign.days <= 0 || (campaign as any).isEnded;
@@ -77,17 +79,33 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
 
   return (
     <div className="flex flex-col sm:grid sm:grid-cols-[100px_minmax(0,1fr)] gap-2 sm:gap-4 items-start w-full">
-      {/* Mobile-only compact metadata line (saves ~100px vertical height on phone) */}
+      {/* Mobile-only compact metadata line (niche icon badge + days) */}
       <div className="sm:hidden flex items-center justify-between text-[12px] px-1 text-[#9C9A92] select-none w-full">
-        <span className="font-medium text-[#F4F2EC]">{campaign.cat}</span>
-        <span>{isEnded ? 'Campaign ended' : `${campaign.days} days left`}</span>
+        <span
+          className="w-7 h-7 rounded-[8px] inline-flex items-center justify-center transition-transform active:scale-95 shadow-2xs border border-[#222222]"
+          style={{ backgroundColor: nicheMeta.bg, color: nicheMeta.fg }}
+          title={`Niche: ${campaign.cat}`}
+          aria-label={`Niche: ${campaign.cat}`}
+        >
+          <i className={`ti ${nicheMeta.icon} text-[14px]`} aria-hidden="true"></i>
+        </span>
+        <span className="text-[12px] text-[#9C9A92]">
+          {isEnded ? 'Campaign ended' : `${campaign.days} days left`}
+        </span>
       </div>
 
-      {/* Desktop Left Column: Category and Days left */}
-      <div className="hidden sm:block pt-1.5 select-none text-left">
-        <div className="text-[14px] font-medium text-[#F4F2EC]">{campaign.cat}</div>
-        <div className="text-[12px] text-[#9C9A92] mt-0.5">
-          {isEnded ? 'Campaign ended' : `${campaign.days} days left`}
+      {/* Desktop Left Column: Niche Icon Only & Days left */}
+      <div className="hidden sm:flex flex-col items-start pt-1 select-none text-left gap-1.5">
+        <div
+          className="w-9 h-9 rounded-[12px] flex items-center justify-center transition-all hover:scale-110 shadow-xs border border-[#222222]/60 hover:border-[#383838]"
+          style={{ backgroundColor: nicheMeta.bg, color: nicheMeta.fg }}
+          title={`Niche: ${campaign.cat}`}
+          aria-label={`Niche: ${campaign.cat}`}
+        >
+          <i className={`ti ${nicheMeta.icon} text-[18px]`} aria-hidden="true"></i>
+        </div>
+        <div className="text-[12px] text-[#9C9A92]">
+          {isEnded ? 'Ended' : `${campaign.days}d left`}
         </div>
       </div>
 
@@ -145,11 +163,14 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
               >
                 {priceDisplay} per verified install
               </span>
+              {/* Niche: good-looking icon only */}
               <span
-                className="chip rounded-full text-[11.5px] font-medium bg-[#141414] text-[#F4F2EC] border border-[#222222]"
-                style={{ padding: '3px 9px' }}
+                className="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all hover:scale-110 shadow-xs border border-white/10 shrink-0"
+                style={{ backgroundColor: nicheMeta.bg, color: nicheMeta.fg }}
+                title={`Niche: ${campaign.cat}`}
+                aria-label={`Niche: ${campaign.cat}`}
               >
-                <span>{campaign.cat}</span>
+                <i className={`ti ${nicheMeta.icon} text-[14px]`} aria-hidden="true"></i>
               </span>
               <span
                 className="chip rounded-full"

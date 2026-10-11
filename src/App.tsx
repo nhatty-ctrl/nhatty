@@ -118,6 +118,11 @@ export default function App() {
   const [filterTab, setFilterTab] = useState<'open' | 'joined'>('open');
   const [activeDetailId, setActiveDetailId] = useState<string | null>(null);
   const [activeAnalyticsId, setActiveAnalyticsId] = useState<string | null>(null);
+  const [createInitialStep, setCreateInitialStep] = useState<0 | 1 | 2>(() => {
+    const hash = window.location.hash || '';
+    if (hash.startsWith('#/create/sdk') || hash.startsWith('#/create-sdk') || hash.startsWith('#/sdk-test')) return 1;
+    return 0;
+  });
 
   // Notifications read map
   const [readMap, setReadMap] = useState<Record<number, boolean>>({
@@ -186,9 +191,15 @@ export default function App() {
       const id = hash.replace('#/c/', '');
       setActiveDetailId(id);
       setActiveAnalyticsId(null);
+    } else if (hash.startsWith('#/create/sdk') || hash.startsWith('#/create-sdk') || hash.startsWith('#/sdk-test')) {
+      setActiveDetailId(null);
+      setActiveAnalyticsId(null);
+      setCreateInitialStep(1);
+      setCurrentTab('create');
     } else if (hash.startsWith('#/create')) {
       setActiveDetailId(null);
       setActiveAnalyticsId(null);
+      setCreateInitialStep(0);
       setCurrentTab('create');
     } else if (hash.startsWith('#/discover')) {
       setActiveDetailId(null);
@@ -243,12 +254,25 @@ export default function App() {
     return () => window.removeEventListener('hashchange', parseHash);
   }, [parseHash]);
 
-  const handleNavigateTab = (
-    tab: 'sdk' | 'campaigns' | 'discover' | 'docs' | 'earnings' | 'analytics' | 'profile' | 'create' | 'payout-methods' | 'billing' | 'notification-settings' | 'settings'
-  ) => {
+  type NavTab =
+    | 'sdk'
+    | 'campaigns'
+    | 'discover'
+    | 'docs'
+    | 'earnings'
+    | 'analytics'
+    | 'profile'
+    | 'create'
+    | 'payout-methods'
+    | 'billing'
+    | 'notification-settings'
+    | 'settings'
+    | 'states-gallery';
+
+  const handleNavigateTab = (tab: NavTab | string) => {
     setActiveDetailId(null);
     setActiveAnalyticsId(null);
-    setCurrentTab(tab);
+    setCurrentTab(tab as NavTab);
     if (tab === 'sdk') {
       window.location.hash = '#/sdk';
     } else if (tab === 'discover') {
@@ -273,6 +297,8 @@ export default function App() {
       window.location.hash = '#/create';
     } else if (tab === 'campaigns') {
       window.location.hash = '#/campaigns';
+    } else if (tab === 'states-gallery') {
+      window.location.hash = '#/states';
     } else {
       window.location.hash = '#/';
     }
@@ -490,6 +516,9 @@ export default function App() {
         ) : currentTab === 'create' ? (
           /* Create Campaign Flow */
           <CreateCampaignView
+            key={`create-step-${createInitialStep}`}
+            initialStep={createInitialStep}
+            simulateSdk={true}
             onBack={() => handleNavigateTab('campaigns')}
             onCreate={handleCreateCampaign}
             onNavigateDocs={() => handleNavigateTab('docs')}

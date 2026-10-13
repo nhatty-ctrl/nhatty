@@ -140,17 +140,148 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[940px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 text-left select-none">
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: 'Home', icon: 'ti-home', onClick: onBack },
-          { label: 'Profile & Settings', icon: 'ti-user', active: true },
-        ]}
-      />
+    <div className="w-full max-w-[940px] mx-auto px-0 sm:px-6 py-0 sm:py-8 sm:space-y-6 text-left select-none">
+      {/* Mobile X.com Profile Header (sm:hidden) */}
+      <div className="sm:hidden w-full select-none">
+        {/* Sticky Top Bar: Back arrow + User name */}
+        <div className="sticky top-[40px] z-30 bg-black/90 backdrop-blur-md border-b border-[#2f3336] px-3 h-[44px] flex items-center gap-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#e7e9ea] hover:bg-neutral-800 transition-colors cursor-pointer border-0 bg-transparent"
+            aria-label="Back"
+          >
+            <i className="ti ti-arrow-left text-[18px]"></i>
+          </button>
+          <div className="min-w-0">
+            <div className="font-bold text-[15px] text-[#e7e9ea] leading-tight truncate">
+              {displayName}
+            </div>
+            <div className="text-[11px] text-[#71767b]">
+              @{currentUsername}
+            </div>
+          </div>
+        </div>
 
-      {/* Profile Header */}
-      <div className="pt-2 pb-6 border-b border-[#27272A] flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
+        {/* Cover Photo Banner (X style) */}
+        <div className="w-full h-24 bg-gradient-to-r from-[#18181b] via-[#27272a] to-[#18181b] relative border-b border-[#2f3336]" />
+
+        {/* Avatar & Profile Details */}
+        <div className="px-4 pb-3 space-y-3">
+          <div className="flex items-end justify-between -mt-10">
+            {/* Circular avatar with thick black ring */}
+            <div className="w-20 h-20 rounded-full ring-4 ring-black bg-[#121215] flex items-center justify-center overflow-hidden shadow-lg">
+              <SmileyAvatar
+                paletteId={avatarPalette}
+                personaId={currentPersona.id}
+                size={76}
+              />
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-1.5 pt-1">
+              <button
+                type="button"
+                onClick={onNavigatePayoutMethods}
+                className="text-[12px] font-semibold py-1.5 px-3 rounded-full border border-[#2f3336] text-[#e7e9ea] bg-[#141414] active:scale-95 transition-transform"
+              >
+                Payouts
+              </button>
+              <button
+                type="button"
+                onClick={onNavigateBilling}
+                className="text-[12px] font-semibold py-1.5 px-3 rounded-full border border-[#2f3336] text-[#e7e9ea] bg-[#141414] active:scale-95 transition-transform"
+              >
+                Billing
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center gap-1 font-bold text-[18px] text-[#e7e9ea]">
+              <span>{displayName}</span>
+              <i className="ti ti-circle-check-filled text-[#C9B8FF] text-[15px]"></i>
+            </div>
+            <div className="text-[13px] text-[#71767b]">@{currentUsername}</div>
+            <p className="text-[13.5px] text-[#d6d9dc] mt-1.5 leading-snug">{bio}</p>
+          </div>
+
+          {/* Social Pills */}
+          <div className="flex items-center gap-2 pt-0.5 flex-wrap">
+            {socials.tiktok && (
+              <span className="text-[11px] py-0.5 px-2 rounded-full bg-[#16181c] text-[#71767b] border border-[#2f3336] flex items-center gap-1">
+                <i className="ti ti-brand-tiktok text-[#EE1D52]"></i>
+                <span>{socials.tiktok}</span>
+              </span>
+            )}
+            {socials.youtube && (
+              <span className="text-[11px] py-0.5 px-2 rounded-full bg-[#16181c] text-[#71767b] border border-[#2f3336] flex items-center gap-1">
+                <i className="ti ti-brand-youtube text-[#FF0000]"></i>
+                <span>{socials.youtube}</span>
+              </span>
+            )}
+            {socials.twitter && (
+              <span className="text-[11px] py-0.5 px-2 rounded-full bg-[#16181c] text-[#71767b] border border-[#2f3336] flex items-center gap-1">
+                <i className="ti ti-brand-x text-white"></i>
+                <span>{socials.twitter}</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile X Profile Tabs (Equal width, white text, active bar, NO numbers) */}
+        <div className="flex border-b border-[#2f3336] sticky top-[84px] bg-black/90 backdrop-blur-md z-20">
+          <button
+            type="button"
+            onClick={() => setActiveTab('created')}
+            className="flex-1 py-3 flex flex-col items-center justify-center relative border-0 bg-transparent cursor-pointer"
+          >
+            <span className={`text-[14px] font-bold ${activeTab === 'created' ? 'text-[#e7e9ea]' : 'text-[#71767b]'}`}>
+              Created
+            </span>
+            {activeTab === 'created' && (
+              <span className="absolute bottom-0 h-[3px] w-12 bg-[#F4F2EC] rounded-full" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('joined')}
+            className="flex-1 py-3 flex flex-col items-center justify-center relative border-0 bg-transparent cursor-pointer"
+          >
+            <span className={`text-[14px] font-bold ${activeTab === 'joined' ? 'text-[#e7e9ea]' : 'text-[#71767b]'}`}>
+              Joined
+            </span>
+            {activeTab === 'joined' && (
+              <span className="absolute bottom-0 h-[3px] w-12 bg-[#F4F2EC] rounded-full" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('settings')}
+            className="flex-1 py-3 flex flex-col items-center justify-center relative border-0 bg-transparent cursor-pointer"
+          >
+            <span className={`text-[14px] font-bold ${activeTab === 'settings' ? 'text-[#e7e9ea]' : 'text-[#71767b]'}`}>
+              Settings
+            </span>
+            {activeTab === 'settings' && (
+              <span className="absolute bottom-0 h-[3px] w-12 bg-[#F4F2EC] rounded-full" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Breadcrumbs (Desktop) */}
+      <div className="hidden sm:block">
+        <Breadcrumbs
+          items={[
+            { label: 'Home', icon: 'ti-home', onClick: onBack },
+            { label: 'Profile & Settings', icon: 'ti-user', active: true },
+          ]}
+        />
+      </div>
+
+      {/* Profile Header (Desktop) */}
+      <div className="hidden sm:flex pt-2 pb-6 border-b border-[#27272A] flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 text-center sm:text-left">
         {/* Avatar with Glow Ring */}
         <div className="relative shrink-0">
           <div
@@ -187,11 +318,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             </div>
 
             {/* Quick Actions */}
-            <div className="flex items-center justify-center sm:justify-end gap-2 pt-1 sm:pt-0">
+            <div className="flex items-center justify-center sm:justify-end gap-2 pt-1 sm:pt-0 flex-wrap">
               <button
                 type="button"
                 onClick={onNavigatePayoutMethods}
-                className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                className="pill text-[12px] min-h-[44px] px-3.5 cursor-pointer flex items-center gap-1.5"
                 title="Manage linked bank & payout methods"
               >
                 <i className="ti ti-wallet"></i>
@@ -201,7 +332,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               <button
                 type="button"
                 onClick={onNavigateBilling}
-                className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                className="pill text-[12px] min-h-[44px] px-3.5 cursor-pointer flex items-center gap-1.5"
                 title="Founder campaign escrow balance"
               >
                 <i className="ti ti-receipt"></i>
@@ -212,7 +343,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <button
                   type="button"
                   onClick={onNavigateSdk}
-                  className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                  className="pill text-[12px] min-h-[44px] px-3.5 cursor-pointer flex items-center gap-1.5"
                   title="App SDK settings & API keys"
                 >
                   <i className="ti ti-key text-[#FAC775]"></i>
@@ -224,7 +355,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <button
                   type="button"
                   onClick={onNavigateDocs}
-                  className="pill text-[12px] min-h-[36px] px-3.5 cursor-pointer"
+                  className="pill text-[12px] min-h-[44px] px-3.5 cursor-pointer flex items-center gap-1.5"
                   title="Developer documentation"
                 >
                   <i className="ti ti-book text-[#C9B8FF]"></i>
@@ -270,8 +401,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
       </div>
 
-      {/* Two Core Tabs: Created (Founder View) vs Joined (Creator Performance) vs Settings */}
-      <div className="flex items-center gap-2 border-b border-[#27272A] pb-3 overflow-x-auto scrollbar-none">
+      {/* Two Core Tabs (Desktop) */}
+      <div className="hidden sm:flex items-center gap-2 border-b border-[#27272A] pb-3 overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveTab('created')}

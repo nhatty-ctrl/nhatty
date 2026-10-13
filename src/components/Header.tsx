@@ -37,11 +37,93 @@ export const Header: React.FC<HeaderProps> = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#000000]/95 backdrop-blur-md border-b border-[#222222] px-3 sm:px-6 py-2.5 sm:py-3 select-none">
-      {/* Edge-to-Edge corner-to-corner container */}
-      <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
+    <header className="sticky top-0 z-40 w-full bg-[#000000]/95 backdrop-blur-md border-b border-[#2f3336] px-3 sm:px-6 py-2 sm:py-3 select-none">
+      {/* Mobile X.com Header: Left avatar, Center logo, Right notifications */}
+      <div className="flex sm:hidden items-center justify-between w-full h-[40px]">
+        {/* Left: User Avatar (X.com mobile pattern) */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setIsProfileOpen(!isProfileOpen);
+              setIsNotifOpen(false);
+            }}
+            className="w-[34px] h-[34px] rounded-full ring-1 ring-[#2f3336] p-0 overflow-hidden flex items-center justify-center bg-[#141414] active:opacity-75 transition-opacity"
+            aria-label="Account menu"
+          >
+            <SmileyAvatar paletteId={avatarPalette} mood={avatarMood} size={34} />
+          </button>
+
+          {isProfileOpen && (
+            <ProfileDropdown
+              isOpen={isProfileOpen}
+              onClose={() => setIsProfileOpen(false)}
+              balance={balance}
+              onNavigateEarnings={() => onNavigate('earnings')}
+              onNavigateAnalytics={() => onNavigate('analytics')}
+              onNavigatePayoutMethods={() => onNavigate('payout-methods')}
+              onNavigateBilling={() => onNavigate('billing')}
+              onNavigateSettings={() => onNavigate('settings')}
+              onNavigateDocs={() => onNavigate('docs')}
+              onNavigateSdk={() => onNavigate('sdk')}
+              onNavigateStatesGallery={() => onNavigate('states-gallery')}
+              onNavigateShareOverlay={() => onNavigate('share-overlay')}
+            />
+          )}
+        </div>
+
+        {/* Center: Brand Mark (like X logo in mobile header) */}
+        <button
+          onClick={() => onNavigate('campaigns')}
+          className="flex items-center gap-1.5 bg-transparent border-0 p-0 cursor-pointer"
+          aria-label="Umi home"
+        >
+          <UmiLogoMark size={28} variant="lime" />
+          <span className="font-serif text-[19px] font-medium tracking-tight text-[#F4F2EC]">umi</span>
+        </button>
+
+        {/* Right: Notifications Bell */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setIsNotifOpen(!isNotifOpen);
+              setIsProfileOpen(false);
+            }}
+            className={`w-[36px] h-[36px] rounded-full border-0 cursor-pointer flex items-center justify-center text-[18px] relative transition-colors ${
+              isNotifOpen
+                ? 'bg-[#222222] text-[#F4F2EC]'
+                : 'bg-transparent text-[#9C9A92] hover:text-[#F4F2EC]'
+            }`}
+            aria-label="Notifications"
+          >
+            <i className="ti ti-bell"></i>
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#C9B8FF] ring-2 ring-[#000000]" />
+            )}
+          </button>
+
+          {isNotifOpen && (
+            <NotificationsDropdown
+              isOpen={isNotifOpen}
+              onClose={() => setIsNotifOpen(false)}
+              readMap={readMap}
+              onMarkRead={onMarkRead}
+              onMarkAllRead={onMarkAllRead}
+              userRole={userRole}
+              onNavigateSettings={() => {
+                setIsNotifOpen(false);
+                onNavigate('notification-settings');
+              }}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Desktop Header Container (Unchanged) */}
+      <div className="hidden sm:flex w-full items-center justify-between gap-4">
         {/* Left: Brand & Navigation */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
           {/* Umi Primary Mark & Serif Wordmark Lockup */}
           <button
             onClick={() => onNavigate('campaigns')}
@@ -54,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </button>
 
-          {/* Desktop Navigation: Campaigns & Discover (sleek segmented pill) */}
+          {/* Desktop Navigation: Campaigns & Discover (sleek segmented pill, hidden on mobile) */}
           <nav
             className="flex items-center p-1 bg-[#141414] border border-[#222222] rounded-full gap-1 ml-2 shadow-inner"
             aria-label="Main navigation"
@@ -88,12 +170,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Right Corner: Create Campaign, Notifications, Profile Avatar */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Create campaign button (Umi Accent Lime) */}
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Create campaign button (Umi Accent Lime, visible on desktop) */}
           <button
             type="button"
             onClick={() => onNavigate('create')}
-            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-semibold py-1.5 px-4 rounded-full bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_14px_rgba(201, 184, 255,0.35)] active:scale-95"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold py-1.5 px-4 rounded-full bg-[#C9B8FF] hover:bg-[#ba9bf7] text-[#000000] cursor-pointer transition-all duration-150 shadow-sm hover:shadow-[0_0_14px_rgba(201,184,255,0.35)] active:scale-95"
           >
             <i className="ti ti-plus text-[13px] stroke-[2.5]" aria-hidden="true"></i>
             <span>Create campaign</span>
@@ -107,7 +189,7 @@ export const Header: React.FC<HeaderProps> = ({
                 setIsNotifOpen(!isNotifOpen);
                 setIsProfileOpen(false);
               }}
-              className={`w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full border-0 cursor-pointer flex items-center justify-center text-[17px] relative transition-colors ${
+              className={`w-[44px] h-[44px] rounded-full border-0 cursor-pointer flex items-center justify-center text-[18px] relative transition-colors ${
                 isNotifOpen
                   ? 'bg-[#222222] text-[#F4F2EC]'
                   : 'bg-[#141414] hover:bg-[#1B1B1B] text-[#9C9A92] hover:text-[#F4F2EC]'
@@ -116,7 +198,7 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <i className="ti ti-bell"></i>
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#C9B8FF] ring-2 ring-[#000000]" />
+                <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-[#C9B8FF] ring-2 ring-[#000000]" />
               )}
             </button>
 
@@ -144,7 +226,7 @@ export const Header: React.FC<HeaderProps> = ({
                 setIsProfileOpen(!isProfileOpen);
                 setIsNotifOpen(false);
               }}
-              className="w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full border-0 cursor-pointer hover:brightness-110 transition-all shadow-sm p-0 overflow-hidden flex items-center justify-center bg-transparent"
+              className="w-[40px] h-[40px] rounded-full border-0 cursor-pointer hover:brightness-110 transition-all shadow-sm p-0 overflow-hidden flex items-center justify-center bg-transparent"
               aria-label="Account and workspace menu"
             >
               <SmileyAvatar paletteId={avatarPalette} mood={avatarMood} size={38} />

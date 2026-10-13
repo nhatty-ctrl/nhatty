@@ -338,8 +338,32 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
 
   return (
     <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6 text-left select-none animate-[fade-in_0.2s_ease-out]">
-      {/* Top Header & Breadcrumbs bar */}
-      <div className="flex items-center justify-between gap-4 pb-2">
+      {/* Mobile X Compose Header (sm:hidden) */}
+      <div className="sm:hidden sticky top-[40px] z-30 bg-black/90 backdrop-blur-md border-b border-[#2f3336] px-4 h-[44px] flex items-center justify-between -mx-4 -mt-6 mb-2 select-none">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-[#e7e9ea] text-[14px] font-medium p-1 bg-transparent border-0 cursor-pointer"
+        >
+          Cancel
+        </button>
+        <div className="flex items-center gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className={`w-6 h-1 rounded-full transition-all ${
+                done || i <= step ? 'bg-[#C9B8FF]' : 'bg-[#333]'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-[12px] font-bold text-[#C9B8FF]">
+          Step {step + 1}/3
+        </span>
+      </div>
+
+      {/* Top Header & Breadcrumbs bar (Desktop) */}
+      <div className="hidden sm:flex items-center justify-between gap-4 pb-2">
         <Breadcrumbs
           items={[
             { label: 'Campaigns', icon: 'ti-speakerphone', onClick: onBack },
@@ -356,8 +380,8 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
         </button>
       </div>
 
-      {/* Stepper Status & Progress Bar (Expanded naturally, no rigid border box) */}
-      <div className="flex items-center justify-between pt-1">
+      {/* Stepper Status & Progress Bar (Desktop) */}
+      <div className="hidden sm:flex items-center justify-between pt-1">
         <div>
           <h1 className="font-serif text-[34px] sm:text-[42px] font-normal tracking-[-1px] text-[#F4F2EC] leading-tight">
             Create campaign

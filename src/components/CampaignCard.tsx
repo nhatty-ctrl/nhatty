@@ -47,9 +47,9 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
     const handle = localStorage.getItem(`kred_handle_${slug}`) || 'you';
-    const fullUrl = `https://kred.link/${slug}/${handle}`;
+    const link = `https://kred.link/${slug}/${handle}`;
     if (onCopyLink) onCopyLink(campaign);
-    navigator.clipboard?.writeText(fullUrl);
+    navigator.clipboard?.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 1200);
   };
@@ -63,36 +63,182 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
   const fg = campaign.fg || '#26215C';
   const icon = campaign.icon || 'ti-device-gamepad-2';
   const priceDisplay = campaign.price ? `$${campaign.price}` : campaign.pay;
-
   const isEnded = campaign.days <= 0 || (campaign as any).isEnded;
   const isPaused = (campaign as any).isPaused;
   const isOutOfBudget = campaign.budget !== undefined && campaign.budget <= 0;
   const isDraft = (campaign as any).isDraft || !campaign.sdkConnected;
 
   return (
-    <div className="flex flex-col sm:grid sm:grid-cols-[100px_minmax(0,1fr)] gap-2 sm:gap-4 items-start w-full">
-      {/* Mobile top metadata bar */}
-      <div className="sm:hidden flex items-center justify-between text-[12px] px-1 text-[#9C9A92] select-none w-full">
-        <span className="font-medium text-[#F4F2EC]">{campaign.cat}</span>
-        <span>{isEnded ? 'Campaign ended' : `${campaign.days} days left`}</span>
-      </div>
-
-      {/* Desktop left column */}
-      <div className="hidden sm:block pt-1.5 select-none text-left">
-        <div className="text-[14px] font-medium text-[#F4F2EC]">{campaign.cat}</div>
-        <div className="text-[12px] text-[#9C9A92] mt-0.5">
-          {isEnded ? 'Campaign ended' : `${campaign.days} days left`}
-        </div>
-      </div>
-
-      {/* Main card */}
-      <div
-        onClick={handleToggleExpand}
-        style={{ width: '720px' }}
-        className={`card cursor-pointer transition-all duration-200 relative group border max-w-full text-left p-4 sm:p-5 ${
-          isExpanded ? 'border-[#F4F2EC]/30 bg-[#141414]' : 'border-transparent hover:bg-[#121212]'
-        }`}
+    <>
+      {/* Mobile X.com Feed Item (sm:hidden) */}
+      <article
+        onClick={handleViewDetailPage}
+        className="sm:hidden w-full bg-black hover:bg-[#080808] active:bg-[#101010] transition-colors p-3.5 sm:p-4 text-left cursor-pointer border-b border-[#2f3336]"
       >
+        <div className="flex items-start gap-3">
+          {/* Left: App Icon / Avatar (X.com mobile tweet avatar) */}
+          <div
+            className="w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-[#2f3336]"
+            style={{ backgroundColor: bg, color: fg }}
+          >
+            <i className={`ti ${icon} text-[22px]`}></i>
+          </div>
+
+          {/* Right: Tweet Body */}
+          <div className="min-w-0 flex-1">
+            {/* Header row: Name + Verified + @handle + time left + options */}
+            <div className="flex items-center justify-between gap-1 leading-tight">
+              <div className="flex items-center gap-1 min-w-0">
+                <span className="font-bold text-[15px] text-[#e7e9ea] truncate hover:underline">
+                  {campaign.name}
+                </span>
+                <i className="ti ti-circle-check-filled text-[#C9B8FF] text-[14px] shrink-0" aria-label="Verified"></i>
+                <span className="text-[13px] text-[#71767b] truncate">
+                  @{campaign.slug || campaign.cat.toLowerCase().replace(/\s+/g, '')}
+                </span>
+                <span className="text-[13px] text-[#71767b] shrink-0">·</span>
+                <span className="text-[13px] text-[#71767b] shrink-0">
+                  {isEnded ? 'Ended' : `${campaign.days}d`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleExpand(e);
+                }}
+                className="text-[#71767b] hover:text-[#e7e9ea] p-1 -mr-1 cursor-pointer bg-transparent border-0"
+                aria-label="More options"
+              >
+                <i className="ti ti-dots text-[16px]"></i>
+              </button>
+            </div>
+
+            {/* Sub-header: By host + category */}
+            <div className="text-[12.5px] text-[#71767b] mt-0.5">
+              By {campaign.by || campaign.host} · {campaign.cat}
+            </div>
+
+            {/* Post text / pitch */}
+            <p className="text-[14px] text-[#e7e9ea] mt-1.5 leading-snug line-clamp-2">
+              {campaign.desc || campaign.tag || 'Casual mobile app with verified install attribution and instant creator bounties.'}
+            </p>
+
+            {/* Embedded Quote Box (Bounty pill card) */}
+            <div className="mt-2.5 p-2.5 rounded-xl border border-[#2f3336] bg-[#0e1013] flex items-center justify-between gap-2">
+              <div>
+                <div className="text-[13px] font-bold text-[#F4F2EC] flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#C9B8FF]"></span>
+                  {priceDisplay} / verified install
+                </div>
+                <div className="text-[11px] text-[#71767b] mt-0.5">
+                  Real-time attribution · Escrow funded
+                </div>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <span className="w-6 h-6 rounded-full bg-[#1c1f24] text-[#e7e9ea] flex items-center justify-center text-[12px]">
+                  <i className="ti ti-brand-apple"></i>
+                </span>
+                <span className="w-6 h-6 rounded-full bg-[#1c1f24] text-[#e7e9ea] flex items-center justify-center text-[12px]">
+                  <i className="ti ti-player-play"></i>
+                </span>
+              </div>
+            </div>
+
+            {/* X Tweet Action Row */}
+            <div className="flex items-center justify-between mt-3 pt-1">
+              {/* Sleek Join Button (same size as create campaign) */}
+              {!isEnded && !isPaused ? (
+                <button
+                  type="button"
+                  onClick={handleJoinClick}
+                  className={`inline-flex items-center justify-center gap-1.5 text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 active:scale-95 shadow-sm min-h-[34px] ${
+                    campaign.joined
+                      ? 'bg-[#141414] hover:bg-[#1B1B1B] text-[#F4F2EC] border border-[#2f3336]'
+                      : 'bg-[#F4F2EC] hover:bg-white text-[#000000]'
+                  }`}
+                >
+                  {campaign.joined ? (
+                    <>
+                      <i className="ti ti-circle-check text-[#C9B8FF] text-[14px]"></i>
+                      <span>Joined</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Join campaign</span>
+                      <i className="ti ti-arrow-right text-[12px] stroke-[2.5]"></i>
+                    </>
+                  )}
+                </button>
+              ) : (
+                <span className="text-[12px] text-[#71767b] font-medium">Inactive</span>
+              )}
+
+              {/* Action icons like X metrics & actions */}
+              <div className="flex items-center gap-3 text-[#71767b]">
+                {campaign.joined && onOpenQr && (
+                  <button
+                    type="button"
+                    onClick={handleOpenQrClick}
+                    className="p-1.5 rounded-full hover:bg-neutral-800 hover:text-[#C9B8FF] transition-colors cursor-pointer border-0 bg-transparent"
+                    title="QR Code"
+                  >
+                    <i className="ti ti-qrcode text-[17px]"></i>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-full hover:bg-neutral-800 hover:text-[#C9B8FF] transition-colors cursor-pointer border-0 bg-transparent"
+                  title="Copy Link"
+                >
+                  <i className={`ti ${copied ? 'ti-check text-[#C9B8FF]' : 'ti-share'} text-[17px]`}></i>
+                </button>
+
+                {/* Avatar stack without numbers (Rule strictly enforced) */}
+                <span className="inline-flex select-none">
+                  <span
+                    className="w-[18px] h-[18px] rounded-full border border-black inline-flex items-center justify-center text-[8px] font-medium"
+                    style={{ backgroundColor: '#CECBF6', color: '#26215C' }}
+                  >
+                    H
+                  </span>
+                  <span
+                    className="w-[18px] h-[18px] rounded-full border border-black -ml-1 inline-flex items-center justify-center text-[8px] font-medium"
+                    style={{ backgroundColor: '#F5C4B3', color: '#4A1B0C' }}
+                  >
+                    C
+                  </span>
+                  <span
+                    className="w-[18px] h-[18px] rounded-full border border-black -ml-1 inline-flex items-center justify-center text-[8px] font-medium"
+                    style={{ backgroundColor: '#C0DD97', color: '#173404' }}
+                  >
+                    F
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {/* Desktop Grid Layout (100% Unchanged) */}
+      <div className="hidden sm:grid sm:grid-cols-[100px_minmax(0,1fr)] gap-4 items-start w-full">
+        <div className="pt-1.5 select-none text-left">
+          <div className="text-[14px] font-medium text-[#F4F2EC]">{campaign.cat}</div>
+          <div className="text-[12px] text-[#9C9A92] mt-0.5">
+            {isEnded ? 'Campaign ended' : `${campaign.days} days left`}
+          </div>
+        </div>
+
+        <div
+          onClick={handleToggleExpand}
+          style={{ width: '720px' }}
+          className={`card cursor-pointer transition-all duration-200 relative group border max-w-full text-left p-4 sm:p-5 ${
+            isExpanded ? 'border-[#F4F2EC]/30 bg-[#141414]' : 'border-transparent hover:bg-[#121212]'
+          }`}
+        >
         <div className="flex gap-3 sm:gap-4 justify-between items-start">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
@@ -154,7 +300,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                 <button
                   type="button"
                   onClick={handleJoinClick}
-                  className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 active:scale-95 shadow-sm ${
+                  className={`inline-flex items-center justify-center gap-1.5 text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 active:scale-95 shadow-sm min-h-[34px] ${
                     campaign.joined
                       ? 'bg-[#141414] hover:bg-[#1B1B1B] text-[#F4F2EC] border border-[#C9B8FF]/40'
                       : 'bg-[#F4F2EC] hover:bg-white text-[#000000] hover:shadow-[0_0_12px_rgba(244,242,236,0.3)]'
@@ -207,8 +353,6 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
                 </span>
               </span>
 
-              <span className="text-[12px] text-[#9C9A92]">+{campaign.creators}</span>
-
               {isFounder && onManage && (
                 <button
                   type="button"
@@ -241,7 +385,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
             className="w-[56px] h-[56px] sm:w-[84px] sm:h-[84px] rounded-[14px] sm:rounded-[20px] flex flex-col items-center justify-center gap-1 shrink-0 select-none shadow-xs"
             style={{ backgroundColor: bg, color: fg }}
           >
-            <i className={`ti ${icon} text-[20px] sm:text-[26px]`} aria-hidden="true"></i>
+            <i className={`ti ${icon} text-[20px] sm:text-[26px]`}></i>
             <span className="text-[10px] sm:text-[11px] font-medium text-center px-1 truncate max-w-full">
               {campaign.name}
             </span>
@@ -337,6 +481,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };

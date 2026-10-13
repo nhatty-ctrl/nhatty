@@ -132,8 +132,8 @@ export const CampaignDiscoveryView: React.FC<CampaignDiscoveryViewProps> = ({
                     <span className="font-mono text-[#DDD]">{camp.holdDays} days</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span>Active Creators:</span>
-                    <span className="font-mono text-[#DDD]">{camp.creatorsCount}</span>
+                    <span>Campaign Status:</span>
+                    <span className="text-[#DDD] font-medium">Open to creators</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Attribution Method:</span>

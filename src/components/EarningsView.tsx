@@ -357,8 +357,9 @@ export const EarningsView: React.FC<EarningsViewProps> = ({
           {[7, 30, 90].map((d) => (
             <button
               key={`range-${d}`}
+              type="button"
               onClick={() => setRange(d)}
-              className={`pill text-[12px] py-1.5 px-3.5 cursor-pointer border-0 ${
+              className={`pill text-[12px] py-1.5 px-3.5 min-h-[40px] cursor-pointer border-0 ${
                 range === d ? 'on font-medium' : 'bg-transparent text-[#9C9A92] hover:text-[#F4F2EC]'
               }`}
             >

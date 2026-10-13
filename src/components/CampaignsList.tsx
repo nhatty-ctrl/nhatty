@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Campaign } from '../types/campaign';
 import { CampaignCard } from './CampaignCard';
 import { CampaignCardSkeleton } from './SkeletonLoader';
+import { PullToRefresh } from './ui/PullToRefresh';
 
 interface CampaignsListProps {
   campaigns: Campaign[];
@@ -17,6 +18,7 @@ interface CampaignsListProps {
   isFounder?: boolean;
   onNavigateSdk?: () => void;
   onNavigateDocs?: () => void;
+  onRefresh?: () => Promise<void> | void;
 }
 
 export const CampaignsList: React.FC<CampaignsListProps> = ({
@@ -31,6 +33,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   onNavigateAnalytics,
   onManage,
   isFounder = false,
+  onRefresh,
 }) => {
   const [isLoading] = useState(false);
 
@@ -38,100 +41,138 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({
   const joinedCampaigns = campaigns.filter((c) => c.joined);
   const visibleCampaigns = filterTab === 'open' ? openCampaigns : joinedCampaigns;
 
+  const handleRefresh = async () => {
+    if (onRefresh) {
+      await onRefresh();
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+    }
+  };
+
   return (
-    <div className="w-full flex justify-center py-6 sm:py-8 px-4 sm:px-6">
-      <div className="w-full max-w-[836px] space-y-6">
-        {/* Title & Filter bar */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
-              Campaigns
-            </h1>
-            <p className="text-[13px] text-[#9C9A92] mt-1">
-              Vetted mobile apps with real-time attribution and guaranteed creator bounties.
-            </p>
-          </div>
-
-          {/* Filter Capsule: [ Open | Joined ] */}
-          <div className="inline-flex bg-[#141414] rounded-full p-1 self-start sm:self-auto shrink-0 border border-[#222222] gap-1 shadow-inner">
-            <button
-              type="button"
-              onClick={() => setFilterTab('open')}
-              className={`text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 ${
-                filterTab === 'open'
-                  ? 'bg-[#F4F2EC] text-[#000000] shadow-sm'
-                  : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
-              }`}
-            >
-              Open ({openCampaigns.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterTab('joined')}
-              className={`text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 ${
-                filterTab === 'joined'
-                  ? 'bg-[#F4F2EC] text-[#000000] shadow-sm'
-                  : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
-              }`}
-            >
-              Joined ({joinedCampaigns.length})
-            </button>
-          </div>
-        </div>
-
-        {/* Campaigns list */}
-        <div className="space-y-4 pt-2">
-          {isLoading ? (
-            <>
-              <CampaignCardSkeleton />
-              <CampaignCardSkeleton />
-              <CampaignCardSkeleton />
-            </>
-          ) : visibleCampaigns.length > 0 ? (
-            visibleCampaigns.map((campaign) => (
-              <CampaignCard
-                key={campaign.id}
-                campaign={campaign}
-                onJoin={onJoin}
-                onOpenQr={onOpenQr}
-                onCopyLink={onCopyLink}
-                onShare={onShare}
-                onNavigateDetail={onNavigateDetail}
-                onNavigateAnalytics={onNavigateAnalytics}
-                onManage={onManage}
-                isFounder={isFounder}
-              />
-            ))
-          ) : (
-            <div className="card text-center py-14 px-6 space-y-3 bg-[#0E0E0E] border border-[#222222] rounded-[24px]">
-              <div className="w-12 h-12 rounded-full bg-[#141414] text-[#9C9A92] flex items-center justify-center text-[22px] mx-auto">
-                <i className={`ti ${filterTab === 'joined' ? 'ti-link' : 'ti-speakerphone'}`}></i>
-              </div>
-              <div>
-                <div className="text-[16px] font-medium text-[#F4F2EC]">
-                  {filterTab === 'joined' ? 'No joined campaigns yet' : 'No open campaigns'}
-                </div>
-                <div className="text-[13px] text-[#9C9A92] mt-1 max-w-[420px] mx-auto leading-relaxed">
-                  {filterTab === 'joined'
-                    ? 'Join a campaign to generate your personal creator tracking link and start earning per verified install.'
-                    : 'All campaigns are currently filled. New mobile apps enter the marketplace weekly.'}
-                </div>
-              </div>
-              {filterTab === 'joined' && (
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setFilterTab('open')}
-                    className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
-                  >
-                    Browse open campaigns
-                  </button>
-                </div>
-              )}
-            </div>
+    <PullToRefresh onRefresh={handleRefresh}>
+      {/* Mobile X.com Sticky Tabs (For You / Following style) */}
+      <div className="flex sm:hidden border-b border-[#2f3336] bg-black/90 backdrop-blur-md sticky top-[40px] z-30 w-full select-none">
+        <button
+          type="button"
+          onClick={() => setFilterTab('open')}
+          className="flex-1 py-3 flex flex-col items-center justify-center relative cursor-pointer border-0 bg-transparent transition-colors active:bg-neutral-900/50"
+        >
+          <span className={`text-[15px] font-bold tracking-tight ${filterTab === 'open' ? 'text-[#F4F2EC]' : 'text-[#71767b]'}`}>
+            Open
+          </span>
+          {filterTab === 'open' && (
+            <span className="absolute bottom-0 h-[3px] w-14 bg-[#F4F2EC] rounded-full" />
           )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setFilterTab('joined')}
+          className="flex-1 py-3 flex flex-col items-center justify-center relative cursor-pointer border-0 bg-transparent transition-colors active:bg-neutral-900/50"
+        >
+          <span className={`text-[15px] font-bold tracking-tight ${filterTab === 'joined' ? 'text-[#F4F2EC]' : 'text-[#71767b]'}`}>
+            Joined
+          </span>
+          {filterTab === 'joined' && (
+            <span className="absolute bottom-0 h-[3px] w-14 bg-[#F4F2EC] rounded-full" />
+          )}
+        </button>
+      </div>
+
+      <div className="w-full flex justify-center py-0 sm:py-8 px-0 sm:px-6">
+        <div className="w-full max-w-[836px] sm:space-y-6">
+          {/* Desktop Title & Filter bar (Untouched on desktop, hidden on mobile in favor of X header + tab bar) */}
+          <div className="hidden sm:flex sm:flex-row sm:items-end justify-between gap-4 text-left">
+            <div>
+              <h1 className="text-[28px] font-medium tracking-[-0.5px] text-[#F4F2EC]">
+                Campaigns
+              </h1>
+              <p className="text-[13px] text-[#9C9A92] mt-1">
+                Vetted mobile apps with real-time attribution and guaranteed creator bounties.
+              </p>
+            </div>
+
+            {/* Filter Capsule: [ Open | Joined ] (Desktop) */}
+            <div className="inline-flex bg-[#141414] rounded-full p-1 self-start sm:self-auto shrink-0 border border-[#222222] gap-1 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setFilterTab('open')}
+                className={`text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 ${
+                  filterTab === 'open'
+                    ? 'bg-[#F4F2EC] text-[#000000] shadow-sm'
+                    : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
+                }`}
+              >
+                Open
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterTab('joined')}
+                className={`text-[13px] font-semibold py-1.5 px-4 rounded-full cursor-pointer transition-all duration-150 ${
+                  filterTab === 'joined'
+                    ? 'bg-[#F4F2EC] text-[#000000] shadow-sm'
+                    : 'text-[#9C9A92] hover:text-[#F4F2EC] hover:bg-[#1B1B1B]'
+                }`}
+              >
+                Joined
+              </button>
+            </div>
+          </div>
+
+          {/* Campaigns list: X-style borders on mobile, cards with space-y-4 on desktop */}
+          <div className="divide-y divide-[#2f3336] sm:divide-y-0 sm:space-y-4 pt-0 sm:pt-2">
+            {isLoading ? (
+              <>
+                <CampaignCardSkeleton />
+                <CampaignCardSkeleton />
+                <CampaignCardSkeleton />
+              </>
+            ) : visibleCampaigns.length > 0 ? (
+              visibleCampaigns.map((campaign) => (
+                <CampaignCard
+                  key={campaign.id}
+                  campaign={campaign}
+                  onJoin={onJoin}
+                  onOpenQr={onOpenQr}
+                  onCopyLink={onCopyLink}
+                  onShare={onShare}
+                  onNavigateDetail={onNavigateDetail}
+                  onNavigateAnalytics={onNavigateAnalytics}
+                  onManage={onManage}
+                  isFounder={isFounder}
+                />
+              ))
+            ) : (
+              <div className="card text-center py-14 px-6 space-y-3 bg-[#0E0E0E] border border-[#222222] rounded-[24px]">
+                <div className="w-12 h-12 rounded-full bg-[#141414] text-[#9C9A92] flex items-center justify-center text-[22px] mx-auto">
+                  <i className={`ti ${filterTab === 'joined' ? 'ti-link' : 'ti-speakerphone'}`}></i>
+                </div>
+                <div>
+                  <div className="text-[16px] font-medium text-[#F4F2EC]">
+                    {filterTab === 'joined' ? 'No joined campaigns yet' : 'No open campaigns'}
+                  </div>
+                  <div className="text-[13px] text-[#9C9A92] mt-1 max-w-[420px] mx-auto leading-relaxed">
+                    {filterTab === 'joined'
+                      ? 'Join a campaign to generate your personal creator tracking link and start earning per verified install.'
+                      : 'All campaigns are currently filled. New mobile apps enter the marketplace weekly.'}
+                  </div>
+                </div>
+                {filterTab === 'joined' && (
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setFilterTab('open')}
+                      className="pill on min-h-[44px] px-6 cursor-pointer font-medium"
+                    >
+                      Browse open campaigns
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </PullToRefresh>
   );
 };
